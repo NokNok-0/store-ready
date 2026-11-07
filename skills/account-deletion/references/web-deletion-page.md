@@ -4,7 +4,9 @@ Google Play requires a web link where users can request account deletion without
 
 On iOS the same page matters only if deletion completes on the web; then the in-app entry must link directly to it. Source: https://developer.apple.com/help/app-review/guideline-reference/5-1-1-account-deletion
 
-Read the Play help page before building the page. It sets what the page must show; our sources do not list that content.
+What our sources quote from the Play help page: the link "must be functional (for example, loads without error)"; the request path must be "prominently featured and easily discoverable"; users must be able to request deletion "without sending the user back to the app"; the page names the app or developer as shown on the store listing; it outlines extra steps such as cancelling a subscription. Read the help page for the rest before building it.
+
+"accounts that are created and operated offline are not app accounts and do not fall within policy scope." For local-only accounts, see "No server" below.
 
 ## Choose the flow
 
@@ -20,7 +22,7 @@ Never delete on an unverified request. The page is public; anyone can type someo
 
 Write it from what the backend really does:
 
-- The app's name as it appears on Google Play, and the developer name.
+- The app's name as it appears on Google Play, and the developer name, exactly as on the store listing.
 - The steps to request deletion on this page, and the steps to delete in the app.
 - What is deleted.
 - What is kept, why, and for how long. This must match the Data safety form.
@@ -37,10 +39,22 @@ Any stable public HTTPS URL on a domain the developer controls. The URL goes int
 - **Expo Router app with web output:** a route such as `app/delete-account.tsx`, exported with the project's existing web build and deployed where the site already lives. Keep native-only imports out of that route.
 - **No website:** a static page on any static host the developer already uses, calling the backend's deletion endpoints. Ask the user which host and domain to use rather than choosing one.
 
-Do not use a document-sharing link or a form on a third-party domain unless the user insists; those pages change or disappear and are hard to verify ownership of.
+If the user has already chosen where the page lives (for example next to their privacy policy in a public repository or on a hosted docs site), use that and record their choice; do not override it. If they have not chosen, suggest a domain they control over a document-sharing link or a third-party form, which can change or disappear. Either way, a repository file link only works once the file is pushed to a public branch: open it before recording it.
+
+## No server
+
+When accounts are created and operated on the device only, there is no server-side data to delete and no request to process. If a page is published anyway (the user wants one, or the Console asks for a URL), it says, in plain words:
+
+- The app's name and the developer name, as on the store listing.
+- That accounts and their data are stored only on the user's device, and the developer has no copy.
+- How to delete the account in the app, tap by tap (for example "Settings > Delete account").
+- That there is nothing to request from the developer, because there is no copy on a server.
+- A contact for questions.
+
+Do not write that uninstalling the app removes everything unless you have checked the platform backup behaviour for this build (device and cloud backups can keep app data); our sources do not cover it.
 
 ## After it is live
 
-- Open the URL logged out, in a private window, on a phone-width screen. It must load without the app installed.
+- Open the URL logged out, in a private window, on a phone-width screen. It must load without the app installed. Record the HTTP status and the date; `npx store-ready check --verify-urls` checks it too.
 - Run the full flow with a test account and confirm the account and its data are gone.
 - Put the URL in `store/data-safety.android.md` (Delete account URL) and tell the user to enter it in Play Console, App content, Data safety.

@@ -21,7 +21,8 @@ Why this matters: guideline 2.1 (app completeness) accounts for over 40% of unre
 
 Read the code for:
 
-1. **Sign-in.** Every way in: email and password, magic link, phone/SMS code, social login, Sign in with Apple, SSO. Whether sign-in is required to see anything.
+1. **Sign-in.** Every way in: email and password, magic link, phone/SMS code, social login, Sign in with Apple, SSO. Whether sign-in is required to see anything. Then find where accounts live: on a server (an auth provider or the project's backend) or only on the device (a profile in AsyncStorage, SecureStore, SQLite or files, with no network call). This decides which template block you use.
+   - **Trace a fresh install.** Read the sign-in and sign-up code as a reviewer on a new device with no data would hit it: what does `signIn` do when no account exists on this device? What does the first screen show? If signing in fails until an account is created ("No account found"), the notes must say "Create an account first" with the steps. Do not rely on the user's summary ("any password works"); confirm it in the code, file and line.
 2. **Two-factor or one-time codes.** Where codes are sent (SMS, email, authenticator) and whether the backend has a way to make them work for a test account.
 3. **Roles.** Every user type with different screens or permissions: member, admin, coach, seller, buyer, parent, child, moderator. Look at role checks in the code and in the backend schema.
 4. **Subscriptions and purchases.** Products, what each unlocks, where the paywall is, and anything that cannot be bought in review: codes from partners, enterprise licenses, physical-world redemption.
@@ -36,7 +37,7 @@ If the store-listing skill wrote a feature inventory, start from it.
 
 Ask, in one message, for what only they can provide:
 
-- A demo account for every role you found, on the production backend this build talks to, with data already in it. If they do not have one, say exactly which accounts to create and what data each needs.
+- A demo account for every role you found, on the production backend this build talks to, with data already in it. If they do not have one, say exactly which accounts to create and what data each needs. Skip this for device-local accounts: there is no server account to give, so the notes tell the reviewer how to create one on their device (step 4).
 - For subscription apps: an account whose subscription has expired.
 - How a reviewer gets past two-factor authentication on those accounts (codes off for demo accounts, a fixed code for demo accounts only, or an inbox the reviewer can open).
 - For hardware-dependent features: a video of the app running on a real device with the hardware. Apple asks for it; you cannot make it.
@@ -60,6 +61,8 @@ Fill [assets/review-notes-template.txt](assets/review-notes-template.txt). Rules
 
 - Plain ASCII. Straight quotes, hyphens, `>` for navigation. Non-ASCII characters cost 2 to 4 bytes each.
 - One demo account per role, each with what that role can see. The expired-subscription account is its own entry.
+- Device-local accounts: use the "DEMO ACCOUNTS (device-local)" block of the template instead. Never write "production server" or "accounts do not expire" when there is no server. Give the exact sign-up steps and example values the reviewer can type, say that data stays on the device, and say what the reviewer sees right after signing up (an empty list, sample data).
+- Every URL in the notes (a video link, the web deletion page, a support page) must load: open it and confirm a 200 before writing it in. A link that does not load is a 2.1 broken link; tell the user to publish it, and leave it out until it loads.
 - The 2FA section says exactly what the reviewer does after entering the password. "Use the code sent to the email" is not enough unless the reviewer can open that inbox.
 - Steps are taps, in order, using the UI's own labels: `Home > tap a habit > Month`. Not "navigate to the habit details".
 - New features first, then other non-obvious features, then account deletion.
@@ -89,7 +92,7 @@ OTHER INSTRUCTIONS
 <Hardware, region, purchases that cannot be tested>
 ```
 
-Leave out anything iOS-specific (Sign in with Apple paths, TestFlight), and add Android-only paths if they differ. Background location, foreground service and other permission declarations have their own forms and videos; leave them to the play-data-safety skill. Background location declarations also need test credentials if login is needed; use the same accounts.
+Leave out anything iOS-specific (Sign in with Apple paths, TestFlight), and add Android-only paths if they differ. For device-local accounts, put the sign-up steps in Instructions; if the Console's fields need a username and password, give the example values from those steps and say the account is created on the device. Background location, foreground service and other permission declarations have their own forms and videos; leave them to the play-data-safety skill. Background location declarations also need test credentials if login is needed; use the same accounts.
 
 ## 6. Measure
 
@@ -116,6 +119,9 @@ Tell the user:
 
 - [ ] The byte count command prints 4000 or less for `store/review-notes.txt`, with at least 100 bytes of margin if it contains placeholders.
 - [ ] Every role found in the code has a demo account entry, in both files.
+- [ ] You traced sign-in on a fresh install in the code. If it fails before an account exists, both files say to create the account first, with the steps.
+- [ ] For device-local accounts, neither file mentions a production server, and the sign-up steps use labels from the code.
+- [ ] Every URL in either file was opened today and loaded.
 - [ ] Subscription apps have an expired-subscription account.
 - [ ] The 2FA section says exactly what the reviewer does after the password.
 - [ ] Every new feature in this version has tap-by-tap steps, using labels that appear in the code's UI strings.

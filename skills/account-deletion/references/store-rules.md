@@ -32,9 +32,24 @@ Source: https://support.google.com/googleplay/android-developer/answer/13327111
 | Disclose any data that is retained | Say what is kept, why, and for how long, on the web page and in the Data safety form |
 | Declare it in the Data safety form | The web link goes into Play Console, App content, Data safety |
 
-What the web page itself must show is set out on the help page above. Read it before writing the page; our sources do not list the page's required content.
+Quoted from the help page (re-checked 2026-11-07, `docs/sources/google-play.md`):
+
+- "accounts that are created and operated offline are not app accounts and do not fall within policy scope."
+- "Permanently private and enterprise device management apps are exempt from this policy requirement."
+- The web link: "The weblink must be functional (for example, loads without error)".
+- The deletion request path must be "prominently featured and easily discoverable".
+- It must let users request deletion "without sending the user back to the app".
+- It must name the app or developer as shown on the store listing.
+- It must outline extra steps, such as cancelling a subscription.
+
+Our sources quote only these lines. Read the help page for anything else before writing the page.
 
 Data safety form: https://support.google.com/googleplay/android-developer/answer/10787469
+
+## Accounts that live only on the device
+
+- Apple: 5.1.1(v) "applies to all account types", so a local account still needs in-app deletion. Our source says apps using Sign in with Apple revoke tokens via the REST API; it does not describe an app that never sends a token to a server. Revoke tokens if your server received them; if no token ever left the device, record that and point the user to the 5.1.1(v) page and https://developer.apple.com/documentation/sign_in_with_apple/revoke_tokens.
+- Google Play: "accounts that are created and operated offline are not app accounts and do not fall within policy scope." Whether this app's accounts are offline is the user's declaration; confirm it with them.
 
 ## Both
 

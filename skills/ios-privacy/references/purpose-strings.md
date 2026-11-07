@@ -12,13 +12,17 @@ A key ends up in the binary from three places. Check all three.
 2. **Config plugins.** Many Expo and community packages add their keys at prebuild, with a default string when you pass none. Read the plugin's options in the package README or in `node_modules/<package>/app.plugin.js` (or the file it points to). The option names differ per package; do not guess them.
 3. **Native project.** In bare React Native or native iOS, `ios/<App>/Info.plist`. In Expo with committed `ios/`, this file is what ships; app config only applies on the next prebuild.
 
-To see the final values in an Expo project, generate the native project and read it:
+To see the final values in an Expo project, read the introspected config. It runs the config plugins without writing native folders, and works on every OS:
 
 ```
-npx expo prebuild --platform ios --no-install
+node -e "require('fs').writeFileSync('expo-introspect.json', require('child_process').execSync('npx expo config --type introspect --json', { maxBuffer: 1 << 26 }))"
 ```
 
-Then open the generated `Info.plist` under `ios/`. If `ios/` did not exist before you ran this, delete it afterwards so the project stays generated from config. If prebuild for iOS fails on this machine, run `npx expo config --type introspect` and read `ios.infoPlist` in its output instead.
+Read `ios.infoPlist` in `expo-introspect.json`, pass the file to the checker with `npx store-ready check --config expo-introspect.json` (it warns on plugin default strings), then delete it.
+
+On Windows and Linux, iOS prebuild does not run (Expo prints "Skipping generating the iOS native project files" and exits with "At least one platform must be enabled"), so use the command above. On a Mac, `npx expo prebuild --platform ios --no-install` and the generated `Info.plist` under `ios/` also work. Prebuild rewrites the `"ios"` and `"android"` scripts in `package.json` (to `expo run:ios` / `expo run:android`) and creates `ios/`: restore the scripts and delete `ios/` if it did not exist before.
+
+If a package that requests a permission has a config plugin and the plugin is not in `plugins`, add it with its options; until then its purpose strings cannot be set through the plugin.
 
 Every `NS…UsageDescription` key in that file needs a string you would defend to a reviewer, including keys added by a plugin for a feature the app never uses. For those, check whether the plugin can leave the key out; if it can, do that, because a string for an unused feature is hard to make specific and true. If it cannot, write a string that describes the feature the library provides and confirm with the user that the app does not use it.
 
@@ -26,7 +30,7 @@ Every `NS…UsageDescription` key in that file needs a string you would defend t
 
 - If a plugin owns the key, set it through that plugin's option, so a later prebuild does not put the default back.
 - If no plugin owns it, set it in `ios.infoPlist`.
-- Set each key in one place only, then confirm the final value in the prebuild output. When both a plugin option and `ios.infoPlist` set the same key, which one wins depends on the plugin.
+- Set each key in one place only, then confirm the final value in the introspect or prebuild output. When both a plugin option and `ios.infoPlist` set the same key, which one wins depends on the plugin.
 
 ```json
 {

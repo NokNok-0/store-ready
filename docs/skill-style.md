@@ -39,7 +39,7 @@ Skills that produce submission artifacts write them under `store/` in the user's
 | `store/privacy.ios.md` | ios-privacy |
 | `store/data-safety.android.md` | play-data-safety |
 | `store/age-rating.md` | age-rating |
-| `store/screenshots/plan.md`; images in `store/screenshots/ios/iphone/`, `ios/ipad/`, `android/phone/`, `android/tablet/`, `android/feature-graphic/`, `android/icon/` | store-screenshots |
+| `store/screenshots/plan.md`; `store/screenshots/capture.json` and its seed file when capturing from web; images in `store/screenshots/ios/iphone/`, `ios/ipad/`, `android/phone/`, `android/tablet/`, `android/feature-graphic/`, `android/icon/` | store-screenshots |
 | `store/checklist.md` | submission-checklist |
 | `store/review-risks.md` | app-review-risk, mock-review |
 

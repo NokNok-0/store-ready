@@ -20,11 +20,13 @@ Apple rules and sources: [references/apple-rules.md](references/apple-rules.md).
 From `package.json`, app config, and the source:
 
 - **Login methods.** Social and third-party: Google, Facebook, X, GitHub, Microsoft, or any OAuth provider (`expo-auth-session`, `@react-native-google-signin/google-signin`, `react-native-fbsdk-next`, provider SDK calls such as `signInWithOAuth`, `signInWithIdToken`, `OAuthProvider`). The app's own email/password, magic link, phone. Sign in with Apple (`expo-apple-authentication`, `@invertase/react-native-apple-authentication`). Note which one the sign-in screen leads with.
+- **Whether each login is real.** Start from the buttons on the sign-in screen, not the package list, and read each handler. A "Continue with Google" whose handler builds a session from hard-coded data, with no provider SDK and no network call, is a fake integration: it is an `app-review-risk` A9 item (placeholder content, 2.1), not a 4.8 question. Record it, remove the button or build the real provider with the user, then decide 4.8 on what is left.
+- **Where accounts live.** An auth provider or backend, or a local profile on the device only. This changes what Sign in with Apple does with its credential (step 2) and how `account-deletion` works.
 - **Paid features.** Purchases SDKs (`react-native-purchases`, `expo-iap`, `react-native-iap`), StoreKit or Play Billing in native code, payment SDKs (`@stripe/stripe-react-native` and others), web checkout links (`Linking.openURL` or web views to pricing, checkout, or billing pages), license key or promo code entry, QR unlocks, crypto payments.
 - **What each paid item is.** Digital content or features used in the app, or physical goods and services used outside it.
 - **Storefronts.** Where the app is distributed on the App Store (ask if unknown).
 
-Ask the user once, together, only for what the code cannot show: storefronts; whether a business exception to 4.8 applies (company-only accounts, education or enterprise, government ID, a client for a specific third-party service); whether paid items are consumed in the app or outside it, if unclear.
+Ask the user once, together, only for what the code cannot show: storefronts; whether a business exception to 4.8 applies (company-only accounts, education or enterprise, government ID, a client for a specific third-party service); whether paid items are consumed in the app or outside it, if unclear; and, if a purchase button is a stub (disabled, "not available yet", no purchases SDK), whether to build the purchase now or remove the paid tier and every limit tied to it. That last one is a product decision: do not make it alone.
 
 ## 2. Login: guideline 4.8
 
@@ -33,6 +35,7 @@ If a third-party or social login is the primary account, the app must also offer
 Decide:
 
 - Own email/password only: no 4.8 finding. Record it under "Checked, no risk found".
+- "Primary" is not defined in our sources. If a social login can create the user's account on its own (not only link to an existing one), treat 4.8 as applying even when it is shown below email and password, and read 4.8 on the guidelines page if the case is unclear. The checker warns either way; record which reading you used.
 - Social login present and an exception clearly applies: record the exception and the evidence.
 - Otherwise: add Sign in with Apple on iOS. That is the usual answer because it is the option our sources name as qualifying, and it fits any backend.
 
@@ -68,10 +71,7 @@ export function AppleSignInButton({ onCredential }: Props) {
       onPress={async () => {
         try {
           const credential = await AppleAuthentication.signInAsync({
-            requestedScopes: [
-              AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-              AppleAuthentication.AppleAuthenticationScope.EMAIL,
-            ],
+            requestedScopes: [AppleAuthentication.AppleAuthenticationScope.EMAIL],
           });
           await onCredential(credential);
         } catch (error) {
@@ -83,9 +83,10 @@ export function AppleSignInButton({ onCredential }: Props) {
 }
 ```
 
-4. In `onCredential`, pass the credential to the auth provider using its documented Sign in with Apple method. Some providers require a nonce; read the provider's docs rather than guessing the call.
-5. `email` and `fullName` can be null, for example after the first sign-in. Save the name on first sign-in, and do not make a later sign-in fail because they are missing.
-6. Send `authorizationCode` to the backend if it will need to revoke Apple tokens on account deletion (see `account-deletion`).
+   Request only the scopes the app stores: add `FULL_NAME` only if the app keeps a name.
+4. In `onCredential`, pass the credential to the auth provider using its documented Sign in with Apple method. Some providers require a nonce; read the provider's docs rather than guessing the call. With device-local accounts and no provider, map `credential.user` (the stable user identifier) to a local profile, create it on first sign-in, and keep no tokens; tell `account-deletion` that no token leaves the device.
+5. `email` and `fullName` can be null, for example after the first sign-in. Save them on first sign-in, and do not make a later sign-in fail because they are missing.
+6. Send `authorizationCode` to the backend if it will need to revoke Apple tokens on account deletion (see `account-deletion`). With no backend, do not send it anywhere.
 7. Decide account linking: a user who signed up with Google and later uses Apple with the same email. Follow what the provider supports; do not merge accounts on an unverified email.
 
 `expo-apple-authentication` supports iOS and tvOS only. `isAvailableAsync` returns false elsewhere, so the button hides itself on Android. Our sources record no Play rule requiring an equivalent login; do not add one to Android for Play's sake.
@@ -115,6 +116,7 @@ Code changes: match the project's purchases library and paywall components. Keep
 ### Review readiness for paid features
 
 - Every IAP product the build offers must be reviewable: in-app purchases that cannot be reviewed are a 2.1 rejection. Check each product the code references exists in App Store Connect, and explain anything the reviewer cannot reach on their own in Review Notes (2.1(b)).
+- A paywall or "Subscribe" button with nothing behind it (disabled, "not available yet", no purchases SDK) cannot be reviewed either. Ask the user (step 1) whether to build the purchase or remove the paid tier, its button and every limit it enforces. Record the decision; the placeholder itself is an `app-review-risk` A9 item.
 - Subscriptions: the reviewer needs a working demo account and an account with an expired subscription. Pass both to `review-notes`; ask the user for the expired one.
 - Account deletion must tell App Store subscribers that Apple billing continues until they cancel (see `account-deletion`).
 
@@ -129,7 +131,9 @@ Write or replace the `## Login and payments` section in `store/review-risks.md` 
 ## Verify
 
 - [ ] Every social or third-party login found in step 1 is covered by a 4.8 finding: resolved by Sign in with Apple, or by a recorded exception with evidence.
-- [ ] If Sign in with Apple was added: `expo-apple-authentication` is in `plugins`, `ios.usesAppleSignIn` is `true`, the button renders only when `isAvailableAsync` is true, cancellation does not show an error, and a null `email` or `fullName` does not break sign-in.
+- [ ] If Sign in with Apple was added: `expo-apple-authentication` is in `plugins`, `ios.usesAppleSignIn` is `true`, the button renders only when `isAvailableAsync` is true, cancellation does not show an error, a null `email` or `fullName` does not break sign-in, and the requested scopes match what the app stores.
+- [ ] Every login button's handler calls its provider; none creates a session from hard-coded data.
+- [ ] No purchase button is a stub; if one was, the user's decision (build or remove) is recorded and done.
 - [ ] Every digital item sold on iOS goes through IAP, and "Restore purchases" is reachable from the paywall and from settings.
 - [ ] No license key, QR code or crypto path unlocks digital content in the iOS build.
 - [ ] Any external purchase link is shown only in storefronts where the decision record says it is allowed, gated on the App Store storefront.

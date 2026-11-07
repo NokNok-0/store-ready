@@ -51,7 +51,11 @@ Mark items `done` or `todo` from evidence in the project. Do not ask the user wh
 | EAS profiles and submit config | `eas.json` |
 | Secrets in git | service account JSON, `.p8` keys, keystores, `credentials.json` tracked by git |
 
-If `npx store-ready check` is available, run it and use its results for the items it covers.
+If `npx store-ready check` is available, run it and use its results for the items it covers. Run it with `--verify-urls` when you have network access; without the flag it lists URLs as "found, not verified", which is not evidence.
+
+### URLs: open them
+
+A privacy policy, support or deletion URL is `done` only after you opened it today and it loaded. Open each one in a browser or with `node -e "fetch(process.argv[1]).then(r=>console.log(r.status,r.url),e=>console.log('failed',e.message))" <url>` and put the result in the Evidence column: `https://example.org/privacy, opened 2026-11-07: HTTP 200, names the app`. A URL that returns 4xx or 5xx, fails to resolve, needs a login, or shows a page for something else is `user` (the user publishes the page) and goes in "Start first", because the store consoles need a working page before review. If you cannot make network requests at all, mark it `todo` with "not opened", never `done`.
 
 A tracked service account key, App Store Connect API key or keystore is a `todo` at the top of the file: remove it from git, rotate it, and ignore it.
 
@@ -62,7 +66,7 @@ Ask, in one message, only for what lives in their accounts:
 - Apple: enrolled in the Apple Developer Program? Individual or organization?
 - Google Play: account created? Personal or organization? When was it created (before or after 2023-11-13)? Identity verification done? D-U-N-S number (organizations)?
 - Closed test: started? Start date and number of opted-in testers?
-- EU DSA trader status: are they a trader? Our sources say the declaration is required even if they do not distribute in the EU.
+- EU DSA trader status: are they a trader? Our sources say the declaration is required even if they do not distribute in the EU, but do not record how Apple decides who is a trader. Before you ask, open https://developer.apple.com/help/app-store-connect/manage-compliance-information/manage-european-union-digital-services-act-trader-requirements, read the factors and examples it gives, and quote them to the user with the URL. Suggest an answer only from what that page says; the user decides and declares it.
 - Is the app a health or medical app (regulated medical device declaration for the EU, UK and US)?
 - Is the app in a regulated field (banking, health, gambling, crypto, air travel)? If so, it must be published by the legal entity.
 - Export compliance: does the app use encryption beyond standard OS networking? If unsure, point them to https://developer.apple.com/help/app-store-connect/manage-app-information/overview-of-export-compliance; do not answer this for them.
@@ -116,6 +120,7 @@ Tell the user:
 
 - [ ] `store/checklist.md` exists, and every row has a status from the four allowed values.
 - [ ] Every `done` row has evidence; every `todo` and `user` row has a concrete next step.
+- [ ] Every URL row (privacy policy, support, account deletion web link) shows the date you opened it and the HTTP status. No URL that failed to load is `done`.
 - [ ] If the user has a personal Play account created after 2023-11-13, the closed test is the first row, with an earliest production-access date.
 - [ ] The EU DSA trader status row is present even if the user does not distribute in the EU.
 - [ ] No secret (service account key, API key, keystore) is tracked by git, or it is the top `todo`.

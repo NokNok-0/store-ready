@@ -14,6 +14,7 @@ How to fill it:
 - Read Apple's definition of "collect" on that page before marking a type as not collected. Data that is only used on the device is where this matters most; when you leave such a type out, say why under "Not collected" with the file that proves it.
 - Fill SDK rows from the SDK's own privacy documentation and its configuration in this project (is IP collection, user ID, session replay switched on?). If the documentation is silent, say so in Notes and tell the user.
 - Leave a cell as `ASK` only for what the code cannot tell you, and list those in "Questions for the user".
+- Open the privacy policy URL before writing it and record the status and date. A URL that does not load is a blocking item in "Questions for the user" ("publish the privacy policy at <url>; it returned 404 on <date>"), not a filled line.
 
 ```markdown
 # App Privacy answers: <App name> <version>
@@ -21,7 +22,7 @@ How to fill it:
 Generated <YYYY-MM-DD> by store-ready ios-privacy. Paste into App Store Connect > App Privacy.
 Data type names follow https://developer.apple.com/app-store/app-privacy-details/ as read on <YYYY-MM-DD>.
 
-Privacy policy URL: <https://...>
+Privacy policy URL: <https://...> (opened <YYYY-MM-DD>: HTTP <status>)
 Data collected: Yes | No
 
 ## Data types

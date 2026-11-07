@@ -28,8 +28,8 @@ Statuses: `done` (evidence given), `todo` (we can do it in the project), `user` 
 | A9 | Age rating, including social-media questions and the Shared Location and Dating & Relationships descriptors | | `store/age-rating.md` | https://developer.apple.com/news/?id=yxkh08us |
 | A10 | Screenshots: at least one "iPhone with Dynamic Island (medium display)" (1179×2556 or 1206×2622); "iPad 13-inch display" (2064×2752 or 2048×2732) if the app runs on iPad | | `store/screenshots/ios/` | https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications |
 | A11 | Listing text within limits | | `store/listing.ios.json` | https://developer.apple.com/help/app-store-connect/reference/app-information/app-information |
-| A12 | Privacy policy URL in App Store Connect and inside the app (5.1.1(i)) | | | https://developer.apple.com/app-store/review/guidelines/ |
-| A13 | Support URL works; contact info accurate (1.5) | | | https://developer.apple.com/app-store/review/guidelines/ |
+| A12 | Privacy policy URL in App Store Connect and inside the app (5.1.1(i)) | | <url>, opened <date>: HTTP <status> | https://developer.apple.com/app-store/review/guidelines/ |
+| A13 | Support URL works; contact info accurate (1.5) | | <url>, opened <date>: HTTP <status> | https://developer.apple.com/app-store/review/guidelines/ |
 | A14 | Review notes with a demo account for every role (4,000 bytes) | | `store/review-notes.txt` | https://developer.apple.com/help/app-review/before-submitting-for-review/complete-review |
 | A15 | In-app account deletion, if the app has accounts | | | https://developer.apple.com/help/app-review/guideline-reference/5-1-1-account-deletion |
 | A16 | App icon 1024×1024 | | | Human Interface Guidelines, App icons |
@@ -52,8 +52,8 @@ Statuses: `done` (evidence given), `todo` (we can do it in the project), `user` 
 | G10 | Permission declarations | | `store/data-safety.android.md` | play-data-safety skill |
 | G11 | Content rating (IARC) | | `store/age-rating.md` | https://support.google.com/googleplay/android-developer/answer/9898843 |
 | G12 | App access / sign-in details | | `store/app-access.android.txt` | https://support.google.com/googleplay/android-developer/answer/9859455 |
-| G13 | Account deletion: in-app path and web link | | | https://support.google.com/googleplay/android-developer/answer/13327111 |
-| G14 | Privacy policy URL | | | https://support.google.com/googleplay/android-developer/answer/10787469 |
+| G13 | Account deletion: in-app path and web link (the link must load; offline-only accounts are out of policy scope) | | <in-app path>; <url>, opened <date>: HTTP <status> | https://support.google.com/googleplay/android-developer/answer/13327111 |
+| G14 | Privacy policy URL | | <url>, opened <date>: HTTP <status> | https://support.google.com/googleplay/android-developer/answer/10787469 |
 | G15 | Listing text within limits | | `store/listing.android.json` | https://support.google.com/googleplay/android-developer/answer/9859152 |
 | G16 | Icon 512×512, feature graphic 1024×500, 2+ phone screenshots | | `store/screenshots/android/` | https://support.google.com/googleplay/android-developer/answer/1078870 |
 

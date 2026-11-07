@@ -31,7 +31,15 @@ Fails (Blocking) when:
 
 Fails (Risk) when: the notes give steps that name screens or buttons that do not exist in the code.
 
-Also look, without running the app, for: `lorem ipsum`, "coming soon" screens, TODO text in user-facing strings, links to `localhost`, `127.0.0.1`, `example.com` or staging hosts in production config. Each one found is a 2.1 Blocking finding with its path.
+Also look, without running the app, for placeholder content and broken links (both named 2.1 triggers):
+- `lorem ipsum`, "coming soon" or "not available yet" screens and rows, TODO text in user-facing strings;
+- placeholder accounts or addresses (`example.com`, `test@`, hard-coded users) and links to `localhost`, `127.0.0.1`, `example.com` or staging hosts in production config;
+- a purchase, subscribe or upgrade button that is disabled or has no purchases SDK behind it;
+- a login button (Google, Facebook, Apple) whose handler creates a session without calling the provider;
+- template artwork: open the icon, adaptive icon and splash images; the checker's `app.template-content` names known template icons;
+- every URL recorded in `store/` files, app config `extra` and the in-app links: open it. A 4xx or 5xx status, a DNS or TLS failure, or a page that does not belong to this app is a broken link.
+
+Each one found is a 2.1 Blocking finding with its path (for a URL: the URL, the file that records it, the status and the date opened). Template artwork is also a 4.1(c) question; cite 4.1 when the icon is another developer's. Route these findings to `app-review-risk` (A9), and broken URLs to the user and the skill that recorded them.
 
 Not verifiable: whether the demo password works, whether the backend is up, whether the app crashes. Always list these.
 
@@ -119,7 +127,9 @@ Read: a privacy policy link in the app (settings, about, sign-up screen), the UR
 
 Fails (Blocking) when the app has no in-app link; or no URL is recorded anywhere in the project.
 
-Not verifiable: what is entered in App Store Connect; whether the URL loads. If you can open the URL, check it loads and names the app or developer.
+Open the URL. Fails (Blocking) when it does not load (4xx, 5xx, DNS or TLS error), or loads a page that is not a privacy policy for this app or developer. Record the status and the date either way.
+
+Not verifiable: what is entered in App Store Connect; the URL, only if you cannot make network requests at all (say so).
 
 ### 5.1.1(ii) Purpose strings
 
@@ -137,9 +147,11 @@ Rule: users must be able to start deletion inside the app; deactivation alone is
 
 Read: sign-up code; a delete account action and what it calls; the server endpoint if it is in the repo; Sign in with Apple token revocation on deletion; subscription messaging on the delete screen.
 
-Fails (Blocking) when accounts can be created and there is no in-app path to start deletion; the path only deactivates; the path is "email us" or "call us" outside a regulated field; a web flow is linked to a home page rather than the deletion page; Sign in with Apple is used and deletion does not revoke tokens.
+Fails (Blocking) when accounts can be created (including accounts that live only on the device; the rule applies to all account types) and there is no in-app path to start deletion; the path only deactivates; the path is "email us" or "call us" outside a regulated field; a web flow is linked to a home page rather than the deletion page; Sign in with Apple is used, the app's server or auth provider received Apple tokens or an authorization code, and deletion does not revoke them.
 
 Fails (Risk) when subscriptions exist and the delete flow does not say Apple billing continues.
+
+Sign in with Apple with no server: our source says apps using Sign in with Apple must revoke tokens via the REST API; it does not describe an app that never sends a token anywhere. If the code shows that no identity token or authorization code ever leaves the device (the credential only maps to a local profile, no network call, no auth provider), do not mark it Blocking. Record it as a Risk: what the code does (file and line), that no token reached a server so there is nothing on a server to revoke, and the page for the user to read: https://developer.apple.com/help/app-review/guideline-reference/5-1-1-account-deletion and https://developer.apple.com/documentation/sign_in_with_apple/revoke_tokens. If any token or code is sent to a server, revoke it there.
 
 Not verifiable: whether the server actually deletes the data.
 
@@ -161,7 +173,7 @@ Fails (Risk) when `store/privacy.ios.md` omits an SDK found in dependencies, or 
 
 Fails (Blocking) when users can see each other's content and report or block is missing; or no contact info or support URL can be found.
 
-Not verifiable: whether the support URL loads.
+Open the support URL. Fails (Blocking) when it does not load. Not verifiable only if you cannot make network requests at all.
 
 ---
 
@@ -177,9 +189,15 @@ Fails (Blocking) when `store/data-safety.android.md` is missing; or an SDK in de
 
 Rule: apps that let users create an account must offer an in-app deletion path, a web link to request deletion without reinstalling, deletion of associated data (disclose anything retained), and declare it in the Data safety form. Source: https://support.google.com/googleplay/android-developer/answer/13327111
 
-Fails (Blocking) when any of the four is missing from the code or `store/` files.
+The help page (re-checked 2026-11-07) also says: "The weblink must be functional (for example, loads without error)"; the deletion request path must be "prominently featured and easily discoverable"; it must let users request deletion "without sending the user back to the app"; it must name the app or developer as shown on the store listing. And: "accounts that are created and operated offline are not app accounts and do not fall within policy scope."
 
-Not verifiable: whether the web link loads.
+Fails (Blocking) when any of the four is missing from the code or `store/` files; or the web link recorded in `store/data-safety.android.md` does not load when you open it.
+
+Fails (Risk) when the page loads but does not name the app or developer as on the listing, or sends the user back to the app to delete.
+
+If the accounts are created and operated offline (no server, no sync), quote the sentence above, record the evidence (no network calls in the auth and storage code), and mark the web link check passed as out of policy scope, with "confirm with the user that no account data leaves the device" under Not verified. A web link that is recorded anyway must still load.
+
+Not verifiable: whether the server deletes the data; the web link, only if you cannot make network requests at all.
 
 ### Permissions
 

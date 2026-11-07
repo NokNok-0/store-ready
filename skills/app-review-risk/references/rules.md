@@ -79,6 +79,8 @@ Our sources do not say whether code written with an AI coding assistant counts a
 - Screens that reproduce a well-known app's layout and wording closely.
 - Keywords listing competitors (also a 2.3.7 metadata issue and against the keyword rules: no other app or company names; https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information).
 
+Before writing "no risk" for the name, search the App Store and Google Play for the planned store name (or ask the user to, if you cannot open the stores). If an existing app uses the same or a confusingly similar name, record it as a Medium risk with what you found; 4.1(c) covers another developer's name. Trademark clearance is the user's to do.
+
 Google Play has Impersonation and Intellectual Property policy areas (https://play.google/developer-content-policy/). Our sources do not detail them; read those sections before flagging Play-specific wording.
 
 **Change.** New name and icon with no reference to the other brand; remove brand names from bundle ID, package, keywords and copy. Do it before the first upload, while changing the bundle ID or package costs nothing. Rework any screen that is a pixel copy.
@@ -135,6 +137,27 @@ Spam sits in the "Spam, Functionality, and User Experience" area of https://play
 
 **Severity.** High for static or single-asset apps. For spam, take the severity from what the policy section says.
 
+## A9. Template, placeholder and fake content
+
+**Rule.** Apple 2.1: placeholder content and broken links are listed triggers for an incomplete app (https://developer.apple.com/help/app-review/before-submitting-for-review/complete-review). Apple 2.3: metadata and notes must not be misleading, so a feature that only looks finished must not be claimed (guidelines). Apple 4.1(c), added 2025-11-13: do not use another developer's icon, brand or name (https://developer.apple.com/news/?id=ey6d8onl; https://developer.apple.com/help/app-review/guideline-reference/4-1-prevent-copycat-rejection). Google Play: apps that do nothing are not allowed, and apps that crash, freeze or fail to load are rejected (https://support.google.com/googleplay/android-developer/answer/9898783). Our sources do not say whether a framework's template icon counts as "another developer's icon" under 4.1(c); treat it as a risk and replace it, which costs little.
+
+**Signals.** Look at the files themselves, not their names:
+- **Template artwork.** Open every image that ships as the app's identity: `icon`, `ios.icon`, `android.adaptiveIcon` (foreground, background, monochrome), `splash` and splash plugin images, `web.favicon`. Expo's template icon set, React logos (`react-logo.png`, `partial-react-logo.png`) still referenced in screens, or a framework logo as the icon. The checker's `app.template-content` warning names known template icons; it does not catch everything, so view the images anyway.
+- **Placeholder accounts and text.** `example.com` addresses, hard-coded users (`test@`, `demo@`, `John Doe`), `lorem ipsum`, "TODO" in UI strings, sample data shown to every new user as if it were theirs.
+- **Disabled or stub purchases.** A "Subscribe", "Upgrade" or "Pro" button that is `disabled`, shows "not available yet" or "coming soon", or has no purchases SDK behind it; limits ("5 habits on the free plan") enforced with nothing to buy.
+- **"Coming soon" features.** Tabs, rows or screens that only say a feature is on its way.
+- **Social buttons that never call the provider.** A "Continue with Google / Facebook / Apple" handler that creates a session from hard-coded data, with no provider SDK in `package.json` and no network call. Check every login button's handler, not just the package list.
+- **Template screens left in.** Starter tabs, "Welcome!" or "Explore" screens that describe the framework instead of the app.
+
+**Change.** Name each item and what replaces it:
+- Template artwork: original icon and splash art for this app; tell the user if you cannot make it.
+- Placeholder accounts and text: remove them, or replace with real content; sample data must be clearly the user's to delete, or not shipped.
+- Stub purchases: either make the purchase real (route to `login-and-payments` for IAP) or remove the button and every limit that depends on it. This changes the product: ask the user which, and record the answer.
+- "Coming soon": remove the entry point until the feature ships.
+- Fake social login: remove the button, or implement the provider for real through `login-and-payments`.
+
+**Severity.** High when the item is on the icon, the first screens, the sign-in screen or the purchase path a reviewer meets. Medium when it is only on a screen a reviewer is unlikely to reach.
+
 ## Out of scope here, route on
 
 Note these in "Checked" with the skill that owns them; do not analyse them here.
@@ -142,8 +165,8 @@ Note these in "Checked" with the skill that owns them; do not analyse them here.
 | Seen in the project | Rule | Skill |
 |---|---|---|
 | Sends user data or prompts to a third-party AI provider | 5.1.2(i): disclose and get explicit permission (https://developer.apple.com/news/?id=ey6d8onl) | ios-privacy, play-data-safety |
-| Third-party or social login | 4.8 | login-and-payments |
-| Paid digital content, subscriptions, external payment links | 3.1.1 | login-and-payments |
+| Third-party or social login that calls a real provider | 4.8 | login-and-payments |
+| Paid digital content, subscriptions, external payment links that work | 3.1.1 | login-and-payments |
 | Account sign-up | 5.1.1(v), Play account deletion | account-deletion |
 | Runs HTML5 or JavaScript mini apps or games inside the app | 4.7 covers these (https://developer.apple.com/news/?id=ey6d8onl); read 4.7 | mock-review |
 | Features switched on remotely or not shown to the reviewer | 2.5.19 hidden features (https://developer.apple.com/news/?id=92th7e5i) | mock-review, review-notes |

@@ -88,11 +88,13 @@ Each line says what was not checked, why, and how the user checks it. Keep only 
 ## Section skeleton
 
 ```markdown
-## Mock review 2026-11-07
+## Mock review 2026-11-07 15:40
 
 Build: 1.2.0 (14), Expo SDK 58. Stores: iOS, Android.
+Previous: Mock review 2026-11-07 11:05, Blocking 3 (2 fixed: demo account added, purpose strings rewritten).
 Read: app config, `app/`, `src/`, `package.json`, `store/` (listing.ios.json, listing.android.json, review-notes.txt, screenshots/ios/iphone, screenshots/ios/ipad, screenshots/android, privacy.ios.md, data-safety.android.md).
 Checker: 1 error, 2 warnings (included below as findings).
+URLs opened 2026-11-07: privacy policy https://example.org/privacy HTTP 200; deletion page https://example.org/delete-account HTTP 404 (finding below).
 
 ### Apple
 

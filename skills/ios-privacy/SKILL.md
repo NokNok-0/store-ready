@@ -35,16 +35,34 @@ Find out what the app touches before changing anything.
    - every network call that sends user data, and where it goes (own backend, analytics, AI provider);
    - sign-up and sign-in: which account data is stored.
 
-4. Ask the user once, together, for what the code cannot tell you: the privacy policy URL; whether any data is used for advertising or shared with other companies; what the backend does with uploaded data if the backend is not in this repository.
+4. Ask the user once, together, for what the code cannot tell you: the privacy policy URL (unless the project already records one); whether any data is used for advertising or shared with other companies; what the backend does with uploaded data if the backend is not in this repository.
 
 ## 2. Purpose strings (5.1.1(ii))
 
 A purpose string must say what data the app uses and what for, with an example. Vague strings are rejected.
 
-1. Get the final list of `NS…UsageDescription` keys. Plugins add keys with generic defaults, so app config alone is not the full list. In Expo, run `npx expo prebuild --platform ios --no-install` and read the generated `Info.plist` (delete `ios/` afterwards if it did not exist before). Fallbacks and details: [references/purpose-strings.md](references/purpose-strings.md).
+1. Get the final list of `NS…UsageDescription` keys. Plugins add keys with generic defaults, so app config alone is not the full list. In Expo, read the effective config without generating native folders:
+
+   ```
+   node -e "require('fs').writeFileSync('expo-introspect.json', require('child_process').execSync('npx expo config --type introspect --json', { maxBuffer: 1 << 26 }))"
+   ```
+
+   Read `ios.infoPlist` in `expo-introspect.json`; it includes what config plugins add. Pass it to the checker too: `npx store-ready check --config expo-introspect.json` warns on plugin default strings. Delete the file when done. The `node -e` form writes plain UTF-8 in every shell; PowerShell's `>` would write UTF-16, which JSON readers reject.
+
+   **Windows (and Linux):** go straight to the command above. `npx expo prebuild --platform ios` does not run there: Expo prints "Skipping generating the iOS native project files" and exits with "At least one platform must be enabled".
+
+   On a Mac you can also run `npx expo prebuild --platform ios --no-install` and read the generated `Info.plist`, but clean up after it (see "Prebuild side effects" below). Details: [references/purpose-strings.md](references/purpose-strings.md).
 2. For each key, find the feature that asks for it and write the string from that feature: "[App] uses [resource] to [feature]. For example, [concrete case]."
-3. Write it where it will survive the next prebuild: the plugin's own option when a plugin owns the key, otherwise `ios.infoPlist`. Read the plugin's README or `app.plugin.js` for its option names.
-4. A key for a feature the app does not use: remove it through the plugin if it allows that; otherwise write an accurate string and confirm with the user.
+3. Write it where it will survive the next prebuild: the plugin's own option when a plugin owns the key, otherwise `ios.infoPlist`. Read the plugin's README or `app.plugin.js` for its option names. If the package that requests the permission ships a config plugin (an `app.plugin.js` in the package) and it is not in `plugins`, add it to `plugins` with its purpose-string options first; without it, its keys are missing or not configurable.
+4. A key for a feature the app does not use: remove it through the plugin if it allows that (its README says whether an option value leaves the key out); otherwise write an accurate string and confirm with the user. Re-run the introspect command and confirm the key is gone, not set back to a default.
+
+### Prebuild side effects
+
+`npx expo prebuild` (either platform) creates `ios/` or `android/` and rewrites the `"ios"` and `"android"` scripts in `package.json` to `expo run:ios` / `expo run:android`. Before running it, note whether those folders exist and are committed, and copy the `scripts` block. After reading what you need:
+
+- restore the `scripts` block in `package.json` exactly as it was;
+- delete `ios/` and `android/` if they did not exist before or are listed in `.gitignore`;
+- compare the project with its state before (version control status, or file modification times) and revert anything else prebuild changed that you did not mean to change.
 
 ## 3. Privacy manifest (required-reason APIs)
 
@@ -56,6 +74,7 @@ Uploads are checked for required-reason API declarations (enforced since 2024-05
 - **Heuristic entries** (`requiredReasonApis.heuristic`): confirm in the package's iOS source first.
 - **Third-party SDKs on Apple's list** need their own manifest, and a signature when shipped as binaries. If an installed SDK lacks one, the fix is updating the SDK, not copying reasons.
 - **Apple's email after upload** names the missing categories. Map each to a dependency with the scanner, add the reason, rebuild.
+- **The checker** (`npx store-ready check`) also reads each dependency's `PrivacyInfo.xcprivacy`; its `ios.privacy-manifest` list should match the scanner's `missingDeclarations`. If they differ, the package's own manifest file is the evidence: open it.
 
 Full procedure, JSON and plist shapes: [references/privacy-manifest.md](references/privacy-manifest.md).
 
@@ -111,15 +130,19 @@ App Privacy details are required for new apps and updates, must include data col
 3. If the app uses expo-updates, answer "Yes" (data is collected) and include Crash Data.
 4. Write `store/privacy.ios.md` from [references/privacy-answers-template.md](references/privacy-answers-template.md). Every row cites where the data comes from (file path or package). Unknowns go under "Questions for the user", not into guesses.
 5. Check the privacy policy is linked in App Store Connect metadata and inside the app (5.1.1(i)). If the app has no in-app link, add one to the settings or about screen.
+6. Open the privacy policy URL, in a browser or with `node -e "fetch(process.argv[1]).then(r=>console.log(r.status,r.url),e=>console.log('failed',e.message))" <url>`. Confirm it loads (HTTP 200 after redirects) and is a privacy policy for this app or developer. Write the result and today's date next to the URL in `store/privacy.ios.md`. If it does not load (404, not pushed yet, needs a login), do not mark it done: record it as blocking under "Questions for the user" and tell the user to publish it. `npx store-ready check --verify-urls` checks the URLs the checker finds; without that flag it reports them as "found, not verified".
+
+For a local-first app, whether data that never leaves the device counts as collected decides most rows. Our sources do not quote Apple's definition: read it on https://developer.apple.com/app-store/app-privacy-details/ and cite it in "Not collected".
 
 Tell the user to paste the answers into App Store Connect, App Privacy, and to update them whenever an SDK or data flow changes.
 
 ## Verify
 
 - [ ] Re-run `node <this-skill>/scripts/scan-deps.mjs .`: `missingDeclarations` is empty and `invalidReasonCodes` is empty. Every `heuristic` entry is either declared or noted as confirmed not needed.
-- [ ] In the prebuild output (or the native project), every `NS…UsageDescription` value names a feature and gives an example; none is a plugin default such as "Allow $(PRODUCT_NAME) to access…".
+- [ ] In the introspect output (or the prebuild output, or the native project), every `NS…UsageDescription` value names a feature and gives an example; none is a plugin default such as "Allow $(PRODUCT_NAME) to access…".
 - [ ] The generated or edited `PrivacyInfo.xcprivacy` contains every category and reason from app config.
-- [ ] If you generated `ios/` only to inspect it, it is deleted again.
+- [ ] If you ran prebuild: `ios/` and `android/` are gone unless they were committed before, and `package.json` `scripts` match their state before. `expo-introspect.json` is deleted.
+- [ ] The privacy policy URL in `store/privacy.ios.md` has a status and a date from when you opened it, and it loaded; otherwise the user has been told it is blocking.
 - [ ] Each permission request has a denial path; you traced it in code (and on a device or simulator if one is available).
 - [ ] Every AI provider found has a consent screen gating its requests, and appears in `store/privacy.ios.md`.
 - [ ] `store/privacy.ios.md` exists, has a row for every SDK in `dataCollection` that you confirmed, has Crash Data if expo-updates is installed, and no example rows from the template are left.

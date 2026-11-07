@@ -13,6 +13,7 @@ It produces, in the user's project:
 - `store/screenshots/plan.md`: which screens, in what order, with captions and the state to set up for each.
 - Images under `store/screenshots/ios/{iphone,ipad}/` and `store/screenshots/android/{phone,tablet,feature-graphic,icon}/`, named `01-<screen>.png`, `02-<screen>.png`, ... so the order is the upload order.
 - A clean run of `scripts/check-sizes.mjs`.
+- When capturing from web: `store/screenshots/capture.json` (and an optional seed file next to it), the plan `scripts/capture.mjs` runs, so the set can be re-captured after UI changes.
 
 Sizes, counts and formats, each with its source URL, are in [references/specs.md](references/specs.md). Capture methods and their limits are in [references/capture.md](references/capture.md). Read both.
 
@@ -85,16 +86,18 @@ Use the first method in [references/capture.md](references/capture.md) that is a
 1. iOS Simulator (Mac with Xcode only).
 2. A real device the user owns, with an internal or TestFlight build. You ask; the user captures.
 3. Android emulator with a 2:1 or squarer device profile.
-4. Expo web rendered at the exact pixel size with a headless browser, as a fallback.
+4. Expo web rendered at the exact pixel size with `scripts/capture.mjs`, as a fallback. It drives a locally installed Chrome or Edge, headless, over the DevTools protocol: it sets the viewport and scale, seeds `localStorage` (so it can get past sign-in without changing app code), opens routes, taps by selector or label, and saves RGB PNGs without alpha. Needs Node 22+; on older Node it prints what to do instead. Plan format and a worked example: [references/capture.md](references/capture.md).
 
 Two traps to avoid:
 
 - **Play's aspect rule.** Play rejects a screenshot whose longest side is more than twice its shortest. Many current Android device profiles are taller than that (1080×2400 is 2.22:1). Capture on a 1080×1920 or 1080×2160 profile, or crop.
 - **Web is not native.** Web renders differ from native in fonts, native controls, safe areas, the status bar, maps, camera and any `Platform.OS` branch. If you capture from web, tell the user, and compare every image against the native build before it is uploaded. Replace any that differ in a way a user would notice.
+- **Android-style back arrows in iOS shots.** On web, React Navigation's stack header draws a Material back arrow. Reaching a screen by tapping through gives iOS screenshots an Android arrow (another platform's imagery, 2.3.10); opening the route by URL gives no back button at all. For iOS sets, open each screen by `route`; tapping through is fine for Android sets. Say which you did in the plan.
+- **iPad from a phone layout.** If the app caps its content width (for example 640 px), the iPad 13-inch shots show a narrow column in a wide screen. Our sources set no rule on this; show the user one iPad image before capturing the rest and let them decide whether the iPad layout needs work.
 
 Render at the exact size; do not upscale a smaller capture.
 
-The feature graphic is not a screenshot. Make it as a plain HTML page at 1024×500 (app name, one short line, colors from the app icon), capture it at scale factor 1, and keep text clear of the edges. Hold it to the same text rules as the captions: no prices, rankings or unverifiable claims. Play's own rules for listing graphics sit under Store Listing and Promotion in the Developer Program Policy (https://play.google/developer-content-policy/).
+The feature graphic is not a screenshot. Make it as a plain HTML page at 1024×500 (app name, one short line, colors from the app icon), capture it with `capture.mjs` at size `1024x500`, and keep text clear of the edges. Hold it to the same text rules as the captions: no prices, rankings or unverifiable claims. Play's own rules for listing graphics sit under Store Listing and Promotion in the Developer Program Policy (https://play.google/developer-content-policy/). If the icon you are about to reuse is template or default artwork, stop and send it to `app-review-risk` (area A9) before making any graphic from it.
 
 ## 4. Check
 
@@ -135,4 +138,5 @@ Tell the user:
 - [ ] No caption has a price, rating, superlative or another platform's name.
 - [ ] Android screenshots are 2:1 or squarer.
 - [ ] `store/screenshots/plan.md` lists every image, in upload order, with its capture method.
+- [ ] Web captures: no iOS image shows an Android-style back arrow; `capture.json` re-runs cleanly (`node <this-skill>/scripts/capture.mjs store/screenshots/capture.json` exits 0).
 - [ ] If the project has the store-ready checker, `npx store-ready check` reports no screenshot errors.

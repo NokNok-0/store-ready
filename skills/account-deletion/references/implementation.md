@@ -75,7 +75,7 @@ export default function DeleteAccountScreen() {
   }
 
   function confirm() {
-    Alert.alert('Delete your account?', 'Your account, habits and photos will be permanently deleted. This cannot be undone.', [
+    Alert.alert('Delete your account?', 'Your account and everything saved in it will be permanently deleted. This cannot be undone.', [
       { text: 'Cancel', style: 'cancel' },
       { text: 'Delete account', style: 'destructive', onPress: deleteNow },
     ]);
@@ -83,7 +83,7 @@ export default function DeleteAccountScreen() {
 
   return (
     <View style={{ padding: 24, gap: 16 }}>
-      <Text>Deleting your account removes your profile, habits, check-ins and photos from our servers.</Text>
+      <Text>Deleting your account removes your profile and all of your data from our servers.</Text>
       {hasAppStoreSubscription && (
         <Text>Your subscription is billed by Apple and continues until you cancel it in your Apple account settings. Deleting your account does not cancel it.</Text>
       )}
@@ -99,7 +99,7 @@ Notes for adapting it:
 
 - Replace `useAuth` with the project's auth hook. `getAccessToken` must return a token the backend verifies (Firebase ID token, Supabase access token, Clerk session token, Auth0 access token, or the project's own).
 - For a Sign in with Apple user without a stored refresh token, get a new credential with `expo-apple-authentication` before calling `requestAccountDeletion` and pass its `authorizationCode`.
-- Write the "what is deleted" text from what the backend actually deletes. Do not promise deletion of data you keep.
+- Write the "what is deleted" text from what the backend actually deletes, naming this app's data types. The strings in the snippet are generic placeholders; replace them. Do not promise deletion of data you keep.
 - Show the subscription notice from the real entitlement state (StoreKit, RevenueCat, or the project's own). For Play subscriptions, read https://support.google.com/googleplay/android-developer/answer/9900533 before writing the equivalent Android notice; our sources do not cover it.
 - Clear every local store the app writes to. Search for `SecureStore.setItemAsync`, `AsyncStorage.setItem`, MMKV, SQLite, and files written under the document directory.
 
@@ -137,4 +137,19 @@ export async function deleteAccount(req: Request): Promise<Response> {
 
 Each helper is project-specific: implement it against the project's database, storage and provider. Provider calls for `deleteAuthUser` are in [providers.md](providers.md).
 
-If the project has no backend at all (local-only data plus a hosted auth provider), the deletion still belongs on a server: deleting a user and all of their data needs privileged credentials, and those must not ship in the app. Add a minimal function on the provider's platform (Cloud Function, Edge Function) or the project's existing hosting, and tell the user it is a new deployed piece.
+If the project has no backend of its own but uses a hosted auth provider (local data plus Firebase, Supabase, Clerk or Auth0), the deletion still belongs on a server: deleting a user and all of their data needs privileged credentials, and those must not ship in the app. Add a minimal function on the provider's platform (Cloud Function, Edge Function) or the project's existing hosting, and tell the user it is a new deployed piece.
+
+## Local-only accounts
+
+When there is no auth provider and no server, the same screen calls a local function instead of `requestAccountDeletion`:
+
+```ts
+export async function deleteLocalAccount(userId: string) {
+  await deleteRecordsFor(userId);
+  await deleteFilesFor(userId);
+  await deleteProfile(userId);
+  await clearSessionKeys();
+}
+```
+
+Each helper uses the project's own storage code. Delete the user's records and files before the profile, so a failure part-way can be retried while the user is still signed in. Leave other local profiles untouched. Then sign out and replace the stack with the start screen, as above. Signing up again with the same email must start empty.

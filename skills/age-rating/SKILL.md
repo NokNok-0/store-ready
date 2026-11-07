@@ -89,7 +89,7 @@ Prepared <YYYY-MM-DD> from the code at <commit or "working tree">. Estimates, no
 Estimated tier: <4+ | 9+ | 13+ | 16+ | 18+> (estimate)
 | Topic | Suggested answer | Based on |
 |---|---|---|
-| Social-media capabilities | <which capabilities apply> | Facts: Social features |
+| Social-media capabilities | <which capabilities apply, each checked against Apple's list as read on <date>> | Facts: Social features |
 | Shared Location | <Yes / No> | Facts: Location |
 | Dating & Relationships | <Yes / No> | Facts: Dating |
 | Unrestricted web access | <Yes / No> | Facts: Web access |

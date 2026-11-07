@@ -8,7 +8,7 @@ The listing has two readers: a person deciding whether to install, and a reviewe
 - Name things the way the UI names them. If the button says "Check in", the description says "check in", not "log your progress".
 - One claim per sentence. Every claim maps to a feature in the inventory.
 - Say what is limited. "Free for up to 3 habits; a subscription unlocks unlimited habits and export." No prices, no "only $X".
-- No superlatives, rankings, emoji, exclamation marks, or rhetorical questions ("Tired of forgetting your habits?").
+- No superlatives, rankings, emoji, exclamation marks, or rhetorical questions ("Tired of forgetting your habits?"). The one exception is a UI label that contains such a word ("Best streak" on a stat tile): name it as the UI does, in descriptions only, and pass it to `measure.mjs` with `--allow`. Never in the name, subtitle or title.
 - No claims about other people: user counts, ratings, press, "trusted by".
 - No other platforms, apps or companies, except a real integration named the way its owner names it (for example "Imports from Apple Health" when the app does).
 

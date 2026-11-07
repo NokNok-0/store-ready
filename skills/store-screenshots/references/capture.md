@@ -43,14 +43,47 @@ Use only when no simulator, emulator or device is available, and tell the user w
 
 Web renders differ from native. Expect differences in: system fonts, native controls (switches, pickers, date pickers, action sheets, alerts), tab bar and header blur, safe-area insets and the status bar (absent on web), maps, camera, video, and any code behind `Platform.OS` checks. A screenshot that does not match the shipped app is the "outdated UI" or inaccurate-metadata problem 2.3.3 and 2.3.1(a) reject. Every web screenshot must be compared against the native build on a device or emulator before upload; if it differs in anything a user would notice, replace it.
 
-1. Start the web build: `npx expo start --web`, or export it with `npx expo export -p web` and serve the output folder.
-2. Navigate the app to the state you want (seeded data, the right route). If the state cannot be reached by URL, add a temporary route or query flag for capture and remove it afterwards.
-3. Render at the exact target pixels by setting the CSS viewport and the device scale factor from the table in `specs.md`, not by upscaling a small capture. With Chrome or Edge headless:
+1. Start the web build: `npx expo start --web` (the dev server answers deep links such as `/habit/1`). A static export (`npx expo export -p web`) needs a server that serves those routes too.
+2. Find what the app keeps in `localStorage` on web (AsyncStorage's web build stores there; confirm by reading the store code, or by using the app in a normal browser and looking at its storage). Note the keys and value shapes, then write a seed file with realistic demo data, for example `store/screenshots/seed.json`:
+   ```json
+   { "session": { "userId": "u1", "email": "sam@demo.app" }, "habits:u1": [{ "id": "1", "name": "Read 20 pages" }] }
    ```
-   chrome --headless --hide-scrollbars --window-size=402,874 --force-device-scale-factor=3 --screenshot=store/screenshots/ios/iphone/01-<screen>.png http://localhost:8081/<route>
+   Values that are not strings are written with `JSON.stringify`, which is what most apps read back. Only `localStorage` is seeded; IndexedDB and cookies are not.
+3. Write `store/screenshots/capture.json`:
+   ```json
+   {
+     "baseUrl": "http://localhost:8081",
+     "background": "#ffffff",
+     "seed": "seed.json",
+     "sets": [
+       { "name": "iphone", "out": "store/screenshots/ios/iphone", "size": "1206x2622" },
+       { "name": "ipad", "out": "store/screenshots/ios/ipad", "size": "2064x2752" },
+       { "name": "android", "out": "store/screenshots/android/phone", "size": "1080x2160" }
+     ],
+     "shots": [
+       { "file": "01-today.png", "route": "/", "waitFor": "text=Today" },
+       { "file": "02-habit.png", "route": "/habit/1", "sets": ["iphone", "ipad"] },
+       { "file": "02-habit.png", "route": "/", "click": ["text=Read 20 pages"], "sets": ["android"] }
+     ]
+   }
    ```
-   On Windows the binary is usually `chrome.exe` under `Program Files\Google\Chrome\Application`, or `msedge.exe`. Headless flags change between browser versions; if the output size is wrong, read the browser's current headless documentation. A browser automation library already in the project (Playwright, Puppeteer) can do the same with its viewport and deviceScaleFactor options.
-4. Run the checker. If the size is wrong, fix the viewport or scale; do not resize the image.
+   `size` is one of the sizes in the pixel table in `specs.md` (or give `width`, `height` and `scale`). A shot opens `baseUrl + route` (omit `route` to stay on the current screen), taps each `click` target in order (a CSS selector such as `[data-testid="save"]`, which is what `testID` becomes on web, or `text=` plus the exact visible label), waits for `waitFor`, then waits `delay` ms (default 500) and captures. `sets` limits a shot to some sets; `reseed: true` restores the seed before that shot. Every set starts in a fresh tab with storage cleared and seeded before the app's code runs.
+4. Run it from the project root:
+   ```
+   node <this-skill>/scripts/capture.mjs store/screenshots/capture.json
+   ```
+   It finds Chrome or Edge in the standard install folders (or use `--browser <path>` or `CHROME_PATH`) and exits 2 with a message if there is none. `--only iphone` re-captures one set. It paints an opaque `background` behind the page, captures the viewport with `captureBeyondViewport`, checks the pixel size, and writes 8-bit RGB PNGs with no alpha channel. `node <this-skill>/scripts/capture.mjs --flatten <file.png>` does the same flattening for an existing PNG (for example a feature graphic), on Node 20 too.
+5. Run `check-sizes.mjs`, then open every image. If the size is wrong, fix the viewport or scale; do not resize the image.
+
+Web against native, beyond the list above:
+- React Navigation draws a Material back arrow on web. Tapping into a screen puts that arrow in the header, which in an iOS screenshot is another platform's imagery (2.3.10); opening the route directly by URL shows no back button. Open iOS screens by `route`; use taps for Android if you like.
+- Native-only screens (camera, maps, purchase sheets) will not render on web. Leave them out of a web set or capture them on a device.
+
+If Node is older than 22 (no global `WebSocket`), the script says so. Then either install Node 22, or use a single headless command per screen, which cannot seed storage or tap, so it only reaches screens that need no sign-in:
+```
+chrome --headless --hide-scrollbars --window-size=402,874 --force-device-scale-factor=3 --screenshot=store/screenshots/ios/iphone/01-<screen>.png http://localhost:8081/<route>
+```
+On Windows the binary is usually `chrome.exe` under `Program Files\Google\Chrome\Application`, or `msedge.exe`. Headless flags change between browser versions; if the output size is wrong, read the browser's current headless documentation. Its PNGs can carry alpha: flatten them with `--flatten`. A browser automation library already in the project (Playwright, Puppeteer) can do the same with its viewport and deviceScaleFactor options.
 
 Do not upscale. Neither store's spec in our sources mentions upscaling either way, but an upscaled capture has soft text and edges, and rendering at the right scale costs nothing extra.
 
@@ -60,7 +93,7 @@ Captions are a store-ready recommendation, not a store requirement in our source
 
 1. Write a plain HTML page with no external assets, sized in CSS to the target divided by the scale factor (402×874 for 1206×2622 at 3x).
 2. Put the caption at the top in the app's font and colors, and the raw screenshot below it, scaled down to fit. The screenshot must stay legible and must not be covered (2.3.3 rejects overlays that hide the UI).
-3. Capture the page with the same headless command as method 4.
+3. Capture the page with `capture.mjs` (a plan whose `baseUrl` serves the page, and a set with the target size), or with the headless command in method 4 followed by `--flatten`.
 4. Keep the raw screenshots too, in a folder the checker ignores (outside `store/screenshots/`), so captions can be redone.
 
 Do not draw device frames that show another platform's hardware or UI (2.3.10). Do not put prices, ratings, awards or "#1" in captions (2.3.14).

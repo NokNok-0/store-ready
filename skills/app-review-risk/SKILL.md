@@ -1,6 +1,6 @@
 ---
 name: app-review-risk
-description: 'Flags App Store and Google Play rejection risks in what the app is, before or early in building: minimum functionality (Apple 4.2, 4.2.2, 4.2.3), commercial template or app-generator apps (4.2.6), spam and duplicate apps (4.3(a), 4.3(b)), copycats (4.1), regulated fields such as banking, crypto, gambling or health from an individual account (5.1.1(ix)), user-generated content and chat moderation (1.2), and Google Play minimum functionality and spam policy. Use when the user asks "will Apple reject this idea", "is my app too simple for the App Store", "Guideline 4.2 minimum functionality", "Guideline 4.3 spam", "can I publish a web wrapper", "can I submit several versions of the same app", "do I need a company account", or is starting a new app. Writes store/review-risks.md with each risk, the evidence in the project and a concrete change.'
+description: 'Flags App Store and Google Play rejection risks in what the app is, before or early in building: minimum functionality (Apple 4.2, 4.2.2, 4.2.3), commercial template or app-generator apps (4.2.6), spam and duplicate apps (4.3(a), 4.3(b)), copycats (4.1), regulated fields such as banking, crypto, gambling or health from an individual account (5.1.1(ix)), user-generated content and chat moderation (1.2), template or placeholder content (template icons, example.com accounts, coming soon screens, stub purchase or fake login buttons; 2.1, 4.1(c)), and Google Play minimum functionality and spam policy. Use when the user asks "will Apple reject this idea", "is my app too simple for the App Store", "Guideline 4.2 minimum functionality", "Guideline 4.3 spam", "can I publish a web wrapper", "can I submit several versions of the same app", "do I need a company account", or is starting a new app. Writes store/review-risks.md with each risk, the evidence in the project and a concrete change.'
 license: MIT
 ---
 
@@ -20,8 +20,9 @@ From the project, in this order:
 2. The navigation tree: Expo Router `app/` folder, React Navigation stacks, storyboards, SwiftUI root views, Android activities and nav graphs. Count the real screens and note what each does.
 3. Dependencies (`package.json`, Podfile, Gradle): web view, auth, payments, chat, media upload, AI SDKs, health, finance, wallet libraries.
 4. Build variants: `app.config.*` branching on env or brand, `productFlavors`, multiple Xcode targets, brand or client folders.
-5. Assets: icon, splash, any image that carries another brand.
-6. `store/listing.*.json` if it exists: what the app claims to be.
+5. Assets: open and look at every icon, adaptive icon layer, splash and favicon image the config points to. Note any that is template or default artwork (A9) or carries another brand (A5). Reading the file name is not enough.
+6. Login buttons and purchase buttons: read each handler. Note any that never calls a provider or a purchases SDK, is `disabled`, or shows "coming soon" / "not available yet" (A9).
+7. `store/listing.*.json` if it exists: what the app claims to be.
 
 If there is no code yet, use the user's description of the app as the evidence and say so in the file.
 
@@ -40,7 +41,7 @@ If the user does not answer, record the risk as Medium with "depends on: <questi
 
 ## 3. Check each area
 
-Go through A1 to A8 in [references/rules.md](references/rules.md). For each:
+Go through A1 to A9 in [references/rules.md](references/rules.md). For each:
 
 - Look for the signals listed. Note file paths and line numbers.
 - Decide: risk found (High or Medium, using the severity notes for that area) or no risk.
@@ -53,6 +54,8 @@ Things to keep straight:
 - If both stores are affected, say so in one risk with both rules.
 - Do not flag something the rules file does not support. If you think there is a risk that is not covered, write it under "Not covered by our sources" with the official page to read, not as a finding.
 - Items listed under "Out of scope here" in the rules file get one line in "Checked" pointing to the owning skill.
+- Run `npx store-ready check --json` if it has not run in this session. Each `app.template-content` issue is an A9 lead: confirm it in the file, then record it.
+- `mock-review` sends its template, placeholder and fake-integration findings here. When you are re-run for them, fix or record each one under A9 and say which mock review finding it answers.
 
 ## 4. Write `store/review-risks.md`
 
@@ -86,6 +89,7 @@ Result: 1 High, 1 Medium
 - 4.1 copycats: name, icon and keywords contain no other brand.
 - 5.1.1(ix) regulated fields: no finance, health, gambling, crypto or travel features.
 - 1.2 user content: no content is shared between users.
+- A9 template and placeholder content: opened `assets/images/icon.png`, `splash-icon.png` and the adaptive icon layers, all original art; no `example.com`, lorem ipsum or "coming soon" in `src/`; the Google button calls `@react-native-google-signin/google-signin`.
 - 3.1.1 payments: card payments for physical goods; checked by login-and-payments.
 
 ### Not covered by our sources
@@ -111,8 +115,10 @@ If the user wants a change made, that is product work, not this skill: make it w
 
 - `store/review-risks.md` exists and the `## Product risks` section has today's date.
 - Any `## Mock review` sections that were in the file before are still there, unchanged.
-- Every area A1 to A8 appears either as a risk or as a line under "Checked".
+- Every area A1 to A9 appears either as a risk or as a line under "Checked".
 - Every Evidence path exists in the project and the line shows what the risk says.
+- You opened every icon and splash image (not only listed them), and the A9 line or risk says what each shows.
+- Every checker `app.template-content` issue from this run appears as an A9 risk or as a "Checked" line saying why it does not apply.
 - Every Sources URL appears in [references/rules.md](references/rules.md).
 - No risk cites a guideline number that is not in the rules file.
 - No sentence says the app will be approved or rejected; risks describe what the rule names.

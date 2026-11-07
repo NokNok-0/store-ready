@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 // Measures store/listing.ios.json and store/listing.android.json against store limits.
-// Usage: node measure.mjs [projectDir | listing.json ...]
+// Usage: node measure.mjs [projectDir | listing.json ...] [--allow "best streak"] ...
+//   --allow  a UI label that contains a flagged word, accepted in descriptions only (repeat the flag, or separate with commas).
+//            Never accepted in name, subtitle or title.
 // Exit codes: 0 all fields within limits, 1 a field is over/under its limit or malformed, 2 nothing to measure.
 // Limits: https://developer.apple.com/help/app-store-connect/reference/app-information/app-information
 //         https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information
@@ -27,9 +29,11 @@ const FIELDS = {
 
 const OPTIONAL_KEYS = ['privacyPolicyUrl'];
 const SHORT_FIELDS = new Set(['name', 'subtitle', 'title']);
-const SUPERLATIVES = /\b(best|ultimate|revolutionary|leading|fastest|easiest|top[- ]rated|number one|world'?s (first|best)|unbeatable|perfect|amazing|incredible)\b|#1\b/i;
-const PRICE = /[$€£¥₹]\s?\d|\d\s?(usd|eur|gbp)\b|\b\d+% off\b/i;
-const FREE = /\bfree\b/i;
+// Price and superlative words. The store-ready checker applies a list like this to name, subtitle and title only
+// (2.3.7: no prices in the name); this script applies it to every field, and in descriptions accepts --allow labels.
+const SUPERLATIVES = /\b(best|ultimate|revolutionary|leading|fastest|easiest|top[- ]rated|number one|world'?s (first|best)|unbeatable|perfect|amazing|incredible)\b|#1\b/gi;
+const PRICE = /[$€£¥₹]\s?\d|\d\s?(usd|eur|gbp)\b|\b\d+% off\b/gi;
+const PRICE_WORDS = /\b(free|sale|discount|cheap|deal)\b/gi;
 const EMOJI = /\p{Extended_Pictographic}/u;
 const HTML = /<\/?[a-z][^>]*>/i;
 const OTHER_PLATFORMS_IOS = /\b(android|google play|play store)\b/i;
@@ -78,14 +82,36 @@ function keywordWarnings(kw, name) {
   return out;
 }
 
-function textWarnings(platform, key, value) {
+// Returns matches of re in value that are not inside an allowed phrase (case-insensitive), and the allowed ones.
+function flagged(re, value, allow) {
+  const lower = value.toLowerCase();
+  const spans = [];
+  for (const phrase of allow) {
+    for (let i = lower.indexOf(phrase); i !== -1; i = lower.indexOf(phrase, i + 1)) spans.push([i, i + phrase.length, phrase]);
+  }
+  const hits = [];
+  const allowed = [];
+  for (const m of value.matchAll(re)) {
+    const span = spans.find(([s, e]) => m.index >= s && m.index + m[0].length <= e);
+    (span ? allowed : hits).push(span ? { word: m[0], phrase: span[2] } : m[0]);
+  }
+  return { hits, allowed };
+}
+
+function textWarnings(platform, key, value, allow, notes) {
   const out = [];
   if (!value) return out;
-  const sup = value.match(SUPERLATIVES);
-  if (sup) out.push(`superlative or ranking claim: "${sup[0]}"`);
-  const price = value.match(PRICE);
-  if (price) out.push(`looks like a price or discount: "${price[0]}"`);
-  if (SHORT_FIELDS.has(key) && FREE.test(value)) out.push(platform === 'ios' ? '"free" in the name or subtitle reads as a price (2.3.7)' : '"free" in the title reads as a price claim');
+  const short = SHORT_FIELDS.has(key);
+  const accept = short ? [] : allow;
+  const sup = flagged(SUPERLATIVES, value, accept);
+  if (sup.hits.length) out.push(`superlative or ranking claim: "${sup.hits[0]}"${short ? ' (the store-ready checker flags this too)' : ''}`);
+  const price = flagged(PRICE, value, accept);
+  if (price.hits.length) out.push(`looks like a price or discount: "${price.hits[0]}"`);
+  if (short) {
+    const words = flagged(PRICE_WORDS, value, []);
+    if (words.hits.length) out.push(platform === 'ios' ? `"${words.hits[0]}" in the name or subtitle reads as a price (2.3.7)` : `"${words.hits[0]}" in the title reads as a price claim`);
+  }
+  for (const a of [...sup.allowed, ...price.allowed]) notes.push(`${key}: "${a.word}" accepted as part of the UI label "${a.phrase}" (--allow)`);
   if (EMOJI.test(value)) out.push('contains emoji');
   if ((key === 'description' || key === 'fullDescription') && HTML.test(value)) out.push('contains HTML-like tags; the field is plain text');
   if (platform === 'ios') {
@@ -95,10 +121,11 @@ function textWarnings(platform, key, value) {
   return out;
 }
 
-function measure(platform, data) {
+function measure(platform, data, allow) {
   const rows = [];
   const errors = [];
   const warnings = [];
+  const notes = [];
   const known = new Set(FIELDS[platform].map((f) => f.key));
 
   for (const key of Object.keys(data)) {
@@ -144,17 +171,37 @@ function measure(platform, data) {
     rows.push({ key: f.key, text, status });
 
     if (f.key === 'keywords') for (const w of keywordWarnings(value, data.name)) warnings.push(`keywords: ${w}`);
-    for (const w of textWarnings(platform, f.key, value)) warnings.push(`${f.key}: ${w}`);
+    for (const w of textWarnings(platform, f.key, value, allow, notes)) warnings.push(`${f.key}: ${w}`);
   }
-  return { rows, errors, warnings };
+  return { rows, errors, warnings, notes };
 }
 
 async function main() {
-  const args = process.argv.slice(2);
-  if (args.includes('-h') || args.includes('--help')) {
-    console.log('Usage: node measure.mjs [projectDir | listing.json ...]');
+  const argv = process.argv.slice(2);
+  if (argv.includes('-h') || argv.includes('--help')) {
+    console.log('Usage: node measure.mjs [projectDir | listing.json ...] [--allow "<UI label>"] ...');
     console.log('Default: reads store/listing.ios.json and store/listing.android.json under the current directory.');
+    console.log('--allow: a label the app\'s UI shows that contains a flagged word (for example "best streak").');
+    console.log('         Accepted in descriptions, promotional text and what\'s new; never in name, subtitle or title.');
     process.exit(0);
+  }
+  const allow = [];
+  const args = [];
+  for (let i = 0; i < argv.length; i++) {
+    if (argv[i] === '--allow') {
+      if (!argv[i + 1]) {
+        console.error('--allow needs a phrase, for example --allow "best streak"');
+        process.exit(2);
+      }
+      allow.push(...argv[++i].split(',').map((p) => p.trim().toLowerCase()).filter(Boolean));
+    } else if (argv[i].startsWith('--allow=')) {
+      allow.push(...argv[i].slice(8).split(',').map((p) => p.trim().toLowerCase()).filter(Boolean));
+    } else if (argv[i].startsWith('-')) {
+      console.error(`Unknown option ${argv[i]}. Run with --help.`);
+      process.exit(2);
+    } else {
+      args.push(argv[i]);
+    }
   }
 
   let files;
@@ -200,11 +247,12 @@ async function main() {
       continue;
     }
     measured++;
-    const { rows, errors, warnings } = measure(platform, data);
+    const { rows, errors, warnings, notes } = measure(platform, data, allow);
     const width = Math.max(...rows.map((r) => r.key.length));
     for (const r of rows) console.log(`  ${r.key.padEnd(width)}  ${r.text}  ${r.status}`);
     for (const e of errors) console.log(`  ERROR ${e}`);
     for (const w of warnings) console.log(`  warn  ${w}`);
+    for (const n of notes) console.log(`  note  ${n}`);
     console.log('');
     errorCount += errors.length;
     warningCount += warnings.length;

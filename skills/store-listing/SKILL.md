@@ -44,7 +44,7 @@ Every claim in the listing must map to a line in this inventory. If a feature is
 
 Ask only what the code cannot tell you, all in one message:
 
-- The store name they want, if it differs from the display name in config. Remind them that checking the name is free to use (trademarks) is theirs to do.
+- The store name they want, if it differs from the display name in config. Before asking, search the App Store and Google Play for that name (or ask the user to, if you cannot open the stores) and tell them what you found; `app-review-risk` records a clash under 4.1. Checking trademarks is theirs to do.
 - Which stores this listing is for (App Store, Google Play, both).
 - For an update: what changed in this version, if the git history does not make it clear.
 
@@ -96,7 +96,9 @@ Write these keys. Use `""` for a field you are leaving empty.
 { "title": "", "shortDescription": "", "fullDescription": "" }
 ```
 
-If the app has a privacy policy URL, add `"privacyPolicyUrl": "https://..."` to both files. It is the one optional key: the store-ready checker reads it from here, and both consoles ask for the URL.
+If the app has a privacy policy URL, add `"privacyPolicyUrl": "https://..."` to both files. It is the one optional key: the store-ready checker reads it from here (it also accepts app config `extra` and a URL in source), and both consoles ask for the URL.
+
+Open the URL before writing it, in a browser or with `node -e "fetch(process.argv[1]).then(r=>console.log(r.status,r.url),e=>console.log('failed',e.message))" <url>`. JSON has no place for a note, so tell the user the status and the date in your report. If it does not load, still write it (the checker needs it), but report it as blocking: the user must publish the page before submitting. `npx store-ready check --verify-urls` checks it again later.
 
 Write paragraphs inside a description as `\n\n` and list lines as `\n`. Use a hyphen and a space for list items; do not use Markdown headings or bold, because both fields are plain text.
 
@@ -114,6 +116,14 @@ or pass the project root as the first argument. It prints every field's length a
 
 Fix every error. Treat every warning as a change to make unless you can say why it does not apply; the script's word lists are heuristics, the rules in `references/limits-and-rules.md` are the source.
 
+The store-ready checker applies price and superlative words to `name`, `subtitle` and `title` only; this script checks every field, so a description can warn here and pass the checker. For the short fields there is no exception: rename. In descriptions, a word can be part of a label the UI really shows (a stat tile called "Best streak"), which the writing guide says to name as the UI names it. Then pass the label, and only labels found in the code:
+
+```
+node <this-skill>/scripts/measure.mjs --allow "best streak"
+```
+
+The script prints a `note` for each accepted use instead of a warning. Give the user each allowed label and the file that shows it.
+
 Characters are counted as Unicode code points. If the script notes that a field has characters outside the Basic Multilingual Plane (most emoji), the console may count them differently; keep at least 5 characters of margin on that field.
 
 ## 7. Report
@@ -127,7 +137,8 @@ Tell the user:
 
 ## Verify
 
-- [ ] `node <this-skill>/scripts/measure.mjs` exits 0 and you have read every warning.
+- [ ] `node <this-skill>/scripts/measure.mjs` exits 0 and you have read every warning. Every `--allow` label appears in the app's UI strings, and you named the file.
+- [ ] The privacy policy URL, if written, was opened today; the user knows its status.
 - [ ] Both JSON files parse and contain exactly the keys shown in step 5, plus `privacyPolicyUrl` if the app has one.
 - [ ] Every feature named in a description maps to a line in the feature inventory with a file path.
 - [ ] No price, currency symbol or "free" in `name`, `subtitle` or `title`.

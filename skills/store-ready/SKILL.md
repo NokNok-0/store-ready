@@ -45,6 +45,8 @@ Check `store/` in the project. The files each skill writes are listed in [refere
 - **Partial**: some files exist. List which are present and which are missing for the stores in scope.
 - **Ready**: every file for the stores in scope exists and the checker reports no errors. Use the fast path.
 
+A clean checker run is not the Ready stage. The checker can print "Passes the checks we know about" before any `store/` file exists; the stage comes from the files, so check them yourself (the checker's `store.files` info lists what it found).
+
 A file that exists can still be stale. If dependencies in `package.json` (or Podfile, Gradle dependencies), permissions, or login/payment code changed after `store/privacy.ios.md` or `store/data-safety.android.md` was last written, treat those two as missing. Use file modification times or the version history to tell.
 
 ## 3. Run the checker
@@ -60,8 +62,15 @@ Pass a path if the app is not in the current folder: `npx store-ready check apps
 The command exits with code 1 when there are errors. That is expected; parse the output anyway. Shape:
 
 ```json
-{ "issues": [{ "id": "", "severity": "error|warning", "platform": "ios|android|both", "message": "", "fix": "", "source": "" }] }
+{
+  "version": "0.1.0",
+  "project": { "type": "expo", "path": "" },
+  "issues": [{ "id": "", "severity": "error|warning|info", "platform": "ios|android|both", "message": "", "fix": "", "source": "", "file": "" }],
+  "summary": { "errors": 0, "warnings": 0, "infos": 0 }
+}
 ```
+
+`file` is present only when the issue points at one. Take the counts for the report from the issues you kept (after dropping out-of-scope platforms), not from `summary`, which counts everything. `info` issues are not problems; mention them only when they change the plan (closed testing, `store.files`, URLs "found, not verified").
 
 - Group issues by the skill that fixes them, using the table in [references/routing.md](references/routing.md). Route by the `id` when the table lists it, otherwise by what the `message` is about.
 - Drop issues for a platform that is not in scope.
@@ -70,9 +79,13 @@ The command exits with code 1 when there are errors. That is expected; parse the
 
 The checker is heuristic and local. It cannot see App Store Connect or Play Console, run the app, or log in. A clean run means "passes the checks we know about", nothing more.
 
+It reports URLs it finds (privacy policy, support, deletion page) as "found, not verified": it does not open them unless you pass `--verify-urls`. Run `npx store-ready check --json --verify-urls` once when you have network access. A URL that does not load is a blocking item in the report, routed to the skill that recorded it.
+
+For an `app.config.js`/`.ts` project, or to see what config plugins add to Info.plist, pass the effective config: `npx expo config --type introspect --json` saved to a file outside `store/`, then `npx store-ready check --json --config <file>` (the `ios-privacy` skill shows a shell-safe way to save it).
+
 ## 4. Ask once
 
-Ask only what the project cannot tell you, in one message:
+Ask only what the project cannot tell you, in one message. Skip anything the user's request already answered (stores, account type, dates); restate it in the report so they can correct it.
 
 - Which stores, if not clear from config.
 - For Google Play: personal or organization account, and whether a personal account was created after 2023-11-13. Has a closed test already started, and on what date?
@@ -142,6 +155,7 @@ Blocking
 - [ios] NSCameraUsageDescription is generic -> ios-privacy
 - [both] sign-up found, no account deletion -> account-deletion
 - [android] targetSdk 34, needs 36 -> play-data-safety
+- [both] privacy policy URL returns 404 (opened 2026-11-07) -> user publishes it; ios-privacy, play-data-safety re-check
 
 Warnings
 - [ios] Google sign-in without Sign in with Apple -> login-and-payments
@@ -166,7 +180,8 @@ Before you finish:
 
 - The project type and store list in the report match what is on disk.
 - Every issue in the report comes from this checker run or from a missing `store/` file. Nothing is from memory.
-- The error and warning counts match the JSON for the platforms in scope.
+- The error and warning counts match the JSON issues for the platforms in scope (count `severity` values; `info` is not a warning).
+- Every URL in the report was opened (or `--verify-urls` was run) and its result is stated; none is reported as fine on the checker's "found, not verified" alone.
 - Every skill named in "Next" and "Then" exists in `skills/`, and the order matches the table in step 5.
 - If Android is in scope, the 12-testers, 14-days rule was raised and the user's answer is reflected in Timeline.
 - After any routed skill finishes, re-run `npx store-ready check --json` and confirm its issues are gone before moving on.

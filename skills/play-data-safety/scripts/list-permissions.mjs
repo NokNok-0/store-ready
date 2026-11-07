@@ -176,9 +176,10 @@ function main() {
   const android = app.config?.android ?? {};
 
   const found = new Map();
-  const add = (name, source) => {
-    if (!found.has(name)) found.set(name, new Set());
-    found.get(name).add(source);
+  const add = (name, source, maxSdkVersion = null) => {
+    if (!found.has(name)) found.set(name, new Map());
+    const label = maxSdkVersion ? `${source} (maxSdkVersion ${maxSdkVersion})` : source;
+    found.get(name).set(label, maxSdkVersion ? Number(maxSdkVersion) : null);
   };
   const removedInManifest = new Set();
   const services = [];
@@ -190,7 +191,7 @@ function main() {
   let manifestTarget = null;
   if (existsSync(appManifest)) {
     const parsed = parseManifest(readFileSync(appManifest, 'utf8'));
-    for (const u of parsed.uses) (u.remove ? removedInManifest.add(u.name) : add(u.name, 'android/app/src/main/AndroidManifest.xml'));
+    for (const u of parsed.uses) (u.remove ? removedInManifest.add(u.name) : add(u.name, 'android/app/src/main/AndroidManifest.xml', u.maxSdkVersion));
     services.push(...parsed.services.map((s) => ({ ...s, from: 'android/app/src/main/AndroidManifest.xml' })));
     manifestTarget = parsed.targetSdkVersion;
   } else if (pkg && 'expo' in deps) {
@@ -203,7 +204,7 @@ function main() {
       if (name !== 'AndroidManifest.xml' || !path.split(sep).includes('android')) return;
       const owner = packageFromPath(path);
       const parsed = parseManifest(readFileSync(path, 'utf8'));
-      for (const u of parsed.uses) if (!u.remove) add(u.name, `library: ${owner}`);
+      for (const u of parsed.uses) if (!u.remove) add(u.name, `library: ${owner}`, u.maxSdkVersion);
       services.push(...parsed.services.map((s) => ({ ...s, from: `library: ${owner}` })));
     });
   } else {
@@ -214,20 +215,25 @@ function main() {
   if (manifestPath) {
     const xml = readFileSync(resolve(manifestPath), 'utf8');
     const parsed = parseManifest(xml);
-    authoritative = { file: manifestPath, permissions: parsed.uses.filter((u) => !u.remove).map((u) => u.name), services: parsed.services, targetSdkVersion: parsed.targetSdkVersion };
+    authoritative = { file: manifestPath, permissions: parsed.uses.filter((u) => !u.remove), services: parsed.services, targetSdkVersion: parsed.targetSdkVersion };
   }
 
+  const withMax = (entry, limits) => {
+    if (limits.length && limits.every((n) => n !== null)) entry.maxSdkVersion = Math.max(...limits);
+    return entry;
+  };
   const effective = authoritative
-    ? authoritative.permissions.map((name) => ({ name, sources: ['merged manifest'] }))
+    ? authoritative.permissions.map((u) =>
+        withMax({ name: u.name, sources: [u.maxSdkVersion ? `merged manifest (maxSdkVersion ${u.maxSdkVersion})` : 'merged manifest'] }, [u.maxSdkVersion ? Number(u.maxSdkVersion) : null]))
     : [...found.entries()]
         .filter(([name]) => !blocked.has(name) && !removedInManifest.has(name))
-        .map(([name, sources]) => ({ name, sources: [...sources] }));
+        .map(([name, sources]) => withMax({ name, sources: [...sources.keys()] }, [...sources.values()]));
   effective.sort((a, b) => a.name.localeCompare(b.name));
 
   const needsDeclaration = effective
     .map((p) => {
       const d = DECLARATIONS.find((x) => x.match(p.name));
-      return d ? { permission: p.name, sources: p.sources, rule: d.rule, source: d.source } : null;
+      return d ? { permission: p.name, sources: p.sources, ...(p.maxSdkVersion ? { maxSdkVersion: p.maxSdkVersion } : {}), rule: d.rule, source: d.source } : null;
     })
     .filter(Boolean);
   const allServices = authoritative ? authoritative.services.map((s) => ({ ...s, from: 'merged manifest' })) : services;
@@ -235,7 +241,7 @@ function main() {
     needsDeclaration.push({ permission: `${P}BIND_ACCESSIBILITY_SERVICE`, sources: [s.from], service: s.name, rule: 'Accessibility API use needs a declaration.', source: 'https://play.google/developer-content-policy/' });
   }
 
-  const dataSafety = effective.filter((p) => DATA_TYPES[p.name]).map((p) => ({ permission: p.name, consider: DATA_TYPES[p.name], sources: p.sources }));
+  const dataSafety = effective.filter((p) => DATA_TYPES[p.name]).map((p) => ({ permission: p.name, consider: DATA_TYPES[p.name], sources: p.sources, ...(p.maxSdkVersion ? { maxSdkVersion: p.maxSdkVersion } : {}) }));
 
   const expoMajor = Number(String(deps.expo ?? '').match(/(\d+)/)?.[1] ?? NaN);
   const fromPlugin = targetSdkFromConfig(app.config);
@@ -255,7 +261,7 @@ function main() {
     tool: 'store-ready play-data-safety list-permissions',
     note: authoritative
       ? 'Permissions are read from the merged manifest you passed.'
-      : 'Approximate: built from app config, the app manifest and library manifests. Confirm against a release build merged manifest (--manifest).',
+      : 'Approximate: built from app config, the app manifest and library manifests. Confirm against a release build merged manifest (--manifest). maxSdkVersion, where present, means the permission is only requested up to that API level.',
     projectRoot: root,
     appConfig: app.source,
     blockedPermissions: [...blocked],

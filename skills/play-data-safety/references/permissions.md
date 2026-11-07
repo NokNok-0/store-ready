@@ -29,7 +29,9 @@ To see what plugins and the template add in an Expo project, generate the native
 npx expo prebuild --platform android --no-install
 ```
 
-If `android/` did not exist before, delete it after the script has read it, so the project stays generated from config. If `app.config.js/ts` is used, pass `--config` with the output of `npx expo config --json`.
+If `android/` did not exist before, delete it after the script has read it, so the project stays generated from config. Prebuild also rewrites the `"android"` and `"ios"` scripts in `package.json` to `expo run:android` / `expo run:ios`: copy the `scripts` block before running it and restore it after. If `app.config.js/ts` is used, pass `--config` with the output of `npx expo config --json`, saved with `node -e "require('fs').writeFileSync('expo-config.json', require('child_process').execSync('npx expo config --json', { maxBuffer: 1 << 26 }))"` (PowerShell's `>` writes UTF-16, which the script cannot parse). Delete the file afterwards.
+
+Each permission in the output lists its sources. A source that ends in `(maxSdkVersion N)` only requests the permission up to API level N. If every source has a `maxSdkVersion`, the entry also has a top-level `maxSdkVersion`: newer devices never see it.
 
 ## 2. Confirm against the release build
 
@@ -69,6 +71,10 @@ For every permission, find the feature that needs it. If there is none, remove i
   ```
 
 Removing a permission a library calls at runtime can crash that code path or make it fail silently. After blocking, exercise the feature that library provides, or confirm the app never calls it.
+
+### Permissions from the Expo template
+
+Prebuild's template can put permissions in the main manifest that no feature of the app uses. One earlier run found `SYSTEM_ALERT_WINDOW` there. Our sources record no Play rule for it; apply the rule above: if no feature needs it, add it to `android.blockedPermissions` and note the decision in the answers file.
 
 ## 4. Permissions that need a declaration
 

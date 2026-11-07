@@ -18,6 +18,8 @@ How to fill it:
 - A webview showing your own site still counts if that site runs analytics or ads scripts. List them.
 - If iOS answers already exist in `store/privacy.ios.md`, start from the same inventory, but answer Google's questions on their own terms. The two forms do not use the same categories.
 - Leave `ASK` only for what the project cannot tell you, and list it under "Questions for the user".
+- The "Account creation" and "Delete account URL" lines are there because the account deletion policy says to declare deletion in this form (https://support.google.com/googleplay/android-developer/answer/13327111). The exact Console questions are not in our sources; match them to what Play Console shows.
+- Open every URL before writing it. One that does not load goes under "Questions for the user" as blocking ("publish <url>; it returned 404 on <date>").
 
 ```markdown
 # Data safety answers: <App name> <versionName> (<versionCode>)
@@ -25,15 +27,15 @@ How to fill it:
 Generated <YYYY-MM-DD> by store-ready play-data-safety. Paste into Play Console > App content > Data safety.
 Data type names follow https://support.google.com/googleplay/android-developer/answer/10787469 as read on <YYYY-MM-DD>.
 
-Privacy policy URL: <https://...>
+Privacy policy URL: <https://...> (opened <YYYY-MM-DD>: HTTP <status>)
 Target SDK: 36 (from <file or "Expo SDK 58 default">)
 
 ## Overview
 
 Does the app collect or share any of the required user data types? Yes | No
 Is all user data encrypted in transit? <Yes/No, with evidence: e.g. all requests go to https:// URLs in src/lib/api.ts>
-Account creation: <how users create accounts>
-Delete account URL: <https://... from account-deletion, or ASK>
+Account creation: <how users create accounts; say if they are created and operated offline only>
+Delete account URL: <https://... (opened <YYYY-MM-DD>: HTTP <status>) from account-deletion, or "none: accounts created and operated offline, out of policy scope (confirmed by the user on <date>)", or ASK>
 
 ## Data types
 

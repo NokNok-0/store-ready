@@ -24,6 +24,8 @@ Source: https://developer.apple.com/app-store/app-privacy-details/
 
 The data types, purposes and questions App Store Connect asks are defined on that page. Read it before filling `store/privacy.ios.md`; use its names exactly.
 
+What counts as "collected", including data that is processed only on the device and never sent, is defined on that page too. Our sources do not quote it. For a local-first app it decides most answers: read it there and cite the page in "Not collected".
+
 ## Privacy manifest (PrivacyInfo.xcprivacy)
 
 Source: `docs/sources/apple.md`, with Apple's third-party SDK list at https://developer.apple.com/support/third-party-SDK-requirements/

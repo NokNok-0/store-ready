@@ -23,7 +23,8 @@ Checks and their rules are in [references/checks.md](references/checks.md). The 
 
 Two differences from the real thing, both deliberate:
 
-- You cannot run the build. Anything that needs a running app, a network call, a login or a console screen is "Not verified", never a finding. Do not guess that something crashes or that a backend is down.
+- You cannot run the build. Anything that needs a running app, a login or a console screen is "Not verified", never a finding. Do not guess that something crashes or that a backend is down.
+- Public URLs are the exception: open every privacy policy, support and deletion URL recorded in the project, as a reviewer would. Record the HTTP status and today's date. One that does not load is a finding, not a Not verified line. Only if you cannot make network requests at all is it Not verified. `npx store-ready check --json --verify-urls` opens the URLs the checker finds.
 - You cite the source URL for every finding, so the user can check the rule themselves.
 
 ## 1. Gather
@@ -42,14 +43,14 @@ Then run the checker:
 npx store-ready check --json
 ```
 
-It exits with code 1 when it finds errors; parse the output anyway. Treat each `error` as a confirmed finding: write it in the store format with its `source`. Treat each `warning` as a lead to check by hand. If the checker cannot run, say so in the section header and do every check by hand.
+It exits with code 1 when it finds errors; parse the output anyway. Treat each `error` as a confirmed finding: write it in the store format with its `source`. Treat each `warning` as a lead to check by hand, including `app.template-content` (template icons, `example.com`, lorem ipsum, "coming soon", "not available yet"). A URL the checker reports as "found, not verified" is unchecked, not passed: open it. If the checker cannot run, say so in the section header and do every check by hand.
 
 ## 2. Check
 
 Work through every check in [references/checks.md](references/checks.md) for the stores in scope. These are mandatory, in this order, because a reviewer meets them in this order:
 
 1. 2.1 demo account and reviewer access. If the reviewer cannot sign in, nothing else gets reviewed.
-2. 2.1 static completeness: placeholder text, dev URLs.
+2. 2.1 static completeness: placeholder text and accounts, dev URLs, template artwork, stub purchase buttons, "coming soon" screens, login buttons that never call their provider, recorded URLs that do not load.
 3. 5.1.1(v) account deletion, and Play account deletion.
 4. 4.8 login services.
 5. 3.1.1 in-app purchase.
@@ -97,22 +98,38 @@ If you cannot view images, mark the count Not verified and list the files.
 
 Append to `store/review-risks.md` (create the file with a `# Review risks` title if missing):
 
-- Heading `## Mock review <YYYY-MM-DD>`. If a section with today's date exists, replace it; keep earlier dates as history.
+- Heading `## Mock review <YYYY-MM-DD> <HH:MM>` (local time, 24-hour). Always append a new section; never replace or edit an earlier one, even from the same day, so a second pass after fixes keeps the first as history. If an earlier section exists, add a header line `Previous: <its heading>, Blocking <n>` and mark which of its findings are now fixed.
 - Header lines: build, stores, what was read, checker result.
 - `### Apple` findings, then `### Google Play` findings, each in the format from [references/format.md](references/format.md). Leave out a store that is not in scope.
 - `### Not verified`: always present. Runtime behaviour is always on it.
 - `### Result`: counts of Blocking, Risk and Not verified; the one fix to do first and why; one line listing checks that passed.
 
-Do not touch the `## Product risks` section or earlier mock reviews.
+Do not touch the `## Product risks` section, the `## Login and payments` section, or earlier mock reviews.
 
 ## 6. Tell the user
 
-Three to six lines: the Blocking count, the first fix and which skill makes it (`review-notes`, `account-deletion`, `login-and-payments`, `ios-privacy`, `play-data-safety`, `store-listing`, `store-screenshots`, `age-rating`), and the device tests from "Not verified". If there are no Blocking findings, say "passes the checks we know about" and point to the Not verified list. Never say the app will be approved.
+Three to six lines: the Blocking count, the first fix and which skill makes it, and the device tests from "Not verified". If there are no Blocking findings, say "passes the checks we know about" and point to the Not verified list. Never say the app will be approved.
+
+Who fixes what:
+
+| Finding | Skill |
+|---|---|
+| Demo account, reviewer steps, hidden features in notes | `review-notes` |
+| Template artwork, placeholder text or accounts, `example.com`, "coming soon", stub or disabled purchase buttons, login buttons that never call the provider | `app-review-risk` (area A9); a real login or purchase to build then goes to `login-and-payments` |
+| Account deletion, deletion web page | `account-deletion` |
+| 4.8 login, 3.1.1 purchases | `login-and-payments` |
+| Purpose strings, privacy manifest, App Privacy, in-app privacy link | `ios-privacy` |
+| Data safety, permissions, target API | `play-data-safety` |
+| Listing text | `store-listing` |
+| Screenshots | `store-screenshots` |
+| Age and content rating | `age-rating` |
+| A URL that does not load | The user publishes the page (no skill can); then the skill that recorded the URL re-checks it: `ios-privacy` or `play-data-safety` (privacy policy), `account-deletion` (deletion page), `submission-checklist` (support URL) |
 
 ## Verify
 
 - Only `store/review-risks.md` changed. Compare the project against its state before the review (version control status, or file modification times) and confirm no code, config or other `store/` file was edited.
-- The new section has today's date, and earlier sections are unchanged.
+- The new section's heading has today's date and the time, and every earlier section, including any from today, is unchanged.
+- Every URL recorded in the project appears in the section with the status and date you opened it, or under Not verified with the reason you could not.
 - Every check in step 2 for the stores in scope appears as a finding, a Not verified line, or in the passed list.
 - Every finding has a header from the format file, Status, Found with at least one path, Next steps, and a Source URL that appears in [references/checks.md](references/checks.md).
 - Every checker error from this run appears as a finding.

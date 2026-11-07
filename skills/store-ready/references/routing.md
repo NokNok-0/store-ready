@@ -11,6 +11,7 @@
 | `store/listing.ios.json` | store-listing | iOS |
 | `store/listing.android.json` | store-listing | Android |
 | `store/screenshots/plan.md` | store-screenshots | both |
+| `store/screenshots/capture.json`, its seed file (web capture only, optional) | store-screenshots | both |
 | `store/screenshots/ios/iphone/`, `ios/ipad/` | store-screenshots | iOS |
 | `store/screenshots/android/phone/`, `android/tablet/`, `android/feature-graphic/`, `android/icon/` | store-screenshots | Android |
 | `store/review-notes.txt` | review-notes | iOS |
@@ -33,9 +34,16 @@ The checker's v1 checks and the skill that fixes each. Route by `id` if it names
 | App icon missing or wrong size | both | fix directly; requirements in [facts.md](facts.md) |
 | Sign-up found without an account deletion path | both | account-deletion |
 | Third-party login without Sign in with Apple or an equivalent | ios | login-and-payments |
-| Privacy policy URL not configured | both | ios-privacy (iOS), play-data-safety (Android); ask the user for the URL once |
+| Privacy policy URL not configured (`privacy.policy-url`) | both | Ask the user for the URL once. The checker accepts `privacyPolicyUrl` in `store/listing.*.json`, a URL in app config `extra`, or one in source; store-listing writes it into the listing files, and ios-privacy (iOS) and play-data-safety (Android) record it and check it loads. The app also needs an in-app link (ios-privacy step 6) |
+| URL "found, not verified" (privacy policy, support, deletion page) | both | The skill that records that URL opens it: ios-privacy and play-data-safety (privacy policy), account-deletion (deletion page), submission-checklist (support URL). Or run `npx store-ready check --verify-urls`. A URL that does not load is blocking until the user publishes the page |
+| Template or placeholder content (`app.template-content`): Expo template icons, `example.com`, lorem ipsum, "coming soon", "not available yet" | both | app-review-risk (area A9) |
+| Purpose string is a config plugin's default (`ios.purpose-strings`) | ios | ios-privacy |
+| Privacy manifest reasons declared by a dependency's `PrivacyInfo.xcprivacy` but not in app config (`ios.privacy-manifest`) | ios | ios-privacy |
+| Sign-up found but no visible deletion screen or button (`account.deletion`) | both | account-deletion |
 | Listing field over its limit, keywords over 100 bytes | both | store-listing |
+| Price or superlative word in the name, subtitle or title | both | store-listing |
 | Screenshot size or format wrong | both | store-screenshots |
+| `store/` files found and missing (`store.files`, info) | both | No fix; use it for the stage in step 2 of SKILL.md, then check the files yourself |
 
 An issue that fits none of these: show it in the report with its `fix` text and `source` URL, and say no skill owns it.
 

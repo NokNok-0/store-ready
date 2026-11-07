@@ -14,6 +14,8 @@ Copied from `docs/sources/apple.md` (checked 2026-11-07). Guidelines page: https
 Reading it for a project:
 
 - The rule is triggered by a third-party or social login being the primary account (Google, Facebook, and similar). An app with only its own email and password accounts is not in 4.8's trigger as recorded in our sources.
+- Our sources do not define "primary". Working reading for this skill: a social login that can create the user's account by itself makes it a primary account option, wherever the button sits on the screen. If that reading is doubtful for an app, read 4.8 on the guidelines page and record what it says.
+- A login button that never calls its provider is not a login service at all; it is placeholder content (2.1), handled by `app-review-risk`.
 - Adding another social login does not satisfy it unless that login meets all three properties above. Sign in with Apple is the option our sources name as qualifying.
 - If an exception may apply, quote the exception and the evidence in the decision record. If it is not clearly one of the four, treat 4.8 as applying.
 

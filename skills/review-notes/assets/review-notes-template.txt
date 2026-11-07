@@ -2,6 +2,7 @@ ABOUT THE APP
 <One or two sentences: what the user does with the app.>
 
 DEMO ACCOUNTS
+[Use this block when accounts live on a server. Delete it for device-local accounts.]
 All accounts below work against the production server this build uses and do not expire.
 
 1. <Role, e.g. Member>
@@ -18,6 +19,15 @@ All accounts below work against the production server this build uses and do not
    Username: <demo.expired@example.com>
    Password: {{PASSWORD_EXPIRED}}
    Use this account to see the paywall and test the purchase.
+
+DEMO ACCOUNTS (device-local)
+[Use this block when accounts are stored only on the device. Delete it otherwise.]
+Accounts are stored only on this device; there is no server account. On a fresh install, create one first:
+1. Open the app > tap <"Create an account">.
+2. Email: <any address the app accepts, e.g. review@your-domain>. Password: <the rule from the code, e.g. any 8+ characters: Review2026>.
+3. Tap <"Sign up">. You land on <screen>, which shows <empty list | sample data>.
+Signing in before an account exists on the device shows "<the app's error text>".
+<If there is Sign in with Apple: "Sign in with Apple also creates a local profile on the first sign-in.">
 
 SIGN-IN AND TWO-FACTOR AUTHENTICATION
 <Exactly what happens after the password, e.g.:

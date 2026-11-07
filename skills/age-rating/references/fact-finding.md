@@ -22,7 +22,7 @@ Record: one-to-one or group; with known contacts, matched strangers, or anyone; 
 
 Look for: follow/unfollow, friends, public profiles, a feed of other users' content, likes, comments, sharing to other users inside the app, user search.
 
-These feed Apple's social-media capability questions. Record each capability separately; the questions are specific.
+These feed Apple's social-media capability questions. Record each capability separately; the questions are specific. Our sources do not list Apple's capabilities: read the list in App Store Connect's age rating section, or follow the news post https://developer.apple.com/news/?id=tlur8uvi to Apple's page, and answer each one against these facts. If you could not read the list, write "not checked against Apple's list" rather than "None apply".
 
 ## Location shared with other people
 
