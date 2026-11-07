@@ -64,3 +64,32 @@ describe('store.listing-limits', () => {
     assert.match(issue.message, /4002 bytes/);
   });
 });
+
+describe('store.listing-limits: price and ranking words', () => {
+  it('warns on price words and superlatives in the iOS name and subtitle', () => {
+    const issues = runCheck(check, ios({ name: 'Streaks - Best Free Habit App', subtitle: 'The #1 tracker, 50% off' }));
+    assert.deepEqual(issues.map((issue) => issue.severity), ['warning', 'warning']);
+    assert.match(issues[0].message, /name "Streaks - Best Free Habit App" contains price or ranking words: "free", "best"\. Guideline 2\.3\.7/);
+    assert.match(issues[1].message, /subtitle .*"% off", "#1"/);
+    assert.equal(issues[0].source, 'https://developer.apple.com/app-store/review/guidelines/');
+  });
+
+  it('warns on the Play title and cites the listing text page', () => {
+    const [issue] = runCheck(check, android({ title: 'Top Habits: No. 1 on Sale' }));
+    assert.match(issue.message, /"sale", "top", "No\. 1"/);
+    assert.equal(issue.platform, 'android');
+    assert.equal(issue.source, 'https://support.google.com/googleplay/android-developer/answer/9859152');
+  });
+
+  for (const [word, name] of [['$', 'Habits for $0.99'], ['€', 'Habits €2'], ['number one', 'The number one tracker'], ['ultimate', 'Ultimate Habits']]) {
+    it(`flags "${word}"`, () => {
+      assert.match(runCheck(check, ios({ name }))[0].message, new RegExp(`"${word.replace(/[$€]/g, '\\$&')}"`));
+    });
+  }
+
+  it('matches whole words only and ignores descriptions', () => {
+    assert.deepEqual(runCheck(check, ios({ name: 'Stop Freezing: Bestow', subtitle: 'Topology notes', description: 'The best free app, #1 in sales.' })), []);
+    assert.deepEqual(runCheck(check, android({ shortDescription: 'Free and the best', fullDescription: 'Best. Free. #1.' })), []);
+    assert.deepEqual(check.claimWords('Track habit #12 daily'), []);
+  });
+});

@@ -1,14 +1,58 @@
 {
   "images": {
-    "assets/icon.png": { "png": [1000, 1000], "alpha": true },
-    "store/screenshots/ios/iphone/01-home.png": { "png": [1290, 2796], "alpha": true },
-    "store/screenshots/ios/iphone/02-settings.png": { "png": [1200, 2600] },
-    "store/screenshots/android/phone/01-home.png": { "png": [300, 600] },
-    "store/screenshots/android/phone/02-settings.png": { "png": [1000, 2500] },
-    "store/screenshots/android/feature-graphic/feature.png": { "png": [1000, 500] },
-    "store/screenshots/android/icon/icon.png": { "png": [500, 500], "alpha": true }
+    "assets/icon.png": {
+      "png": [
+        1000,
+        1000
+      ],
+      "alpha": true
+    },
+    "store/screenshots/ios/iphone/01-home.png": {
+      "png": [
+        1290,
+        2796
+      ],
+      "alpha": true
+    },
+    "store/screenshots/ios/iphone/02-settings.png": {
+      "png": [
+        1200,
+        2600
+      ]
+    },
+    "store/screenshots/android/phone/01-home.png": {
+      "png": [
+        300,
+        600
+      ]
+    },
+    "store/screenshots/android/phone/02-settings.png": {
+      "png": [
+        1000,
+        2500
+      ]
+    },
+    "store/screenshots/android/feature-graphic/feature.png": {
+      "png": [
+        1000,
+        500
+      ]
+    },
+    "store/screenshots/android/icon/icon.png": {
+      "png": [
+        500,
+        500
+      ],
+      "alpha": true
+    }
   },
   "text": {
-    "store/review-notes.txt": { "repeat": "Sign in with the demo account and open Settings. ", "bytes": 4100 }
+    "store/review-notes.txt": {
+      "repeat": "Sign in with the demo account and open Settings. ",
+      "bytes": 4100
+    }
+  },
+  "files": {
+    "node_modules/@react-native-async-storage/async-storage/ios/PrivacyInfo.xcprivacy": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<plist version=\"1.0\"><dict><key>NSPrivacyAccessedAPITypes</key><array><dict><key>NSPrivacyAccessedAPIType</key><string>NSPrivacyAccessedAPICategoryFileTimestamp</string><key>NSPrivacyAccessedAPITypeReasons</key><array><string>C617.1</string></array></dict></array></dict></plist>\n"
   }
 }

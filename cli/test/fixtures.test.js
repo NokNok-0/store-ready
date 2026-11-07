@@ -14,7 +14,7 @@ describe('good-expo fixture', () => {
   });
 
   it('keeps only the expected reminders as info', () => {
-    assert.deepEqual(result.issues.map((issue) => issue.id).sort(), ['android.permissions', 'play.closed-testing', 'store.screenshots']);
+    assert.deepEqual(result.issues.map((issue) => issue.id).sort(), ['android.permissions', 'play.closed-testing', 'privacy.policy-url', 'store.screenshots']);
   });
 });
 
@@ -38,6 +38,9 @@ describe('bad-expo fixture', () => {
     ['app.identity', 'error'],
     ['app.identity', 'warning'],
     ['app.icon', 'error'],
+    ['app.template-content', 'warning'],
+    ['app.links', 'info'],
+    ['store.files', 'info'],
     ['account.deletion', 'warning'],
     ['login.apple-equivalent', 'warning'],
     ['privacy.policy-url', 'warning'],

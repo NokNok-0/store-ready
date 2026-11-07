@@ -11,5 +11,10 @@
     "store/screenshots/android/phone/04-settings.jpg": { "jpeg": [1080, 1920] },
     "store/screenshots/android/feature-graphic/feature.png": { "png": [1024, 500] },
     "store/screenshots/android/icon/icon.png": { "png": [512, 512], "alpha": true }
+  },
+  "files": {
+    "node_modules/@react-native-async-storage/async-storage/package.json": "{ \"name\": \"@react-native-async-storage/async-storage\" }\n",
+    "node_modules/@react-native-async-storage/async-storage/ios/PrivacyInfo.xcprivacy": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<plist version=\"1.0\"><dict><key>NSPrivacyAccessedAPITypes</key><array><dict><key>NSPrivacyAccessedAPIType</key><string>NSPrivacyAccessedAPICategoryFileTimestamp</string><key>NSPrivacyAccessedAPITypeReasons</key><array><string>C617.1</string></array></dict></array></dict></plist>\n",
+    "node_modules/expo-constants/ios/PrivacyInfo.xcprivacy": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<plist version=\"1.0\"><dict><key>NSPrivacyAccessedAPITypes</key><array><dict><key>NSPrivacyAccessedAPIType</key><string>NSPrivacyAccessedAPICategoryUserDefaults</string><key>NSPrivacyAccessedAPITypeReasons</key><array><string>CA92.1</string></array></dict></array></dict></plist>\n"
   }
 }

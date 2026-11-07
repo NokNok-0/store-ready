@@ -55,7 +55,10 @@ function checkIosIconFile(project, file, origin) {
       file,
     });
   }
-  if (info.hasAlpha) {
+  // Expo generates the native icons for managed projects and flattens transparency, so the note only
+  // applies when the icon file itself ships (native projects, or Expo projects with a committed ios/ folder).
+  const expoManaged = project.expo.isExpo && !project.ios.present;
+  if (info.hasAlpha && !expoManaged) {
     issues.push({
       severity: 'info',
       platform: 'ios',

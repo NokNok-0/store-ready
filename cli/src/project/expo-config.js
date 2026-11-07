@@ -63,7 +63,7 @@ export function loadExpoConfig(files, { configFile, cwd, hasExpoDependency }) {
       severity: 'info',
       platform: 'both',
       message: `${dynamicFile} was not run (${reason}), so values it computes are unknown. ${fromJson ? 'Checks used app.json only' : 'Checks that need app config values were skipped'}.`,
-      fix: 'Run "npx expo config --json > store/expo-config.json", then check again with "--config store/expo-config.json".',
+      fix: 'Run "npx expo config --type introspect --json > store/expo-config.json" (it includes the values config plugins write), then check again with "--config store/expo-config.json".',
       source: SOURCES.expoVersions,
       file: dynamicFile,
     });
@@ -79,7 +79,7 @@ export function loadExpoConfig(files, { configFile, cwd, hasExpoDependency }) {
 }
 
 /**
- * Accepts app.json ({ expo: {...} }), a bare ExpoConfig, or `npx expo config --json --full` output ({ exp: {...} }).
+ * Accepts app.json ({ expo: {...} }), a bare ExpoConfig (including `npx expo config --type introspect --json` output), or `--full` output ({ exp: {...} }).
  * @param {Record<string, any>} value
  */
 export function unwrapExpoConfig(value) {

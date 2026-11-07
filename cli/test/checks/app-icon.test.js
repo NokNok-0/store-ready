@@ -33,9 +33,21 @@ describe('app.icon', () => {
     }
   });
 
-  it('notes alpha on the iOS icon as info only', () => {
-    const issues = runCheck(check, expoProject(ICON, {}, { 'assets/icon.png': makePng(1024, 1024, { alpha: true }) }));
+  it('does not note alpha for Expo managed projects, which flatten the icon', () => {
+    assert.deepEqual(runCheck(check, expoProject(ICON, {}, { 'assets/icon.png': makePng(1024, 1024, { alpha: true }) })), []);
+  });
+
+  it('notes alpha on a native iOS icon as info only', () => {
+    const contents = { images: [{ idiom: 'universal', platform: 'ios', size: '1024x1024', filename: 'icon-1024.png' }] };
+    const set = 'ios/App/Images.xcassets/AppIcon.appiconset';
+    const issues = runCheck(check, {
+      'package.json': { name: 'bare', dependencies: { 'react-native': '0.88.0' } },
+      'ios/App.xcodeproj/project.pbxproj': '',
+      [`${set}/Contents.json`]: contents,
+      [`${set}/icon-1024.png`]: makePng(1024, 1024, { alpha: true }),
+    });
     assert.deepEqual(issues.map((issue) => issue.severity), ['info']);
+    assert.match(issues[0].message, /alpha channel/);
   });
 
   it('prefers ios.icon and accepts Icon Composer files', () => {

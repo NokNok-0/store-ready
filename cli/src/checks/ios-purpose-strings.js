@@ -1,6 +1,6 @@
 import { isObject } from '../fs-utils.js';
 import { SOURCES } from '../sources.js';
-import { configFileName, pluginOptions, truncate } from './expo-helpers.js';
+import { configFileName, pluginEntries, pluginOptions, truncate } from './expo-helpers.js';
 
 export const id = 'ios.purpose-strings';
 export const title = 'iOS permission purpose strings';
@@ -23,6 +23,30 @@ export const PACKAGE_PURPOSE_STRINGS = [
   { pkg: 'expo-av', key: 'NSMicrophoneUsageDescription', option: 'microphonePermission', when: 'recording' },
   { pkg: 'expo-audio', key: 'NSMicrophoneUsageDescription', option: 'microphonePermission', when: 'recording' },
 ];
+
+/**
+ * Purpose strings that an Expo config plugin writes with its own generic text ("Allow $(PRODUCT_NAME) to
+ * access your ...") when the option is not set and ios.infoPlist does not set the key. Setting the option
+ * to false removes the key. Only options whose default we are sure of are listed.
+ * @type {{ pkg: string, option: string, key: string }[]}
+ */
+export const PLUGIN_DEFAULT_PURPOSE_STRINGS = [
+  { pkg: 'expo-image-picker', option: 'photosPermission', key: 'NSPhotoLibraryUsageDescription' },
+  { pkg: 'expo-image-picker', option: 'cameraPermission', key: 'NSCameraUsageDescription' },
+  { pkg: 'expo-image-picker', option: 'microphonePermission', key: 'NSMicrophoneUsageDescription' },
+  { pkg: 'expo-camera', option: 'cameraPermission', key: 'NSCameraUsageDescription' },
+  { pkg: 'expo-camera', option: 'microphonePermission', key: 'NSMicrophoneUsageDescription' },
+  { pkg: 'expo-location', option: 'locationWhenInUsePermission', key: 'NSLocationWhenInUseUsageDescription' },
+  { pkg: 'expo-location', option: 'locationAlwaysAndWhenInUsePermission', key: 'NSLocationAlwaysAndWhenInUseUsageDescription' },
+  { pkg: 'expo-location', option: 'locationAlwaysPermission', key: 'NSLocationAlwaysUsageDescription' },
+  { pkg: 'expo-contacts', option: 'contactsPermission', key: 'NSContactsUsageDescription' },
+  { pkg: 'expo-media-library', option: 'photosPermission', key: 'NSPhotoLibraryUsageDescription' },
+  { pkg: 'expo-media-library', option: 'savePhotosPermission', key: 'NSPhotoLibraryAddUsageDescription' },
+  { pkg: 'expo-calendar', option: 'calendarPermission', key: 'NSCalendarsUsageDescription' },
+];
+
+/** The text Expo config plugins write by default, as it appears in introspected config or Info.plist. */
+export const PLUGIN_DEFAULT_TEXT = /^Allow \$\(PRODUCT_NAME\) to (?:access|save|use)\b/i;
 
 export const RECORDING_INDICATORS = [
   /\bAudio\.Recording\b/,
@@ -64,6 +88,7 @@ const DEFAULT_EXAMPLE = 'The camera is used to scan receipts and attach them to 
  */
 export function genericReason(text) {
   const value = text.trim();
+  if (PLUGIN_DEFAULT_TEXT.test(value)) return "is the generic default text an Expo config plugin writes";
   if ([...value].length < MIN_LENGTH) return `is shorter than ${MIN_LENGTH} characters`;
   if (GENERIC_PATTERNS.some((pattern) => pattern.test(value))) return 'reads like template text';
   if (!REASON_WORDS.test(value)) return 'does not say what the data is used for';
@@ -94,7 +119,9 @@ function collectStrings(project) {
         if (key.endsWith('UsageDescription')) add(key, { value, file, origin: 'expo.ios.infoPlist' });
       }
     }
-    for (const mapping of PACKAGE_PURPOSE_STRINGS) {
+    const optionMappings = [...PACKAGE_PURPOSE_STRINGS, ...PLUGIN_DEFAULT_PURPOSE_STRINGS]
+      .filter((mapping, index, all) => all.findIndex((other) => other.pkg === mapping.pkg && other.option === mapping.option && other.key === mapping.key) === index);
+    for (const mapping of optionMappings) {
       for (const options of pluginOptions(config, mapping.pkg)) {
         const value = options[mapping.option];
         if (value === false) disabled.add(`${mapping.pkg}:${mapping.key}`);
@@ -158,10 +185,13 @@ export function run(project) {
     });
   }
 
+  /** @type {Set<string>} */
+  const reportedMissing = new Set();
   for (const requirement of requiredKeys(project, disabled).values()) {
     const keys = [requirement.key, ...requirement.alternatives];
     const satisfied = keys.some((key) => (strings.get(key) ?? []).some((entry) => typeof entry.value === 'string' && entry.value.trim() !== ''));
     if (satisfied || (project.expo.isExpo && !project.expo.complete)) continue;
+    reportedMissing.add(requirement.key);
     const packages = requirement.packages.join(', ');
     const example = EXAMPLES[requirement.key] ?? DEFAULT_EXAMPLE;
     const fix = project.expo.isExpo
@@ -176,6 +206,8 @@ export function run(project) {
       file: project.expo.isExpo ? file : project.ios.infoPlists[0]?.file ?? file,
     });
   }
+
+  issues.push(...pluginDefaults(project, strings, reportedMissing));
 
   const seen = new Set();
   for (const [key, entries] of strings) {
@@ -205,6 +237,47 @@ export function run(project) {
         file: entry.file,
       });
     }
+  }
+  return issues;
+}
+
+/**
+ * Warns when a config plugin will write its generic default purpose string because the option is unset.
+ * @param {import('../project/load-project.js').Project} project
+ * @param {Map<string, { value: unknown }[]>} strings
+ * @param {Set<string>} reportedMissing keys already reported as missing
+ * @returns {Omit<import('../issue.js').Issue, 'id'>[]}
+ */
+function pluginDefaults(project, strings, reportedMissing) {
+  if (!project.expo.isExpo || !project.expo.complete) return [];
+  const config = project.expo.config;
+  const file = configFileName(project);
+  const listed = new Set(pluginEntries(config).map((entry) => entry.name));
+  /** @type {Omit<import('../issue.js').Issue, 'id'>[]} */
+  const issues = [];
+  /** @type {Set<string>} */
+  const warned = new Set();
+  for (const mapping of PLUGIN_DEFAULT_PURPOSE_STRINGS) {
+    const inPlugins = listed.has(mapping.pkg);
+    if (!inPlugins && !project.hasDependency(mapping.pkg)) continue;
+    if (reportedMissing.has(mapping.key) || warned.has(mapping.key)) continue;
+    const alternatives = PACKAGE_PURPOSE_STRINGS.find((other) => other.key === mapping.key)?.alternatives ?? [];
+    const set = [mapping.key, ...alternatives].some((key) => (strings.get(key) ?? []).some((entry) => typeof entry.value === 'string' && entry.value.trim() !== ''));
+    if (set) continue;
+    const optionsList = inPlugins ? pluginOptions(config, mapping.pkg) : [{}];
+    if (optionsList.every((options) => options[mapping.option] === false || options[mapping.option] !== undefined)) continue;
+    warned.add(mapping.key);
+    const when = inPlugins
+      ? `The ${mapping.pkg} config plugin is in plugins without a "${mapping.option}" option`
+      : `${mapping.pkg} is installed and not in plugins; if Expo applies its config plugin automatically, it runs without a "${mapping.option}" option`;
+    issues.push({
+      severity: 'warning',
+      platform: 'ios',
+      message: `${when}, and ios.infoPlist does not set ${mapping.key}. The package's generic default text ("Allow $(PRODUCT_NAME) to access ...") will ship, which is the vague kind of purpose string guideline 5.1.1(ii) rejects.`,
+      fix: `If the app uses this permission, set "${mapping.option}" in the ${mapping.pkg} plugin options to a sentence that says what the data is for, with an example such as "${EXAMPLES[mapping.key] ?? DEFAULT_EXAMPLE}". If it does not, set "${mapping.option}": false to remove the key. To see the final values, run "npx expo config --type introspect --json > store/expo-config.json" and check with --config store/expo-config.json.`,
+      source: SOURCES.applePurposeStrings,
+      file,
+    });
   }
   return issues;
 }

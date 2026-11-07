@@ -1,2 +1,2 @@
-Demo account: reviewer@example.com (password in App Store Connect sign-in information).
+Demo account: reviewer@habitlens.app (password in App Store Connect sign-in information).
 Steps: sign in, tap a habit, tap "Check in", take or choose a photo.

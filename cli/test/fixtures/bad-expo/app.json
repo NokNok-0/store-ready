@@ -13,11 +13,15 @@
         "NSPrivacyAccessedAPITypes": [
           {
             "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryDiskSpace",
-            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+            "NSPrivacyAccessedAPITypeReasons": [
+              "CA92.1"
+            ]
           },
           {
             "NSPrivacyAccessedAPIType": "UserDefaults",
-            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+            "NSPrivacyAccessedAPITypeReasons": [
+              "CA92.1"
+            ]
           }
         ]
       }
@@ -38,7 +42,17 @@
       ]
     },
     "plugins": [
-      ["expo-build-properties", { "android": { "targetSdkVersion": 34 } }]
-    ]
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "targetSdkVersion": 34
+          }
+        }
+      ]
+    ],
+    "extra": {
+      "supportUrl": "https://support.badapp.dev/help"
+    }
   }
 }

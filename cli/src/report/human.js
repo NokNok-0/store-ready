@@ -36,7 +36,9 @@ export function formatHuman(result, { color, strict, version }) {
   lines.push(`${count(errors, 'error')}, ${count(warnings, 'warning')}, ${infos} info`);
   if (errors > 0) lines.push('Fix the errors above, then run the check again.');
   else if (strict && warnings > 0) lines.push('Warnings fail with --strict. Fix them, then run the check again.');
-  else lines.push('Passes the checks we know about. Store review also covers things no tool can check, such as crashes and server behaviour.');
+  else if (result.notChecked && result.notChecked.length > 0) {
+    lines.push(`Code and config pass the checks we know about. Not checked yet: ${clean(result.notChecked.join(', '))}. Store review also covers things no tool can check, such as crashes and server behaviour.`);
+  } else lines.push('Passes the checks we know about. Store review also covers things no tool can check, such as crashes and server behaviour.');
   return `${lines.join('\n')}\n`;
 }
 

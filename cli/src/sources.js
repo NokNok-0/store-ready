@@ -14,6 +14,7 @@ export const SOURCES = Object.freeze({
   expoAppStores: 'https://docs.expo.dev/distribution/app-stores/',
   playTargetSdk: 'https://developer.android.com/google/play/requirements/target-sdk',
   playPolicy: 'https://play.google/developer-content-policy/',
+  playMinimumFunctionality: 'https://support.google.com/googleplay/android-developer/answer/9898783',
   playPhotoVideo: 'https://support.google.com/googleplay/android-developer/answer/14115180',
   playBackgroundLocation: 'https://support.google.com/googleplay/android-developer/answer/9799150',
   playExactAlarm: 'https://support.google.com/googleplay/android-developer/answer/16558241',

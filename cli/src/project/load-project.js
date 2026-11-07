@@ -25,6 +25,7 @@ import { UsageError } from './usage-error.js';
  *   resolve: (relative: string) => string | null,
  *   exists: (relative: string) => boolean,
  *   notes: import('../issue.js').Issue[],
+ *   urlChecks: Map<string, import('./links.js').UrlCheck>,
  * }} Project
  */
 
@@ -80,6 +81,7 @@ export function loadProject(root, { configFile, cwd = process.cwd() } = {}) {
     resolve: (relative) => files.resolve(relative),
     exists: (relative) => files.resolve(relative) !== null,
     notes,
+    urlChecks: new Map(),
   };
 }
 

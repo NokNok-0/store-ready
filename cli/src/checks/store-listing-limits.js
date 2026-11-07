@@ -40,6 +40,29 @@ export const LISTINGS = [
 ];
 
 export const OPTIONAL_KEYS = ['privacyPolicyUrl'];
+
+/** Fields where price and ranking words are flagged. Descriptions are not checked. */
+export const CLAIM_FIELDS = Object.freeze({ ios: ['name', 'subtitle'], android: ['title'] });
+
+/** Price words and superlative or ranking claims, matched as whole words. */
+export const CLAIM_WORDS = [
+  { label: 'free', kind: 'price', pattern: /\bfree\b/i },
+  { label: 'sale', kind: 'price', pattern: /\bsales?\b/i },
+  { label: '% off', kind: 'price', pattern: /%\s*off\b/i },
+  { label: '$', kind: 'price', pattern: /\$/ },
+  { label: '€', kind: 'price', pattern: /€/ },
+  { label: 'best', kind: 'ranking', pattern: /\bbest\b/i },
+  { label: 'top', kind: 'ranking', pattern: /\btop\b/i },
+  { label: 'ultimate', kind: 'ranking', pattern: /\bultimate\b/i },
+  { label: '#1', kind: 'ranking', pattern: /(?<![\w#])#\s?1(?!\d)/ },
+  { label: 'number one', kind: 'ranking', pattern: /\bnumber\s+one\b/i },
+  { label: 'No. 1', kind: 'ranking', pattern: /\bno\.\s?1(?!\d)/i },
+];
+
+/** @param {string} text @returns {string[]} labels of the claim words in the text */
+export function claimWords(text) {
+  return CLAIM_WORDS.filter((word) => word.pattern.test(text)).map((word) => word.label);
+}
 export const REVIEW_NOTES_FILE = 'store/review-notes.txt';
 export const REVIEW_NOTES_MAX_BYTES = 4000;
 
@@ -73,6 +96,21 @@ function checkListing(spec, listing) {
     } else if (size === 0 && limit.required) {
       add('warning', `${spec.store} ${field} is empty.`, `Fill in "${field}" before submitting.`);
     }
+  }
+  for (const field of CLAIM_FIELDS[spec.platform]) {
+    const value = listing[field];
+    if (typeof value !== 'string') continue;
+    const words = claimWords(value);
+    if (words.length === 0) continue;
+    const ios = spec.platform === 'ios';
+    issues.push({
+      severity: 'warning',
+      platform: spec.platform,
+      message: `${spec.store} ${field} "${value}" contains price or ranking words: ${words.map((word) => `"${word}"`).join(', ')}.${ios ? ' Guideline 2.3.7 keeps prices and claims out of the name and subtitle.' : ' Play does not allow prices, promotions or ranking claims in the app title.'}`,
+      fix: `Remove ${words.map((word) => `"${word}"`).join(', ')} from "${field}" and say what the app does instead. Descriptions are not checked for these words.`,
+      source: ios ? SOURCES.appleGuidelines : SOURCES.playListingText,
+      file: spec.file,
+    });
   }
   const privacyUrl = listing.privacyPolicyUrl;
   if (privacyUrl !== undefined && (typeof privacyUrl !== 'string' || !/^https?:\/\/\S+$/.test(privacyUrl.trim()))) {

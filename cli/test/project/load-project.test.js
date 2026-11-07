@@ -42,7 +42,7 @@ describe('loadProject', () => {
     assert.equal(project.expo.config.name, 'FromJson');
     assert.equal(project.notes.length, 1);
     assert.equal(project.notes[0].severity, 'info');
-    assert.match(project.notes[0].fix, /npx expo config --json > store\/expo-config\.json/);
+    assert.match(project.notes[0].fix, /npx expo config --type introspect --json > store\/expo-config\.json/);
   });
 
   it('uses --config output, relative to cwd or the project, in either shape', () => {

@@ -33,13 +33,15 @@ describe('store-ready CLI', () => {
   it('prints the version and help', () => {
     assert.match(run(['--version']).stdout, /^\d+\.\d+\.\d+\n$/);
     assert.match(run(['--help']).stdout, /Usage: store-ready check \[path\]/);
+    assert.match(run(['--help']).stdout, /--verify-urls/);
+    assert.match(run(['--help']).stdout, /npx expo config --type introspect --json/);
     assert.equal(run([]).code, 0);
   });
 
   it('exits 0 on a clean project and says it passes the checks we know about', () => {
     const { code, stdout } = run(['check', good]);
     assert.equal(code, 0);
-    assert.match(stdout, /0 errors, 0 warnings, 3 info\nPasses the checks we know about\./);
+    assert.match(stdout, /0 errors, 0 warnings, 4 info\nPasses the checks we know about\./);
     assert.doesNotMatch(stdout, /approved|will pass review/i);
   });
 
@@ -61,6 +63,7 @@ describe('store-ready CLI', () => {
     const relaxed = run(['check', warningsOnly]);
     assert.equal(relaxed.code, 0, relaxed.stdout);
     assert.match(relaxed.stdout, /[1-9]\d* warnings?/);
+    assert.match(relaxed.stdout, /\nCode and config pass the checks we know about\. Not checked yet: store\/listing\.android\.json, store\/data-safety\.android\.md, store\/screenshots\/android\/\./);
     const strict = run(['check', warningsOnly, '--strict']);
     assert.equal(strict.code, 1);
     assert.match(strict.stdout, /Warnings fail with --strict/);

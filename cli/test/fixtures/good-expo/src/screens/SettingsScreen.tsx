@@ -1,7 +1,7 @@
 import { Button, Linking, View } from 'react-native';
 import { deleteUser, getAuth } from 'firebase/auth';
 
-const PRIVACY_POLICY = 'https://example.com/habit-lens/privacy';
+const PRIVACY_POLICY = 'https://habitlens.app/privacy';
 
 export function SettingsScreen() {
   const user = getAuth().currentUser;

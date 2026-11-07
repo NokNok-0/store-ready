@@ -60,6 +60,8 @@ export function materializeFixture(name) {
     for (const [relative, spec] of Object.entries(manifest.text ?? {})) {
       files[relative] = spec.repeat.repeat(Math.ceil(spec.bytes / Buffer.byteLength(spec.repeat)));
     }
+    // Files that cannot be committed as-is (node_modules/ is git-ignored).
+    for (const [relative, content] of Object.entries(manifest.files ?? {})) files[relative] = content;
     writeFiles(root, files);
   }
   return root;
@@ -74,6 +76,15 @@ export function runCheck(checkModule, filesOrRoot, options = {}) {
   const root = typeof filesOrRoot === 'string' ? filesOrRoot : makeProject(filesOrRoot);
   const project = loadProject(root, { cwd: root, ...options });
   return checkModule.run(project).map((/** @type {any} */ raw) => normalizeIssue(checkModule.id, raw));
+}
+
+/**
+ * A PrivacyInfo.xcprivacy body declaring required-reason API categories.
+ * @param {Record<string, string[]>} categories category name -> reason codes
+ */
+export function xcprivacy(categories) {
+  const entries = Object.entries(categories).map(([category, reasons]) => `<dict><key>NSPrivacyAccessedAPIType</key><string>${category}</string><key>NSPrivacyAccessedAPITypeReasons</key><array>${reasons.map((reason) => `<string>${reason}</string>`).join('')}</array></dict>`);
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<plist version="1.0"><dict><key>NSPrivacyAccessedAPITypes</key><array>${entries.join('')}</array></dict></plist>\n`;
 }
 
 /**

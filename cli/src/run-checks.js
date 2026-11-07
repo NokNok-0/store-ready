@@ -1,16 +1,55 @@
 import { CHECKS } from './checks/index.js';
 import { normalizeIssue, sortIssues, summarize } from './issue.js';
+import { findLinks } from './project/links.js';
 import { loadProject } from './project/load-project.js';
 import { SOURCES } from './sources.js';
+import { verifyUrls } from './verify-urls.js';
 
 /**
+ * @typedef {{ platform?: 'ios' | 'android' | 'both', configFile?: string, cwd?: string }} CheckOptions
+ * @typedef {{
+ *   version: number,
+ *   project: { type: string, path: string },
+ *   issues: import('./issue.js').Issue[],
+ *   summary: { errors: number, warnings: number, infos: number },
+ *   notChecked?: string[],
+ * }} CheckResult
+ */
+
+/**
+ * Offline check: reads files only.
  * @param {string} target
- * @param {{ platform?: 'ios' | 'android' | 'both', configFile?: string, cwd?: string }} [options]
+ * @param {CheckOptions} [options]
+ * @returns {CheckResult}
  */
 export function check(target, { platform = 'both', configFile, cwd = process.cwd() } = {}) {
   const project = loadProject(target, { configFile, cwd });
-  /** @type {import('./issue.js').Issue[]} */
-  const issues = project.notes.map((note) => normalizeIssue(note.id, note));
+  return runChecks(project, platform);
+}
+
+/**
+ * Like check(), and with verifyUrls also fetches every URL the checks report (HEAD, fallback GET).
+ * @param {string} target
+ * @param {CheckOptions & { verifyUrls?: boolean, fetchImpl?: typeof fetch, timeoutMs?: number }} [options]
+ * @returns {Promise<CheckResult>}
+ */
+export async function checkAsync(target, { platform = 'both', configFile, cwd = process.cwd(), verifyUrls: verify = false, fetchImpl, timeoutMs } = {}) {
+  const project = loadProject(target, { configFile, cwd });
+  if (verify) {
+    const results = await verifyUrls(findLinks(project).map((link) => link.url), { fetchImpl, timeoutMs });
+    for (const [url, result] of results) project.urlChecks.set(url, result);
+  }
+  return runChecks(project, platform);
+}
+
+/**
+ * @param {import('./project/load-project.js').Project} project
+ * @param {'ios' | 'android' | 'both'} platform
+ * @returns {CheckResult}
+ */
+function runChecks(project, platform) {
+  /** @type {{ issue: import('./issue.js').Issue, missing?: string[] }[]} */
+  const entries = project.notes.map((note) => ({ issue: normalizeIssue(note.id, note) }));
   for (const item of CHECKS) {
     let raw;
     try {
@@ -24,23 +63,34 @@ export function check(target, { platform = 'both', configFile, cwd = process.cwd
         source: item.source,
       }];
     }
-    for (const entry of raw) issues.push(normalizeIssue(item.id, entry));
+    for (const entry of raw) {
+      const missing = /** @type {{ missing?: unknown }} */ (entry).missing;
+      entries.push({ issue: normalizeIssue(item.id, entry), missing: Array.isArray(missing) ? missing.map(String) : undefined });
+    }
   }
   for (const file of project.files.outside) {
-    issues.push(normalizeIssue('project.paths', {
-      severity: 'warning',
-      platform: 'both',
-      message: `${file} points outside the project, not read.`,
-      fix: 'Use a path inside the project (no absolute paths, ".." or symlinks that leave the project).',
-      source: SOURCES.expoVersions,
-      file,
-    }));
+    entries.push({
+      issue: normalizeIssue('project.paths', {
+        severity: 'warning',
+        platform: 'both',
+        message: `${file} points outside the project, not read.`,
+        fix: 'Use a path inside the project (no absolute paths, ".." or symlinks that leave the project).',
+        source: SOURCES.expoVersions,
+        file,
+      }),
+    });
   }
-  const visible = sortIssues(issues.filter((issue) => platform === 'both' || issue.platform === 'both' || issue.platform === platform));
-  return {
+  const shown = entries.filter(({ issue }) => platform === 'both' || issue.platform === 'both' || issue.platform === platform);
+  const visible = sortIssues(shown.map(({ issue }) => issue));
+  /** @type {CheckResult} */
+  const result = {
     version: 1,
     project: { type: project.type, path: project.root },
     issues: visible,
     summary: summarize(visible),
   };
+  // Store files that do not exist yet, for the human footer. Not enumerable, so --json keeps its shape.
+  const notChecked = [...new Set(shown.flatMap(({ missing }) => missing ?? []))];
+  Object.defineProperty(result, 'notChecked', { value: notChecked, enumerable: false });
+  return result;
 }
