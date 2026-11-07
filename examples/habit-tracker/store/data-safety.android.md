@@ -13,7 +13,7 @@ Google's definition, read 2026-11-07: "Collect" means transmitting data from you
 Does the app collect or share any of the required user data types? No
 Is all user data encrypted in transit? Not asked when nothing is collected. If Play Console asks, no user data is transmitted.
 Account creation: email and password, creating a profile stored on the device only (`src/auth.ts`). Sign in with Apple is iOS only.
-Delete account URL: https://github.com/NokNok-0/store-ready/blob/main/examples/habit-tracker/docs/delete-account.md
+Delete account URL: https://github.com/NokNok-0/store-ready/blob/main/examples/habit-tracker/docs/delete-account.md (opened 2026-11-07: HTTP 200)
 In-app deletion path: Settings > Delete account (`src/app/settings.tsx`, `src/app/delete-account.tsx`)
 Data retained after deletion: none (no server; `src/account.ts` deletes the profile, the habits and the habit photo files on the device)
 
@@ -72,7 +72,7 @@ None. With READ_MEDIA_IMAGES blocked, the Photo and video permissions declaratio
 - Merged manifest not checked against a release build. After the first EAS production build, run `bundletool dump manifest --bundle app.aab > merged-manifest.xml` and `node <skill>/scripts/list-permissions.mjs . --manifest merged-manifest.xml`, or check the permission list in Play Console after upload.
 - "Choose photo" with READ_MEDIA_IMAGES blocked: confirm on an Android 13+ device or emulator that the photo picker opens and the picture shows on the habit.
 - Target API 36 behaviour changes (https://developer.android.com/about/versions/16/behavior-changes-16) not tested on a device. The target was already 36 by default; nothing was raised.
-- The delete account URL and the privacy policy URL must load logged out once the repository is public on GitHub.
+- The delete account URL and the privacy policy URL answered HTTP 200 on 2026-11-07 (`--verify-urls`, after the repository was published). Only the status code was checked; open both signed out in a browser before submitting.
 
 ## Questions for the user
 

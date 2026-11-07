@@ -1,6 +1,6 @@
 # Account deletion
 In-app path: Today > Settings > Delete account
-Delete account URL: https://github.com/NokNok-0/store-ready/blob/main/examples/habit-tracker/docs/delete-account.md (not opened yet: the repository is not public, so it returns 404; blocking until it is published)
+Delete account URL: https://github.com/NokNok-0/store-ready/blob/main/examples/habit-tracker/docs/delete-account.md (opened 2026-11-07: HTTP 200)
 Data kept after deletion: none (no server; `src/account.ts` deletes the profile, the habits and the habit photo files on the device)
 Sign in with Apple tokens: none left the device (`src/components/apple-sign-in.tsx` keeps only `user` and `email` locally)
 
