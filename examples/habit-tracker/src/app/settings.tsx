@@ -1,9 +1,16 @@
 import { useRouter } from 'expo-router';
-import { ScrollView, StyleSheet } from 'react-native';
+import { Linking, ScrollView, StyleSheet } from 'react-native';
 
+import type { AuthProvider } from '@/auth';
 import { SettingsGroup, SettingsRow } from '@/components/settings-row';
+import { PRIVACY_POLICY_URL, SUPPORT_URL } from '@/links';
 import { useSession } from '@/session';
 import { spacing } from '@/theme';
+
+const providerLabels: Record<AuthProvider, string> = {
+  email: 'Email',
+  apple: 'Apple',
+};
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -12,13 +19,13 @@ export default function SettingsScreen() {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic" contentContainerStyle={styles.content}>
       <SettingsGroup title="Account">
-        <SettingsRow label="Email" value={user?.email} />
-        <SettingsRow label="Signed in with" value={user?.provider === 'google' ? 'Google' : 'Email'} />
-      </SettingsGroup>
-      <SettingsGroup title="Plan">
-        <SettingsRow label="Streaks Pro" value="Free plan" onPress={() => router.push('/paywall')} />
+        <SettingsRow label="Email" value={user?.email || 'Hidden'} />
+        <SettingsRow label="Signed in with" value={user ? providerLabels[user.provider] : undefined} />
+        <SettingsRow label="Delete account" onPress={() => router.push('/delete-account')} />
       </SettingsGroup>
       <SettingsGroup>
+        <SettingsRow label="Privacy policy" onPress={() => Linking.openURL(PRIVACY_POLICY_URL)} />
+        <SettingsRow label="Help and support" onPress={() => Linking.openURL(SUPPORT_URL)} />
         <SettingsRow label="About" onPress={() => router.push('/about')} />
       </SettingsGroup>
       <SettingsGroup>

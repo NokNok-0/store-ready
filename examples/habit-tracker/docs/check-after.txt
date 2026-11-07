@@ -1,0 +1,21 @@
+store-ready 0.1.0: checked expo project at examples/habit-tracker
+
+iOS
+  INFO   store.screenshots  store/screenshots/ios
+         No iPhone Duo screenshots (outer 1398x2034, inner 2007x2853). Optional now; Apple says they are required from April 2027 for builds made with the iOS 27.1 SDK or later.
+         Fix:    Plan to add iPhone Duo screenshots before you build with the iOS 27.1 SDK.
+         Source: https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications
+
+Android
+  INFO   android.permissions  app.json
+         Declared Android permissions: CAMERA. Libraries can add more when the manifest is merged at build time.
+         Fix:    Keep only the permissions the app uses, and make sure the Data safety form covers the data they give access to.
+         Source: https://support.google.com/googleplay/android-developer/answer/10787469
+
+  INFO   play.closed-testing
+         Personal Play developer accounts created after 2023-11-13 must run a closed test with at least 12 testers opted in for at least 14 days in a row before applying for production access. This cannot be detected from the project.
+         Fix:    If this applies to your account, start the closed test early and keep 12 or more testers opted in for the full 14 days.
+         Source: https://support.google.com/googleplay/android-developer/answer/14151465
+
+0 errors, 0 warnings, 3 info
+Passes the checks we know about. Store review also covers things no tool can check, such as crashes and server behaviour.

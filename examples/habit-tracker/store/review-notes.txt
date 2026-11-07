@@ -1,0 +1,31 @@
+ABOUT THE APP
+Streaks is a habit tracker: add daily habits, check them off once a day, see each habit's current and best streak, and attach a photo to a habit. All data is stored on the device. The app has no server, no ads, no tracking and no in-app purchases.
+
+DEMO ACCOUNT
+Accounts are created and stored on the device, so there is no server-side account to share. Create the demo account on the review device:
+
+1. Member (the only role)
+   Username: reviewer@storeready.dev
+   Password: any password of 8 or more characters
+   On a fresh install, tap "Create an account" on the first screen, enter the email above and a password, and tap "Create account". After that, "Sign in" works with the same email and any 8+ character password.
+   Sees: every feature. There are no other roles and no paid tier.
+
+SIGN-IN AND TWO-FACTOR AUTHENTICATION
+There is no two-factor authentication and no code is sent. After "Create account" or "Sign in" the Today screen opens.
+"Continue with Apple" is on the same screens (iOS only) and signs in with the reviewer's Apple Account; it also needs no further step in the app.
+
+HOW TO REACH EACH FEATURE
+- Add a habit: Today > type a name in "New habit" > Add.
+- Check off a habit for today: Today > tap the circle on the habit's row.
+- Habit details (current streak, best streak, check-ins): Today > tap the habit's name.
+- Add a photo to a habit: Today > tap the habit > Take photo (camera) or Choose photo (photo library). The camera and photo permissions are asked only here; if you decline, the app explains how to turn access on and everything else keeps working.
+- Delete a habit: Today > tap the habit > Delete habit > Delete.
+- Privacy policy and support: Today > Settings > Privacy policy / Help and support.
+- Delete account: Today > Settings > Delete account > Delete account > confirm. This deletes the account, its habits and photos from the device and returns to the sign-in screen. To keep reviewing afterwards, create the demo account again as above.
+
+PURCHASES
+None. The app has no in-app purchases or subscriptions in this version.
+
+CONTACT
+{{CONTACT_NAME}}, {{CONTACT_EMAIL}}, {{CONTACT_PHONE}}, {{TIME_ZONE}}
+Issues: https://github.com/NokNok-0/store-ready/issues

@@ -4,7 +4,6 @@ import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { AddHabitBar } from '@/components/add-habit-bar';
 import { HabitRow } from '@/components/habit-row';
 import { HeaderButton } from '@/components/header-button';
-import { FREE_HABIT_LIMIT } from '@/habit-store';
 import { useHabits } from '@/habits-context';
 import { isCompletedOn, toDayKey } from '@/streaks';
 import { spacing, useTheme } from '@/theme';
@@ -20,14 +19,6 @@ export default function HabitsScreen() {
   const now = new Date();
   const today = toDayKey(now);
   const doneCount = habits.filter((habit) => isCompletedOn(habit.completions, today)).length;
-
-  const add = (name: string) => {
-    if (habits.length >= FREE_HABIT_LIMIT) {
-      router.push('/paywall');
-      return;
-    }
-    addHabit(name);
-  };
 
   return (
     <>
@@ -50,7 +41,7 @@ export default function HabitsScreen() {
             <Text style={[styles.summary, { color: theme.text }]}>
               {habits.length === 0 ? 'Add your first habit' : `${doneCount} of ${habits.length} done`}
             </Text>
-            <AddHabitBar onAdd={add} />
+            <AddHabitBar onAdd={addHabit} />
           </View>
         }
         ListEmptyComponent={

@@ -10,8 +10,6 @@ export type Habit = {
   photoUri?: string;
 };
 
-export const FREE_HABIT_LIMIT = 5;
-
 const storageKey = (userId: string) => `streaks:habits:${userId}`;
 
 export async function loadHabits(userId: string): Promise<Habit[]> {
@@ -21,6 +19,10 @@ export async function loadHabits(userId: string): Promise<Habit[]> {
 
 export async function saveHabits(userId: string, habits: Habit[]): Promise<void> {
   await AsyncStorage.setItem(storageKey(userId), JSON.stringify(habits));
+}
+
+export async function deleteHabits(userId: string): Promise<void> {
+  await AsyncStorage.removeItem(storageKey(userId));
 }
 
 export function createHabit(name: string, now: Date = new Date()): Habit {

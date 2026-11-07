@@ -1,3 +1,4 @@
+import { File } from 'expo-file-system';
 import {
   launchCameraAsync,
   launchImageLibraryAsync,
@@ -34,4 +35,16 @@ export async function pickPhoto(source: PhotoSource): Promise<PhotoResult> {
     return { status: 'cancelled' };
   }
   return { status: 'picked', uri: result.assets[0].uri };
+}
+
+export function deletePhotos(uris: readonly string[]): void {
+  for (const uri of uris) {
+    if (!uri.startsWith('file://')) {
+      continue;
+    }
+    const file = new File(uri);
+    if (file.exists) {
+      file.delete();
+    }
+  }
 }

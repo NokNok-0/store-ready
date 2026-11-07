@@ -1,0 +1,7 @@
+CREDENTIAL SET 1: Member (the only role)
+Username: reviewer@storeready.dev
+Password: any password of 8 or more characters
+Instructions: Accounts are stored on the device, so create the account on the review device first: on the first screen tap "Create an account", enter the email above and any password of 8 or more characters, then tap "Create account". After that "Sign in" works with the same email and any 8+ character password. There is no two-factor authentication. All features are available to this account: add a habit (Today > New habit > Add), check it off (tap the circle), open a habit (tap its name) to see streaks and add a photo, Settings > Delete account.
+
+OTHER INSTRUCTIONS
+No server, no in-app purchases, no hardware or region dependencies. Deleting the account (Settings > Delete account) removes it from the device; create it again as above to keep testing.

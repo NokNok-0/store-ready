@@ -1,27 +1,20 @@
 import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { AppleSignInButton, useAppleSignInAvailable } from '@/components/apple-sign-in';
 import { errorMessage } from '@/components/auth-form';
-import { Button } from '@/components/button';
 import { useSession } from '@/session';
 import { spacing, useTheme } from '@/theme';
 
 export function SocialSignIn() {
   const theme = useTheme();
-  const { signInWithGoogle } = useSession();
-  const [loading, setLoading] = useState(false);
+  const { signInWithApple } = useSession();
+  const available = useAppleSignInAvailable();
   const [error, setError] = useState<string | null>(null);
 
-  const continueWithGoogle = async () => {
-    setError(null);
-    setLoading(true);
-    try {
-      await signInWithGoogle();
-    } catch (caught) {
-      setError(errorMessage(caught));
-      setLoading(false);
-    }
-  };
+  if (!available) {
+    return null;
+  }
 
   return (
     <View style={styles.container}>
@@ -30,12 +23,12 @@ export function SocialSignIn() {
         <Text style={[styles.or, { color: theme.textSecondary }]}>or</Text>
         <View style={[styles.line, { backgroundColor: theme.border }]} />
       </View>
-      <Button
-        label="Continue with Google"
-        icon="G"
-        variant="secondary"
-        onPress={continueWithGoogle}
-        loading={loading}
+      <AppleSignInButton
+        onCredential={async (credential) => {
+          setError(null);
+          await signInWithApple({ user: credential.user, email: credential.email });
+        }}
+        onError={(caught) => setError(errorMessage(caught))}
       />
       {error ? <Text style={[styles.error, { color: theme.danger }]}>{error}</Text> : null}
     </View>

@@ -64,7 +64,7 @@ function RootNavigator() {
             <Stack.Screen name="habit/[id]" options={{ title: 'Habit' }} />
             <Stack.Screen name="settings" options={{ title: 'Settings' }} />
             <Stack.Screen name="about" options={{ title: 'About' }} />
-            <Stack.Screen name="paywall" options={{ title: 'Streaks Pro', presentation: 'modal' }} />
+            <Stack.Screen name="delete-account" options={{ title: 'Delete account' }} />
           </Stack.Protected>
         </Stack>
       </HabitsProvider>
