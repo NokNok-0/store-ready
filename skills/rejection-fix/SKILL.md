@@ -67,7 +67,7 @@ Fix every issue in the message before drafting anything.
 Then run:
 
 ```
-npx store-ready check --json
+npx @noknok-0/store-ready check --json
 ```
 
 The exit code is 1 when errors remain; read the output and confirm no error relates to the rejection. If the checker cannot run, say so.
@@ -114,7 +114,7 @@ Suggest running `mock-review` before resubmitting when the fix touched more than
 
 - Every guideline or policy in the message has a cause, evidence (or a stated reason it is outside the repository), and a fix.
 - Every guideline number and policy name you wrote appears in the user's message and in the mapping files, or you read the official page for it.
-- `npx store-ready check --json` shows no error related to the rejection.
+- `npx @noknok-0/store-ready check --json` shows no error related to the rejection.
 - If code changed, the build number or versionCode is higher than the rejected one.
 - Every step in the reply names a screen or button that exists in the code with that exact label.
 - The reply contains no apology formula, no request to expedite, no appeal language, and no claim the app "complies" or "will be approved". Apple replies are under 150 words for a fix, 250 for an explanation.

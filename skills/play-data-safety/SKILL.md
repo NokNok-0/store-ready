@@ -91,7 +91,7 @@ Raising the target changes runtime behaviour. List the behaviour changes the use
 ## 6. Write the Data safety answers
 
 1. Open https://support.google.com/googleplay/android-developer/answer/10787469 and read the current data types, purposes, and how Google defines collection and sharing.
-2. Open the privacy policy URL and the delete account URL, in a browser or with `node -e "fetch(process.argv[1]).then(r=>console.log(r.status,r.url),e=>console.log('failed',e.message))" <url>`. Record the HTTP status and today's date next to each in the answers file. Play's help page says the deletion link "must be functional (for example, loads without error)". A URL that does not load is a blocking item under "Questions for the user", not a filled answer. `npx store-ready check --verify-urls` checks the URLs the checker finds; without the flag it reports them as "found, not verified".
+2. Open the privacy policy URL and the delete account URL, in a browser or with `node -e "fetch(process.argv[1]).then(r=>console.log(r.status,r.url),e=>console.log('failed',e.message))" <url>`. Record the HTTP status and today's date next to each in the answers file. Play's help page says the deletion link "must be functional (for example, loads without error)". A URL that does not load is a blocking item under "Questions for the user", not a filled answer. `npx @noknok-0/store-ready check --verify-urls` checks the URLs the checker finds; without the flag it reports them as "found, not verified".
 3. Fill `store/data-safety.android.md` from [references/data-safety-template.md](references/data-safety-template.md): overview answers, one row per data type with every source (backend, SDKs, webviews), the SDKs reviewed, the permission decisions, the declarations, the delete account URL, and what was not verified.
 4. For each SDK, read the vendor's own Data safety guidance and this project's configuration of it. If the vendor publishes nothing, say so and tell the user. expo-updates with Expo Update adds Device or other IDs and Crash logs (https://docs.expo.dev/eas-update/store-privacy-declarations/); see [references/play-facts.md](references/play-facts.md).
 5. Use `dataSafety` from the script as prompts: a permission is not a data type, but each one should map to a row or to a note saying why the data never leaves the device.
@@ -107,5 +107,5 @@ Tell the user to paste the answers into Play Console, App content, Data safety, 
 - [ ] Each URL in it carries the status and date you opened it. Any that did not load is listed as blocking and was reported to the user.
 - [ ] If background location is kept: the disclosure screen exists in code, comes before the runtime prompt, and the video shot list is written.
 - [ ] If this prebuild run created `android/` only to inspect it, it is deleted again; a folder that existed before is still there, and `package.json` `scripts` match their state before prebuild.
-- [ ] `npx store-ready check` reports no target SDK or permission errors.
+- [ ] `npx @noknok-0/store-ready check` reports no target SDK or permission errors.
 - [ ] Tell the user the result passes the checks we know about. Do not say it will be approved.

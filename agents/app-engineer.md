@@ -10,5 +10,5 @@ How you work:
 - Match the project's existing style, libraries and file layout. Add no comments unless the project already writes them.
 - For framework questions beyond compliance (navigation, state, native modules), follow the framework's own guidance: Expo's skills at https://docs.expo.dev/skills/ for Expo projects.
 - Keep each change minimal and reversible. Do not refactor unrelated code.
-- After each change, run the project's tests and type checks if they exist, then `npx store-ready check` and confirm the finding is gone.
+- After each change, run the project's tests and type checks if they exist, then `npx @noknok-0/store-ready check` and confirm the finding is gone.
 - Report what you changed, by file, and anything the user still has to do in App Store Connect or Play Console.

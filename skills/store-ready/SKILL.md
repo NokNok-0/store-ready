@@ -1,6 +1,6 @@
 ---
 name: store-ready
-description: 'Entry point for getting a mobile app through App Store and Google Play review. Use when the user says "get my app ready for the App Store", "submit my app", "publish to Google Play", "release my Expo app", "is my app ready for review", "what is left before I can submit", "why would Apple reject this", or "prepare for App Store submission". Detects the project type (Expo, bare React Native, native iOS, native Android) and how far along the store work is, runs npx store-ready check, routes to the other store-ready skills in dependency order, and ends with a short status report in store/status.md and the next step.'
+description: 'Entry point for getting a mobile app through App Store and Google Play review. Use when the user says "get my app ready for the App Store", "submit my app", "publish to Google Play", "release my Expo app", "is my app ready for review", "what is left before I can submit", "why would Apple reject this", or "prepare for App Store submission". Detects the project type (Expo, bare React Native, native iOS, native Android) and how far along the store work is, runs npx @noknok-0/store-ready check, routes to the other store-ready skills in dependency order, and ends with a short status report in store/status.md and the next step.'
 license: MIT
 ---
 
@@ -54,10 +54,10 @@ A file that exists can still be stale. If dependencies in `package.json` (or Pod
 From the app's root:
 
 ```
-npx store-ready check --json
+npx @noknok-0/store-ready check --json
 ```
 
-Pass a path if the app is not in the current folder: `npx store-ready check apps/mobile --json`.
+Pass a path if the app is not in the current folder: `npx @noknok-0/store-ready check apps/mobile --json`.
 
 The command exits with code 1 when there are errors. That is expected; parse the output anyway. Shape:
 
@@ -79,7 +79,7 @@ The command exits with code 1 when there are errors. That is expected; parse the
 
 The checker is heuristic and local. It cannot see App Store Connect or Play Console, run the app, or log in. A clean run means "passes the checks we know about", nothing more.
 
-It reports URLs it finds (privacy policy, support, deletion page) as "found, not verified": it does not open them unless you pass `--verify-urls`. Run `npx store-ready check --json --verify-urls` once when you have network access. A URL that does not load is a blocking item in the report, routed to the skill that recorded it.
+It reports URLs it finds (privacy policy, support, deletion page) as "found, not verified": it does not open them unless you pass `--verify-urls`. Run `npx @noknok-0/store-ready check --json --verify-urls` once when you have network access. A URL that does not load is a blocking item in the report, routed to the skill that recorded it.
 
 For an `app.config.js`/`.ts` project, or to see what config plugins add to Info.plist, pass the effective config. Save it with this command, which writes plain UTF-8 in bash, zsh and PowerShell alike (a `>` redirect in Windows PowerShell can write UTF-16, which the checker cannot read):
 
@@ -87,7 +87,7 @@ For an `app.config.js`/`.ts` project, or to see what config plugins add to Info.
 node -e "require('fs').writeFileSync('expo-introspect.json', require('child_process').execSync('npx expo config --type introspect --json', { maxBuffer: 1 << 26 }))"
 ```
 
-Then run `npx store-ready check --json --config expo-introspect.json`, and delete `expo-introspect.json` when you are done.
+Then run `npx @noknok-0/store-ready check --json --config expo-introspect.json`, and delete `expo-introspect.json` when you are done.
 
 ## 4. Ask once
 
@@ -191,4 +191,4 @@ Before you finish:
 - Every URL in the report was opened (or `--verify-urls` was run) and its result is stated; none is reported as fine on the checker's "found, not verified" alone.
 - Every skill named in "Next" and "Then" exists in `skills/`, and the order matches the table in step 5.
 - If Android is in scope, the 12-testers, 14-days rule was raised and the user's answer is reflected in Timeline.
-- After any routed skill finishes, re-run `npx store-ready check --json` and confirm its issues are gone before moving on.
+- After any routed skill finishes, re-run `npx @noknok-0/store-ready check --json` and confirm its issues are gone before moving on.

@@ -86,7 +86,7 @@ Required for Google Play. Choose between sign-in-and-delete, an emailed confirma
 
 If the page lives outside this repository, write its copy into a file the user can hand over, and do not report the URL as done until it is live.
 
-Open the URL yourself, in a browser or with `node -e "fetch(process.argv[1]).then(r=>console.log(r.status,r.url),e=>console.log('failed',e.message))" <url>`, and record the status and date. A page that returns 404, needs a login, or is not pushed yet (a repository file link before the push) is not done: record it as blocking, tell the user to publish it, and open it again after. `npx store-ready check --verify-urls` does the same for the URLs the checker finds; without the flag it reports them as "found, not verified".
+Open the URL yourself, in a browser or with `node -e "fetch(process.argv[1]).then(r=>console.log(r.status,r.url),e=>console.log('failed',e.message))" <url>`, and record the status and date. A page that returns 404, needs a login, or is not pushed yet (a repository file link before the push) is not done: record it as blocking, tell the user to publish it, and open it again after. `npx @noknok-0/store-ready check --verify-urls` does the same for the URLs the checker finds; without the flag it reports them as "found, not verified".
 
 ## Local-only accounts
 
@@ -125,7 +125,7 @@ Then:
 - [ ] If the app sells App Store subscriptions: the billing notice shows for a subscribed user before confirmation.
 - [ ] The web deletion page loads logged out in a private window, completes or records a verified request (local-only: explains in-app deletion), and states what is kept and for how long. The recorded URL carries the status and date you opened it; one that did not load is reported as blocking, not done.
 - [ ] No privileged key appears in the app bundle or the repository (search app code and config for service role keys, Admin SDK credentials, Management API tokens, `.p8` contents).
-- [ ] `npx store-ready check` no longer warns about sign-up without a deletion path (it looks for a visible deletion screen or button, not just a delete function).
+- [ ] `npx @noknok-0/store-ready check` no longer warns about sign-up without a deletion path (it looks for a visible deletion screen or button, not just a delete function).
 - [ ] The confirmation and explanation text name only what this app deletes; no wording from the reference snippet is left over.
 - [ ] `store/account-deletion.md` exists with the in-app path, the URL line (with status and date) or the offline reasoning, and the data kept.
 - [ ] Tell the user it passes the checks we know about. Do not say it will be approved.

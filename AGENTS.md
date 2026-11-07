@@ -9,7 +9,7 @@ When the user wants to ship, submit, or fix a rejection, read `skills/store-read
 The checker runs without installing anything:
 
 ```bash
-npx store-ready check
+npx @noknok-0/store-ready check
 ```
 
 ## Skills

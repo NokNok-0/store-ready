@@ -65,9 +65,9 @@ Five Claude Code subagents. Other tools get the same roles described in `AGENTS.
 - `store-marketer`: listing text and screenshots; follows limits and 2.3.x rules.
 - `release-manager`: credentials, builds, submission checklist, rejection replies.
 
-### 3. The checker (`cli/`, published as `store-ready`)
+### 3. The checker (`cli/`, published on npm as `@noknok-0/store-ready`)
 
-`npx store-ready check [path]` reads the project and reports issues with the rule, a fix, and the source URL. No network, no account, Node 20+, minimal dependencies.
+`npx @noknok-0/store-ready check [path]` reads the project and reports issues with the rule, a fix, and the source URL. No network, no account, Node 20+, minimal dependencies.
 
 Checks for v1 (Expo and bare React Native first; native iOS/Android projects read where files exist):
 

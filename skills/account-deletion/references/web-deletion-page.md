@@ -55,6 +55,6 @@ Do not write that uninstalling the app removes everything unless you have checke
 
 ## After it is live
 
-- Open the URL logged out, in a private window, on a phone-width screen. It must load without the app installed. Record the HTTP status and the date; `npx store-ready check --verify-urls` checks it too.
+- Open the URL logged out, in a private window, on a phone-width screen. It must load without the app installed. Record the HTTP status and the date; `npx @noknok-0/store-ready check --verify-urls` checks it too.
 - Run the full flow with a test account and confirm the account and its data are gone.
 - Put the URL in `store/data-safety.android.md` (Delete account URL) and tell the user to enter it in Play Console, App content, Data safety.

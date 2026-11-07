@@ -49,7 +49,7 @@ A purpose string must say what data the app uses and what for, with an example. 
    node -e "require('fs').writeFileSync('expo-introspect.json', require('child_process').execSync('npx expo config --type introspect --json', { maxBuffer: 1 << 26 }))"
    ```
 
-   Read `ios.infoPlist` in `expo-introspect.json`; it includes what config plugins add. Pass it to the checker too: `npx store-ready check --config expo-introspect.json` warns on plugin default strings. Delete the file when done. The `node -e` form writes plain UTF-8 in every shell; PowerShell's `>` would write UTF-16, which JSON readers reject.
+   Read `ios.infoPlist` in `expo-introspect.json`; it includes what config plugins add. Pass it to the checker too: `npx @noknok-0/store-ready check --config expo-introspect.json` warns on plugin default strings. Delete the file when done. The `node -e` form writes plain UTF-8 in every shell; PowerShell's `>` would write UTF-16, which JSON readers reject.
 
    **Windows (and Linux):** go straight to the command above. `npx expo prebuild --platform ios` does not run there: Expo prints "Skipping generating the iOS native project files" and exits with "At least one platform must be enabled".
 
@@ -76,7 +76,7 @@ Uploads are checked for required-reason API declarations (enforced since 2024-05
 - **Heuristic entries** (`requiredReasonApis.heuristic`): confirm in the package's iOS source first.
 - **Third-party SDKs on Apple's list** need their own manifest, and a signature when shipped as binaries. If an installed SDK lacks one, the fix is updating the SDK, not copying reasons.
 - **Apple's email after upload** names the missing categories. Map each to a dependency with the scanner, add the reason, rebuild.
-- **The checker** (`npx store-ready check`) also reads each dependency's `PrivacyInfo.xcprivacy`; its `ios.privacy-manifest` list should match the scanner's `missingDeclarations`. If they differ, the package's own manifest file is the evidence: open it.
+- **The checker** (`npx @noknok-0/store-ready check`) also reads each dependency's `PrivacyInfo.xcprivacy`; its `ios.privacy-manifest` list should match the scanner's `missingDeclarations`. If they differ, the package's own manifest file is the evidence: open it.
 
 Full procedure, JSON and plist shapes: [references/privacy-manifest.md](references/privacy-manifest.md).
 
@@ -132,7 +132,7 @@ App Privacy details are required for new apps and updates, must include data col
 3. If the app uses expo-updates with Expo Update, answer "Yes" (data is collected) and include Device ID and Crash Data, with the purposes from https://docs.expo.dev/eas-update/store-privacy-declarations/. If the project points `updates.url` at its own server, declare what that server stores instead.
 4. Write `store/privacy.ios.md` from [references/privacy-answers-template.md](references/privacy-answers-template.md). Every row cites where the data comes from (file path or package). Unknowns go under "Questions for the user", not into guesses.
 5. Check the privacy policy is linked in App Store Connect metadata and inside the app (5.1.1(i)). If the app has no in-app link, add one to the settings or about screen.
-6. Open the privacy policy URL, in a browser or with `node -e "fetch(process.argv[1]).then(r=>console.log(r.status,r.url),e=>console.log('failed',e.message))" <url>`. Confirm it loads (HTTP 200 after redirects) and is a privacy policy for this app or developer. Write the result and today's date next to the URL in `store/privacy.ios.md`. If it does not load (404, not pushed yet, needs a login), do not mark it done: record it as blocking under "Questions for the user" and tell the user to publish it. `npx store-ready check --verify-urls` checks the URLs the checker finds; without that flag it reports them as "found, not verified".
+6. Open the privacy policy URL, in a browser or with `node -e "fetch(process.argv[1]).then(r=>console.log(r.status,r.url),e=>console.log('failed',e.message))" <url>`. Confirm it loads (HTTP 200 after redirects) and is a privacy policy for this app or developer. Write the result and today's date next to the URL in `store/privacy.ios.md`. If it does not load (404, not pushed yet, needs a login), do not mark it done: record it as blocking under "Questions for the user" and tell the user to publish it. `npx @noknok-0/store-ready check --verify-urls` checks the URLs the checker finds; without that flag it reports them as "found, not verified".
 
 For a local-first app, whether data that never leaves the device counts as collected decides most rows. Our sources do not quote Apple's definition: read it on https://developer.apple.com/app-store/app-privacy-details/ and cite it in "Not collected".
 
@@ -148,5 +148,5 @@ Tell the user to paste the answers into App Store Connect, App Privacy, and to u
 - [ ] Each permission request has a denial path; you traced it in code (and on a device or simulator if one is available).
 - [ ] Every AI provider found has a consent screen gating its requests, and appears in `store/privacy.ios.md`.
 - [ ] `store/privacy.ios.md` exists, has a row for every SDK in `dataCollection` that you confirmed, has Device ID and Crash Data if expo-updates with Expo Update is installed, and no example rows from the template are left.
-- [ ] `npx store-ready check` reports no purpose-string, privacy-manifest or privacy-policy errors.
+- [ ] `npx @noknok-0/store-ready check` reports no purpose-string, privacy-manifest or privacy-policy errors.
 - [ ] Tell the user the result passes the checks we know about. Do not say it will be approved.

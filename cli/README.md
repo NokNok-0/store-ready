@@ -7,10 +7,10 @@ A clean run means the project **passes the checks we know about**. It does not m
 ## Run
 
 ```sh
-npx store-ready check            # current directory
-npx store-ready check path/to/app --platform ios
-npx store-ready check . --github --strict   # in CI
-npx store-ready check . --verify-urls       # also open the URLs it finds
+npx @noknok-0/store-ready check            # current directory
+npx @noknok-0/store-ready check path/to/app --platform ios
+npx @noknok-0/store-ready check . --github --strict   # in CI
+npx @noknok-0/store-ready check . --verify-urls       # also open the URLs it finds
 ```
 
 | Flag | Effect |
@@ -31,7 +31,7 @@ Exit codes: `0` no errors (and no warnings with `--strict`), `1` errors found (o
 
 ```sh
 npx expo config --type introspect --json > store/expo-config.json
-npx store-ready check --config store/expo-config.json
+npx @noknok-0/store-ready check --config store/expo-config.json
 ```
 
 Native files are read when present: `ios/**/Info.plist`, `ios/**/PrivacyInfo.xcprivacy`, `ios/*.xcodeproj/project.pbxproj`, `AppIcon.appiconset`, `android/app/src/main/AndroidManifest.xml`, `android/**/build.gradle(.kts)`, `android/gradle.properties`, `package.json`. With installed dependencies, `node_modules/**/PrivacyInfo.xcprivacy` is read too (see `ios.privacy-manifest`).

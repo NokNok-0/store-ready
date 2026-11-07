@@ -54,7 +54,7 @@ Things to keep straight:
 - If both stores are affected, say so in one risk with both rules.
 - Do not flag something the rules file does not support. If you think there is a risk that is not covered, write it under "Not covered by our sources" with the official page to read, not as a finding.
 - Items listed under "Out of scope here" in the rules file get one line in "Checked" pointing to the owning skill.
-- Run `npx store-ready check --json` if it has not run in this session. Each `app.template-content` issue is an A9 lead: confirm it in the file, then record it.
+- Run `npx @noknok-0/store-ready check --json` if it has not run in this session. Each `app.template-content` issue is an A9 lead: confirm it in the file, then record it.
 - `mock-review` sends its template, placeholder and fake-integration findings here. When you are re-run for them, fix or record each one under A9 and say which mock review finding it answers.
 
 ## 4. Write `store/review-risks.md`

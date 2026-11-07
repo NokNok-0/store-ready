@@ -139,5 +139,5 @@ Write or replace the `## Login and payments` section in `store/review-risks.md` 
 - [ ] Any external purchase link is shown only in storefronts where the decision record says it is allowed, gated on the App Store storefront.
 - [ ] Play payments: each paid item on Android has a finding citing the Play policy pages, or "No payments on Android".
 - [ ] `store/review-risks.md` has the `## Login and payments` section with today's date; other sections are unchanged; every Evidence path exists; no `open` finding is marked resolved.
-- [ ] `npx store-ready check` no longer warns about third-party login without Sign in with Apple.
+- [ ] `npx @noknok-0/store-ready check` no longer warns about third-party login without Sign in with Apple.
 - [ ] Tell the user it passes the checks we know about. Do not say it will be approved.

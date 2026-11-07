@@ -18,7 +18,7 @@ To see the final values in an Expo project, read the introspected config. It run
 node -e "require('fs').writeFileSync('expo-introspect.json', require('child_process').execSync('npx expo config --type introspect --json', { maxBuffer: 1 << 26 }))"
 ```
 
-Read `ios.infoPlist` in `expo-introspect.json`, pass the file to the checker with `npx store-ready check --config expo-introspect.json` (it warns on plugin default strings), then delete it.
+Read `ios.infoPlist` in `expo-introspect.json`, pass the file to the checker with `npx @noknok-0/store-ready check --config expo-introspect.json` (it warns on plugin default strings), then delete it.
 
 On Windows and Linux, iOS prebuild does not run (Expo prints "Skipping generating the iOS native project files" and exits with "At least one platform must be enabled"), so use the command above. On a Mac, `npx expo prebuild --platform ios --no-install` and the generated `Info.plist` under `ios/` also work. Prebuild rewrites the `"ios"` and `"android"` scripts in `package.json` (to `expo run:ios` / `expo run:android`) and creates `ios/`: restore the scripts and delete `ios/` if it did not exist before.
 

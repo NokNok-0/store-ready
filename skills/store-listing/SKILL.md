@@ -104,7 +104,7 @@ Add these console fields when you have them. They are not measured text, but the
 
 Choose categories from the feature inventory: the category that matches what most of the inventory does. Read the category list in each console and use its names exactly. Picking Health & Fitness or Medical on Apple means a regulated medical device declaration (see `submission-checklist`), so say so to the user when you suggest it. If the project has no support page, ask the user for one; do not invent a URL.
 
-Open the URL before writing it, in a browser or with `node -e "fetch(process.argv[1]).then(r=>console.log(r.status,r.url),e=>console.log('failed',e.message))" <url>`. JSON has no place for a note, so tell the user the status and the date in your report. If it does not load, still write it (the checker needs it), but report it as blocking: the user must publish the page before submitting. `npx store-ready check --verify-urls` checks it again later.
+Open the URL before writing it, in a browser or with `node -e "fetch(process.argv[1]).then(r=>console.log(r.status,r.url),e=>console.log('failed',e.message))" <url>`. JSON has no place for a note, so tell the user the status and the date in your report. If it does not load, still write it (the checker needs it), but report it as blocking: the user must publish the page before submitting. `npx @noknok-0/store-ready check --verify-urls` checks it again later.
 
 Write paragraphs inside a description as `\n\n` and list lines as `\n`. Use a hyphen and a space for list items; do not use Markdown headings or bold, because both fields are plain text.
 
@@ -152,4 +152,4 @@ Tell the user:
 - [ ] No price, currency symbol or "free" in `name`, `subtitle` or `title`.
 - [ ] No other app, company or platform name in `keywords`; no "Android" or "Google Play" anywhere in the iOS listing.
 - [ ] The first sentence of each description says what the user can do.
-- [ ] If the project has the store-ready checker, `npx store-ready check` reports no listing errors.
+- [ ] If the project has the store-ready checker, `npx @noknok-0/store-ready check` reports no listing errors.

@@ -21,7 +21,7 @@ Every skill in `skills/` follows these rules. Reviewers reject skills that break
 
 - Facts about Apple, Google or Expo come only from `docs/sources/*.md`, copied into the skill's own `references/` with the source URL next to each fact. If a fact is not there, the skill tells the agent to open the official page and read it, and gives the URL. Never state a store rule from memory.
 - Write to the agent, in the imperative. Short sentences. Explain the reason behind a rule in one clause when it changes what the agent does.
-- Start with when to use the skill and what it produces. End with a "Verify" section: concrete checks the agent runs before saying it is done (re-run `npx store-ready check`, count bytes, open the file).
+- Start with when to use the skill and what it produces. End with a "Verify" section: concrete checks the agent runs before saying it is done (re-run `npx @noknok-0/store-ready check`, count bytes, open the file).
 - Every skill produces a change to the project or a file the user pastes into a console. No essays, no plans for their own sake.
 - Ask the user only for what cannot be found in the project (legal entity name, whether they sell in the EU, a demo account password). Ask once, all together.
 - Never promise approval. Say "passes the checks we know about".

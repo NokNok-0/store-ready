@@ -66,10 +66,10 @@ function terminalSvg({ rows, summary }) {
     }
   });
   const height = top + (shown.length + 2) * lineH;
-  const command = 'npx store-ready check examples/habit-tracker';
+  const command = 'npx @noknok-0/store-ready check examples/habit-tracker';
   const typeSteps = command.length;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="store-ready check run on the sample app: ${esc(summary)}">
-<title>npx store-ready check on the sample app: ${esc(summary)}</title>
+<title>npx @noknok-0/store-ready check on the sample app: ${esc(summary)}</title>
 <style>
 text{font-family:${FONT};font-size:13px}
 .cmd{clip-path:inset(0 100% 0 0);animation:type ${cycle}s steps(${typeSteps}) infinite}

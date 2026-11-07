@@ -1,5 +1,5 @@
 {
-  "name": "store-ready",
+  "name": "@noknok-0/store-ready",
   "version": "0.1.0",
   "description": "Checks an Expo, React Native, iOS or Android project for issues that get apps rejected by App Store and Google Play review.",
   "type": "module",

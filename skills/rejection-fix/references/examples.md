@@ -99,7 +99,7 @@ Project: Moodnote, Expo journaling app. Email sign-up and Sign in with Apple thr
 - The server function deletes the journal entries and the auth user, and revokes the Sign in with Apple token through Apple's REST API.
 - No deactivate-only option, no "email us" step.
 - Android is also live, so the same flow covers Play, plus a web deletion page for Play's requirement (https://support.google.com/googleplay/android-developer/answer/13327111). `store/data-safety.android.md` updated to declare it.
-- Build number raised from 21 to 22. `npx store-ready check` no longer reports the deletion warning.
+- Build number raised from 21 to 22. `npx @noknok-0/store-ready check` no longer reports the deletion warning.
 
 **Reply.**
 

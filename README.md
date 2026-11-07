@@ -15,7 +15,7 @@ Works with Claude Code, Codex, Cursor, Gemini CLI and any agent that reads Agent
 </div>
 
 <p align="center">
-  <img src="docs/images/check.svg" alt="npx store-ready check on the sample app finds 6 errors and 13 warnings: missing purpose strings, no bundle identifier, Expo template icons, undeclared privacy manifest reasons, no account deletion, Google login without Sign in with Apple, no privacy policy" width="100%">
+  <img src="docs/images/check.svg" alt="npx @noknok-0/store-ready check on the sample app finds 6 errors and 13 warnings: missing purpose strings, no bundle identifier, Expo template icons, undeclared privacy manifest reasons, no account deletion, Google login without Sign in with Apple, no privacy policy" width="100%">
 </p>
 
 The checker run above is the sample app before the skills ran, one line per finding. In the [full report](examples/habit-tracker/docs/check-before.txt), every finding also has the fix and a link to the official Apple or Google page it is based on.
@@ -30,7 +30,7 @@ store-ready does that part. Your agent runs the checker, fixes the code, and wri
 
 | | The checker | The skills |
 |---|---|---|
-| What it is | A command: `npx store-ready check` | Instructions your AI agent loads |
+| What it is | A command: `npx @noknok-0/store-ready check` | Instructions your AI agent loads |
 | What it does | Reads the project and reports what would get it rejected | Fixes what the checker found and writes the store forms |
 | Changes your files | Never. Read-only, offline unless you pass `--verify-urls` | Yes: code, app config, and the files under `store/` |
 | Needs an agent | No. Run it yourself or in CI | Yes: Claude Code, Codex, Cursor, Gemini CLI |
@@ -61,7 +61,7 @@ gemini extensions install https://github.com/NokNok-0/store-ready
 **Just the checker** (no agent needed)
 
 ```bash
-npx store-ready check
+npx @noknok-0/store-ready check
 ```
 
 Install the skills one way only. Installing both the plugin and the skills CLI gives you every skill twice.
@@ -107,7 +107,7 @@ Full reports: [before](examples/habit-tracker/docs/check-before.txt) and [after]
 
 ## The checker
 
-`npx store-ready check [path]` reads the project without running it. No network, no account, no dependencies, Node 20+.
+`npx @noknok-0/store-ready check [path]` reads the project without running it. No network, no account, no dependencies, Node 20+.
 
 | Check | What it looks for |
 |---|---|
@@ -145,7 +145,7 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 22
-      - run: npx store-ready check --github --strict
+      - run: npx @noknok-0/store-ready check --github --strict
 ```
 
 For an `app.config.js` or `app.config.ts` project, install dependencies first, save the effective config (`npx expo config --type introspect --json > expo-config.json` works on Linux runners), and add `--config expo-config.json`. The checker stays offline in CI unless you add `--verify-urls`, which only contacts public hosts.

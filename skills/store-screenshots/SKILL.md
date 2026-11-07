@@ -141,4 +141,4 @@ Tell the user:
 - [ ] Android screenshots are 2:1 or squarer.
 - [ ] `store/screenshots/plan.md` lists every image, in upload order, with its capture method.
 - [ ] Web captures: no iOS image shows an Android-style back arrow; `capture.json` re-runs cleanly (`node <this-skill>/scripts/capture.mjs store/screenshots/capture.json` exits 0).
-- [ ] If the project has the store-ready checker, `npx store-ready check` reports no screenshot errors.
+- [ ] If the project has the store-ready checker, `npx @noknok-0/store-ready check` reports no screenshot errors.

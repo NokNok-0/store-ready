@@ -24,7 +24,7 @@ Checks and their rules are in [references/checks.md](references/checks.md). The 
 Two differences from the real thing, both deliberate:
 
 - You cannot run the build. Anything that needs a running app, a login or a console screen is "Not verified", never a finding. Do not guess that something crashes or that a backend is down.
-- Public URLs are the exception: open every privacy policy, support and deletion URL recorded in the project, as a reviewer would. Record the HTTP status and today's date. One that does not load is a finding, not a Not verified line. Only if you cannot make network requests at all is it Not verified. `npx store-ready check --json --verify-urls` opens the URLs the checker finds.
+- Public URLs are the exception: open every privacy policy, support and deletion URL recorded in the project, as a reviewer would. Record the HTTP status and today's date. One that does not load is a finding, not a Not verified line. Only if you cannot make network requests at all is it Not verified. `npx @noknok-0/store-ready check --json --verify-urls` opens the URLs the checker finds.
 - You cite the source URL for every finding, so the user can check the rule themselves.
 
 ## 1. Gather
@@ -40,7 +40,7 @@ Read, in this order, and note what is missing:
 Then run the checker:
 
 ```
-npx store-ready check --json
+npx @noknok-0/store-ready check --json
 ```
 
 It exits with code 1 when it finds errors; parse the output anyway. Treat each `error` as a confirmed finding: write it in the store format with its `source`. Treat each `warning` as a lead to check by hand, including `app.template-content` (template icons, `example.com`, lorem ipsum, "coming soon", "not available yet"). A URL the checker reports as "found, not verified" is unchecked, not passed: open it. If the checker cannot run, say so in the section header and do every check by hand.

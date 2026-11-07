@@ -51,7 +51,7 @@ Mark items `done` or `todo` from evidence in the project. Do not ask the user wh
 | EAS profiles and submit config | `eas.json` |
 | Secrets in git | service account JSON, `.p8` keys, keystores, `credentials.json` tracked by git |
 
-If `npx store-ready check` is available, run it and use its results for the items it covers. Run it with `--verify-urls` when you have network access; without the flag it lists URLs as "found, not verified", which is not evidence.
+If `npx @noknok-0/store-ready check` is available, run it and use its results for the items it covers. Run it with `--verify-urls` when you have network access; without the flag it lists URLs as "found, not verified", which is not evidence.
 
 ### URLs: open them
 
@@ -129,4 +129,4 @@ Tell the user:
 - [ ] The EU DSA trader status row is present even if the user does not distribute in the EU.
 - [ ] No secret (service account key, API key, keystore) is tracked by git, or it is the top `todo`.
 - [ ] Every row's source is a URL from the references or another skill's output file.
-- [ ] If `npx store-ready check` is available, it was run and its errors appear as `todo` rows.
+- [ ] If `npx @noknok-0/store-ready check` is available, it was run and its errors appear as `todo` rows.
