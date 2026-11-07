@@ -1,6 +1,6 @@
 # store-ready
 
-Skills and a checker that take a mobile app from "it runs" to "it passes App Store and Google Play review".
+Skills and a checker that take a mobile app from "it runs" to "ready for App Store and Google Play review".
 
 ## Start here
 

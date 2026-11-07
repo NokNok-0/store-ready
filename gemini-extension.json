@@ -1,6 +1,6 @@
 {
   "name": "store-ready",
-  "description": "Get a mobile app through App Store and Google Play review: compliance checks, privacy and data safety forms, store listings, screenshots, review notes and rejection fixes.",
+  "description": "Prepare a mobile app for App Store and Google Play review: compliance checks, privacy and data safety forms, store listings, screenshots, review notes and rejection fixes.",
   "version": "0.1.0",
   "contextFileName": "GEMINI.md"
 }

@@ -24,12 +24,12 @@ Recent changes (Apple News):
 
 | Guideline | Trigger | Fix | Source |
 |---|---|---|---|
-| 2.1 App completeness | Crashes, placeholder content, broken links, missing or expired demo login, backend down, IAP not reviewable | Working demo account for every role in Review Notes (include 2FA path); for subscriptions also give an account with an expired subscription; demo mode only with Apple's prior approval; hardware-dependent apps attach a real-device video; explain unreviewable IAP in notes (2.1(b)) | https://developer.apple.com/help/app-review/before-submitting-for-review/complete-review |
+| 2.1 App completeness | Crashes, placeholder content, broken links, missing or expired demo login, backend down, IAP not reviewable | Working demo account for every role in Review Notes (include 2FA path); if the app offers auto-renewable subscriptions also give an account with an expired subscription; demo mode only with Apple's prior approval; hardware-dependent apps attach a real-device video; explain unreviewable IAP in notes (2.1(b)) | https://developer.apple.com/help/app-review/before-submitting-for-review/complete-review |
 | 2.3 / 2.3.1(a) Accurate metadata | Misleading or generic metadata or notes | Describe new features specifically in Review Notes | guidelines |
 | 2.3.3 Screenshots | Splash, login or title-art-only screenshots, outdated UI, overlays hiding UI | More than half of the screenshots for each device size must show the app in use | https://developer.apple.com/help/app-review/guideline-reference/2-3-3-screenshots |
 | 2.3.7 | Keyword stuffing, trademarks or prices in the name | Clean name and subtitle | guidelines |
 | 2.3.10 | Other platforms' names or imagery | Remove them | guidelines |
-| 2.5.1 / 2.5.2 / 2.5.4 / 2.5.14 / 2.5.19 | Private APIs; downloaded code that changes features; background modes used for other purposes; recording without visible consent; hidden features | Remove or disclose | guidelines |
+| 2.5.1 / 2.5.2 / 2.5.4 / 2.5.14 / 2.5.19 | Private APIs; downloaded code that changes features; background modes used for other purposes; recording without visible consent; hidden features | Remove; for 2.5.19, remove the feature or make it available and describe it (disclosing a dormant feature does not make it allowed) | guidelines |
 | 4.2, 4.2.2, 4.2.3 Minimum functionality | Web clippings, link collections, marketing-only apps, app needs another app to work | Add native, app-like value | guidelines |
 | 4.2.6 | Built from a commercial template or app-generation service | Must be submitted by the content provider | guidelines |
 | 4.3(a)/(b) Spam | Many bundle IDs for the same app; saturated categories | Merge into one app with IAP variants; differentiate | guidelines |
@@ -39,7 +39,7 @@ Recent changes (Apple News):
 | 5.1.1(i) | Missing privacy policy | Link it in App Store Connect metadata and inside the app | guidelines |
 | 5.1.1(ii) | Vague permission purpose strings | Say what the data is used for, with an example | https://developer.apple.com/help/app-review/guideline-reference/5-1-1-purpose-strings |
 | 5.1.1(v) | Account creation without in-app deletion | See Account deletion | https://developer.apple.com/help/app-review/guideline-reference/5-1-1-account-deletion |
-| 5.1.1(ix) | Regulated field (banking, health, gambling, crypto, air travel) from an individual | Submit from the legal entity | guidelines |
+| 5.1.1(ix) | Regulated field (banking and financial services, healthcare, gambling, legal cannabis, air travel, crypto exchanges) or sensitive user information, from an individual | Apple: "should be submitted by a legal entity that provides the services, and not by an individual developer" (a recommendation, not stated as an absolute bar) | guidelines |
 | 5.1.2(i) | Sharing data (including with AI providers) without consent; forcing push, location or tracking permission to use the app | Disclose and get explicit permission; app must work without optional permissions | guidelines |
 | 1.2 User-generated content | No moderation tools | Content filter, report mechanism, user blocking, published contact info | guidelines |
 | 1.5 Developer information | Inaccurate contact info | Accurate contact info in app and a working Support URL | guidelines |
@@ -69,9 +69,9 @@ Source: https://developer.apple.com/help/app-review/after-submitting-for-review/
 - Account deletion (https://developer.apple.com/help/app-review/guideline-reference/5-1-1-account-deletion): users must be able to start deletion inside the app; deactivation alone is not enough; applies to all account types; if deletion completes on the web, link directly to that page; no phone or email-only flows unless in a 5.1.1(ix) regulated field; apps using Sign in with Apple must revoke tokens via the REST API; tell subscribers that Apple billing continues until they cancel.
 - Age ratings: tiers 4+, 9+, 13+, 16+, 18+; new questionnaire answers were due 2026-01-31 (https://developer.apple.com/news/?id=ks775ehf); social-media capability questions required from Sep 2026 (https://developer.apple.com/news/?id=tlur8uvi); new descriptors Shared Location and Dating & Relationships (dating forces 18+) required on submissions from 2026-11-16 and for all apps by 2027-01-12 (https://developer.apple.com/news/?id=yxkh08us).
 - EU Digital Services Act trader status: must be declared even if not distributing in the EU; apps without it removed from the EU since 2025-02-17; traders must provide verified address, phone and email (https://developer.apple.com/help/app-store-connect/manage-compliance-information/manage-european-union-digital-services-act-trader-requirements).
-- Regulated medical device declaration required for health and medical apps in the EU, UK and US (https://developer.apple.com/news/?id=nyqbfz1y).
+- Regulated medical device declaration (https://developer.apple.com/news/?id=nyqbfz1y, https://developer.apple.com/help/app-store-connect/manage-app-information/declare-regulated-medical-device-status): apps available in the EU/EEA, UK or US declare whether they are a regulated medical device if their primary or secondary category is Health & Fitness or Medical, or the age rating questionnaire says "Frequent" Medical or Treatment Information. Apps with no health or medical features declare No.
 - Export compliance (https://developer.apple.com/help/app-store-connect/manage-app-information/overview-of-export-compliance): asked on each submission; an Info.plist key skips the question (`ITSAppUsesNonExemptEncryption`, named in linked docs). France has separate rules.
-- TestFlight: up to 10,000 external testers; first build of a version needs Beta App Review; max 6 review submissions per 24 hours. 90-day build expiry is **unconfirmed**.
+- TestFlight (https://developer.apple.com/testflight/, https://developer.apple.com/help/app-store-connect/test-a-beta-version/testflight-overview): up to 10,000 external testers; the first build added to a group goes to App Review, later builds may not need a full review; a build can be tested for up to 90 days. A limit of 6 review submissions per 24 hours is **unconfirmed** (not on either page).
 
 ## Metadata limits
 

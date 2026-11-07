@@ -21,8 +21,8 @@ Statuses: `done` (evidence given), `todo` (we can do it in the project), `user` 
 | A2 | Version and a new build number for this upload | | | https://docs.expo.dev/submit/introduction/ |
 | A3 | Built with Xcode 26+ and the 26 SDKs; deployment target iOS 13+ | | | https://developer.apple.com/news/upcoming-requirements/ |
 | A4 | Export compliance: `ITSAppUsesNonExemptEncryption` set to the user's answer | | | https://developer.apple.com/help/app-store-connect/manage-app-information/overview-of-export-compliance |
-| A5 | Regulated medical device declaration (health and medical apps, EU/UK/US) | | | https://developer.apple.com/news/?id=nyqbfz1y |
-| A6 | Submitted by the legal entity if in a regulated field (5.1.1(ix)) | | | https://developer.apple.com/app-store/review/guidelines/ |
+| A5 | Regulated medical device declaration, yes or no (EU/EEA, UK, US; category Health & Fitness or Medical, or "Frequent" Medical or Treatment Information) | | | https://developer.apple.com/help/app-store-connect/manage-app-information/declare-regulated-medical-device-status |
+| A6 | Regulated field or sensitive data (5.1.1(ix)): Apple says it should be submitted by the legal entity providing the service | | | https://developer.apple.com/app-store/review/guidelines/ |
 | A7 | App Privacy details, including SDK data | | `store/privacy.ios.md` | https://developer.apple.com/app-store/app-privacy-details/ |
 | A8 | Privacy manifest reasons for required-reason APIs | | | https://developer.apple.com/support/third-party-SDK-requirements/ |
 | A9 | Age rating, including social-media questions and the Shared Location and Dating & Relationships descriptors | | `store/age-rating.md` | https://developer.apple.com/news/?id=yxkh08us |
@@ -48,9 +48,12 @@ Statuses: `done` (evidence given), `todo` (we can do it in the project), `user` 
 | G6 | Target API 36 (Wear OS/Automotive 35, TV/XR 34) | | | https://developer.android.com/google/play/requirements/target-sdk |
 | G7 | Android App Bundle (.aab) | | | https://developer.android.com/guide/app-bundle |
 | G8 | Play App Signing; upload key kept safe | | | https://developer.android.com/studio/publish/app-signing |
+| G8a | 16 KB page sizes: native libraries in the release build are 16 KB aligned (required for updates from 2027-02-01) | | <how it was checked> | https://developer.android.com/guide/practices/page-sizes |
 | G9 | Data safety form, including SDK data | | `store/data-safety.android.md` | https://support.google.com/googleplay/android-developer/answer/10787469 |
 | G10 | Permission declarations | | `store/data-safety.android.md` | play-data-safety skill |
 | G11 | Content rating (IARC) | | `store/age-rating.md` | https://support.google.com/googleplay/android-developer/answer/9898843 |
+| G11a | Ads declaration (including ads from SDKs) | | `store/age-rating.md` | https://support.google.com/googleplay/android-developer/answer/9859455 |
+| G11b | Target audience and content (target age groups; Families policy if under 13) | | `store/age-rating.md` | https://support.google.com/googleplay/android-developer/answer/9867159 |
 | G12 | App access / sign-in details | | `store/app-access.android.txt` | https://support.google.com/googleplay/android-developer/answer/9859455 |
 | G13 | Account deletion: in-app path and web link (the link must load; offline-only accounts are out of policy scope) | | <in-app path>; <url>, opened <date>: HTTP <status> | https://support.google.com/googleplay/android-developer/answer/13327111 |
 | G14 | Privacy policy URL | | <url>, opened <date>: HTTP <status> | https://support.google.com/googleplay/android-developer/answer/10787469 |

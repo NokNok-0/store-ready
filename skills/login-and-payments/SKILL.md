@@ -117,7 +117,7 @@ Code changes: match the project's purchases library and paywall components. Keep
 
 - Every IAP product the build offers must be reviewable: in-app purchases that cannot be reviewed are a 2.1 rejection. Check each product the code references exists in App Store Connect, and explain anything the reviewer cannot reach on their own in Review Notes (2.1(b)).
 - A paywall or "Subscribe" button with nothing behind it (disabled, "not available yet", no purchases SDK) cannot be reviewed either. Ask the user (step 1) whether to build the purchase or remove the paid tier, its button and every limit it enforces. Record the decision; the placeholder itself is an `app-review-risk` A9 item.
-- Subscriptions: the reviewer needs a working demo account and an account with an expired subscription. Pass both to `review-notes`; ask the user for the expired one.
+- Auto-renewable subscriptions: the reviewer needs a working demo account and an account with an expired subscription. Pass both to `review-notes`; ask the user for the expired one.
 - Account deletion must tell App Store subscribers that Apple billing continues until they cancel (see `account-deletion`).
 
 ## 4. Google Play payments

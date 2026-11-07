@@ -28,15 +28,15 @@ Copied from `docs/sources/` in the store-ready repo, checked 2026-11-07. Where a
 | Export compliance | Asked on each submission. The Info.plist key `ITSAppUsesNonExemptEncryption` answers it in the build so the question is skipped. France has separate rules. Whether the app's encryption is exempt is a legal answer: read the page, and ask the user if the app does anything beyond standard OS networking. | https://developer.apple.com/help/app-store-connect/manage-app-information/overview-of-export-compliance |
 | Export compliance in Expo | `ios.config.usesNonExemptEncryption` in the app config sets `ITSAppUsesNonExemptEncryption`; `ios.infoPlist` can set Info.plist keys directly. | https://docs.expo.dev/versions/latest/config/app/ |
 | EU Digital Services Act trader status | Must be declared even if the app is not distributed in the EU. Apps without it have been removed from the EU storefronts since 2025-02-17. Traders must provide a verified address, phone number and email. How Apple decides who is a trader is **not in our sources**: read the factors and examples on the page before suggesting an answer, and let the user decide. | https://developer.apple.com/help/app-store-connect/manage-compliance-information/manage-european-union-digital-services-act-trader-requirements |
-| Regulated medical device | Health and medical apps declare regulated medical device status for the EU, UK and US. | https://developer.apple.com/news/?id=nyqbfz1y |
-| Regulated fields | Banking, health, gambling, crypto exchanges and air travel apps must be submitted by the legal entity, not an individual (5.1.1(ix)). | https://developer.apple.com/app-store/review/guidelines/ |
+| Regulated medical device | Apps available in the EU/EEA, UK or US must declare whether they are a regulated medical device if their primary or secondary category is Health & Fitness or Medical, or the age rating questionnaire says "Frequent" Medical or Treatment Information. The declaration is yes or no: most health apps declare No. Whether the app is a regulated device is the developer's call; never decide it for them. | https://developer.apple.com/help/app-store-connect/manage-app-information/declare-regulated-medical-device-status |
+| Regulated fields | 5.1.1(ix): apps in highly regulated fields (banking and financial services, healthcare, gambling, legal cannabis, air travel, crypto exchanges) or that require sensitive user information "should be submitted by a legal entity that provides the services, and not by an individual developer". Treat an individual account as a high review risk, not an automatic block. | https://developer.apple.com/app-store/review/guidelines/ |
 
 ## App Store Connect metadata
 
 | Item | Fact | Source |
 |---|---|---|
 | App Privacy | Required for new apps and updates; must include data collected by third-party SDKs; can be updated without a new build. | https://developer.apple.com/app-store/app-privacy-details/ |
-| expo-updates and App Privacy | Apps using expo-updates should answer "Yes" and select Crash Data. | https://docs.expo.dev/guides/apple-privacy/ |
+| expo-updates and App Privacy | With Expo Update: answer "Yes", declare Device ID and Crash Data. Self-hosted: declare what the server stores. | https://docs.expo.dev/eas-update/store-privacy-declarations/ |
 | Privacy manifest | Required-reason API declarations enforced at upload since 2024-05-01. | https://developer.apple.com/support/third-party-SDK-requirements/ |
 | Age rating | Tiers 4+, 9+, 13+, 16+, 18+. Social-media capability questions required from September 2026. Shared Location and Dating & Relationships descriptors required on submissions from 2026-11-16, all apps by 2027-01-12. | https://developer.apple.com/news/?id=tlur8uvi, https://developer.apple.com/news/?id=yxkh08us |
 | Screenshots | Apple names display classes, not inches. Required: at least one "iPhone with Dynamic Island (medium display)" screenshot, 1179×2556 or 1206×2622; "iPad 13-inch display", 2064×2752 or 2048×2732, if the app runs on iPad. Other classes optional. 1–10 per device size, no alpha or transparency. | https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications |
@@ -52,7 +52,8 @@ Copied from `docs/sources/` in the store-ready repo, checked 2026-11-07. Where a
 |---|---|
 | Up to 10,000 external testers. | Apple; confirm at https://developer.apple.com/testflight/ |
 | The first build of a version needs Beta App Review before external testers get it. | Apple; confirm at https://developer.apple.com/testflight/ |
-| At most 6 review submissions per 24 hours. | Apple; confirm at https://developer.apple.com/testflight/ |
+| A limit of 6 beta review submissions per 24 hours is **unconfirmed**: neither TestFlight page states it. Do not plan around it. | https://developer.apple.com/testflight/, https://developer.apple.com/help/app-store-connect/test-a-beta-version/testflight-overview |
+| A TestFlight build can be tested for up to 90 days, then becomes unavailable to testers. | https://developer.apple.com/help/app-store-connect/test-a-beta-version/testflight-overview |
 | `eas submit -p ios` uploads a build to App Store Connect for TestFlight, from Windows, macOS or Linux. | https://docs.expo.dev/submit/testflight/ |
 | A build's expiry period is **not confirmed** in our sources. | https://developer.apple.com/testflight/ |
 

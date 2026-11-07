@@ -53,6 +53,11 @@ Estimated tier: 4+ (estimate)
 
 Retake this questionnaire whenever the app's content changes.
 
+## Google Play (ads and target audience)
+Contains ads: No (based on: no ad SDK in `package.json`, no ad code in `src/`)
+Target age groups: the user decides; nothing in the app is aimed at children (based on: a general habit tracker with email sign-up)
+Designed primarily for children under 13: No.
+
 ## You must confirm
 
 - [ ] Children are not an intended audience (if they are, read the Families section of https://play.google/developer-content-policy/ first).

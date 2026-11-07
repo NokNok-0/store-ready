@@ -87,6 +87,7 @@ Result: 1 High, 1 Medium
 
 - 4.3(a) duplicates: one bundle ID (`com.example.shop`), no flavors or brand folders.
 - 4.1 copycats: name, icon and keywords contain no other brand.
+- 5.2 content rights: every third-party image, font, sound, video, dataset and service content in the app has a recorded license or permission, or is listed as "license not confirmed".
 - 5.1.1(ix) regulated fields: no finance, health, gambling, crypto or travel features.
 - 1.2 user content: no content is shared between users.
 - A9 template and placeholder content: opened `assets/images/icon.png`, `splash-icon.png` and the adaptive icon layers, all original art; no `example.com`, lorem ipsum or "coming soon" in `src/`; the Google button calls `@react-native-google-signin/google-signin`.

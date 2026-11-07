@@ -127,7 +127,7 @@ App Privacy details are required for new apps and updates, must include data col
 
 1. Open https://developer.apple.com/app-store/app-privacy-details/ and read the current data types, purposes and questions. Use Apple's names exactly.
 2. Build one row per data type from the inventory: own backend, auth provider, and each SDK in `dataCollection`. For each SDK, read its own privacy documentation and its configuration in this project.
-3. If the app uses expo-updates, answer "Yes" (data is collected) and include Crash Data.
+3. If the app uses expo-updates with Expo Update, answer "Yes" (data is collected) and include Device ID and Crash Data, with the purposes from https://docs.expo.dev/eas-update/store-privacy-declarations/. If the project points `updates.url` at its own server, declare what that server stores instead.
 4. Write `store/privacy.ios.md` from [references/privacy-answers-template.md](references/privacy-answers-template.md). Every row cites where the data comes from (file path or package). Unknowns go under "Questions for the user", not into guesses.
 5. Check the privacy policy is linked in App Store Connect metadata and inside the app (5.1.1(i)). If the app has no in-app link, add one to the settings or about screen.
 6. Open the privacy policy URL, in a browser or with `node -e "fetch(process.argv[1]).then(r=>console.log(r.status,r.url),e=>console.log('failed',e.message))" <url>`. Confirm it loads (HTTP 200 after redirects) and is a privacy policy for this app or developer. Write the result and today's date next to the URL in `store/privacy.ios.md`. If it does not load (404, not pushed yet, needs a login), do not mark it done: record it as blocking under "Questions for the user" and tell the user to publish it. `npx store-ready check --verify-urls` checks the URLs the checker finds; without that flag it reports them as "found, not verified".
@@ -145,6 +145,6 @@ Tell the user to paste the answers into App Store Connect, App Privacy, and to u
 - [ ] The privacy policy URL in `store/privacy.ios.md` has a status and a date from when you opened it, and it loaded; otherwise the user has been told it is blocking.
 - [ ] Each permission request has a denial path; you traced it in code (and on a device or simulator if one is available).
 - [ ] Every AI provider found has a consent screen gating its requests, and appears in `store/privacy.ios.md`.
-- [ ] `store/privacy.ios.md` exists, has a row for every SDK in `dataCollection` that you confirmed, has Crash Data if expo-updates is installed, and no example rows from the template are left.
+- [ ] `store/privacy.ios.md` exists, has a row for every SDK in `dataCollection` that you confirmed, has Device ID and Crash Data if expo-updates with Expo Update is installed, and no example rows from the template are left.
 - [ ] `npx store-ready check` reports no purpose-string, privacy-manifest or privacy-policy errors.
 - [ ] Tell the user the result passes the checks we know about. Do not say it will be approved.

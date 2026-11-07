@@ -52,6 +52,10 @@ or `eas build -p all --profile production`.
 
 Every upload needs a new `versionCode` (Android) or `buildNumber` (iOS) (https://docs.expo.dev/submit/introduction/). Before each store build, confirm how the project increments them: in app config, or managed by EAS. The eas.json schema documents the options. A rejected upload because of a reused number costs a full build.
 
+## Uploading needs the user's approval
+
+Every command in the two sections below uploads a build to Apple or Google. Run one only after the user approves that upload in this conversation, having been shown the platform, version, build number, destination and the exact command. `eas build --auto-submit` uploads too. A finished build is not approval to upload it.
+
 ## Submit to App Store Connect and TestFlight
 
 Sources: https://docs.expo.dev/submit/introduction/, https://docs.expo.dev/submit/testflight/
@@ -63,7 +67,7 @@ eas submit -p ios --latest
 - Creates the App Store Connect app if it is missing.
 - CI (`--non-interactive`) needs an App Store Connect API key from a user with the Account Holder or Admin role.
 - `--path` submits a specific build file; `eas build --auto-submit` builds and submits in one step.
-- The build then appears in TestFlight. External testers need Beta App Review for the first build of a version.
+- The build then appears in TestFlight. The first build added to an external testing group goes to Beta App Review; later builds may not need a full review (https://developer.apple.com/help/app-store-connect/test-a-beta-version/testflight-overview).
 
 ## Submit to Google Play
 

@@ -10,7 +10,7 @@ From `docs/sources/apple.md` (checked 2026-11-07). "Guidelines" means https://de
 
 - Causes: crash; placeholder content; broken links; demo login missing, wrong or expired; backend down, or reachable only from your own network or VPN; IAP that cannot be reviewed.
 - Look: `store/review-notes.txt`; auth guard and 2FA code; production API URL in app config and `eas.json` env; `lorem`, "coming soon", `localhost`, staging hosts; IAP product IDs in code.
-- Fix: a working demo account for every role, on the production backend, with the 2FA path described; for subscriptions also an account with an expired subscription; demo mode only with Apple's prior approval; for hardware-dependent apps attach a real-device video; explain IAP that cannot be reviewed in the notes (2.1(b)). Review Notes limit 4,000 bytes. For a crash, ask the user for the crash log or screenshot attached to the rejection; you cannot reproduce it from files.
+- Fix: a working demo account for every role, on the production backend, with the 2FA path described; if the app offers auto-renewable subscriptions also an account with an expired subscription; demo mode only with Apple's prior approval; for hardware-dependent apps attach a real-device video; explain IAP that cannot be reviewed in the notes (2.1(b)). Review Notes limit 4,000 bytes. For a crash, ask the user for the crash log or screenshot attached to the rejection; you cannot reproduce it from files.
 - Owner: `review-notes`; code fixes yourself.
 - Build: not for notes or server fixes; yes for crashes and placeholder content.
 - Source: https://developer.apple.com/help/app-review/before-submitting-for-review/complete-review
@@ -48,7 +48,7 @@ From `docs/sources/apple.md` (checked 2026-11-07). "Guidelines" means https://de
 
 - Causes: private APIs (2.5.1); downloaded code that changes features (2.5.2); background modes used for other purposes (2.5.4); recording without visible consent (2.5.14); hidden, dormant or undocumented features (2.5.19, added 2026-10-16; obfuscating to hide features can end the developer account).
 - Look: if the rejection names an API or symbol, search the code and dependencies for it; OTA update setup; `UIBackgroundModes` against what the code does in the background; recording code and its on-screen indicator; feature flags, remote config, region or date switches, hidden routes.
-- Fix: remove or disclose. For 2.5.19, either remove the gated feature or turn it on and describe it in Review Notes.
+- Fix: for 2.5.19, either remove the gated feature from the build, or make it available to users and describe how to reach it in Review Notes. Describing a feature that stays switched off does not fix it.
 - Build: yes, except a 2.5.19 disclosure where the feature is already in the build and only the notes were missing.
 - Source: guidelines; https://developer.apple.com/news/?id=92th7e5i
 
@@ -129,7 +129,7 @@ From `docs/sources/apple.md` (checked 2026-11-07). "Guidelines" means https://de
 ### 5.1.1(ix) Regulated fields
 
 - Cause: banking, health, gambling, crypto (including exchanges), air travel or another regulated field, submitted by an individual.
-- Fix: submit from the legal entity. Read 5.1.1(ix) for the full list.
+- Fix: submit from an organization account of the legal entity that provides the service, as Apple asks ("should be submitted by a legal entity"). Read 5.1.1(ix) for the full list.
 - Build: a new upload from the organization account, or removal of the regulated feature.
 - Sources: guidelines; https://developer.apple.com/news/?id=ey6d8onl
 

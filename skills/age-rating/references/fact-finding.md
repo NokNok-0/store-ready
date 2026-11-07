@@ -51,7 +51,7 @@ Yes if: the user can reach arbitrary web content from inside the app. Fixed page
 
 Look for: real-money betting or wagering; simulated casino games (slots, poker, roulette) with no real money; paid random rewards (loot boxes, gacha, mystery packs); sweepstakes, contests, prize draws.
 
-Record which kind. Real-money gambling is a restricted area on Play and a 5.1.1(ix) regulated field on Apple (submitted by the legal entity); flag it to the user as more than an age-rating answer.
+Record which kind. Real-money gambling is a restricted area on Play and a 5.1.1(ix) regulated field on Apple (Apple says it should be submitted by the legal entity); flag it to the user as more than an age-rating answer.
 
 ## Mature or sensitive themes in the app's own content
 

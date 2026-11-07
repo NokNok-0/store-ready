@@ -23,7 +23,7 @@ Copied from `docs/sources/` (checked 2026-11-07). Each fact has its source. Comp
 - Age rating: new descriptors Shared Location and Dating & Relationships (dating forces 18+) are required on submissions from 2026-11-16 and for all apps by 2027-01-12. https://developer.apple.com/news/?id=yxkh08us
 - EU Digital Services Act trader status must be declared even if the app is not distributed in the EU. https://developer.apple.com/help/app-store-connect/manage-compliance-information/manage-european-union-digital-services-act-trader-requirements
 - Review time: 50% of submissions are reviewed in under 24 hours, 90% in under 48 hours. Over 40% of unresolved issues are guideline 2.1. https://developer.apple.com/distribute/app-review/
-- TestFlight: up to 10,000 external testers; the first build of a version needs Beta App Review; at most 6 review submissions per 24 hours. Recorded in `docs/sources/apple.md` without a page URL; for anything beyond this, open https://developer.apple.com/testflight/ and read it.
+- TestFlight: up to 10,000 external testers; the first build added to a group goes to App Review; a build can be tested for up to 90 days. A limit of 6 review submissions per 24 hours is unconfirmed; do not plan around it. https://developer.apple.com/help/app-store-connect/test-a-beta-version/testflight-overview
 
 ## Building without a Mac (Expo)
 

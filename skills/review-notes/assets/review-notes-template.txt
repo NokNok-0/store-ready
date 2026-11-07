@@ -1,5 +1,17 @@
-ABOUT THE APP
-<One or two sentences: what the user does with the app.>
+APP PURPOSE AND AUDIENCE
+<One or two sentences: what the user does with the app, and who it is for.>
+<New app: the business model, e.g. "Free, with an optional monthly subscription." Update: what changed and where to find it.>
+
+TESTED DEVICES AND OS VERSIONS
+{{TESTED_DEVICES}}
+[The user fills this in, e.g. "iPhone 16, iOS 26.1; iPad Air (M2), iPadOS 26.1". Never invent it.]
+
+EXTERNAL SERVICES
+- <Service>: <what the app uses it for, e.g. "Supabase: sign-in and data storage">
+[Or: "None. The app works offline and stores data only on the device."]
+
+REGIONAL AVAILABILITY
+<"Features and content are the same in every region." Or list what differs and how a reviewer can see it.>
 
 DEMO ACCOUNTS
 [Use this block when accounts live on a server. Delete it for device-local accounts.]
@@ -15,7 +27,7 @@ All accounts below work against the production server this build uses and do not
    Password: {{PASSWORD_COACH}}
    Sees: <what this role adds>
 
-3. Expired subscription
+3. Expired subscription [only if the app offers auto-renewable subscriptions]
    Username: <demo.expired@example.com>
    Password: {{PASSWORD_EXPIRED}}
    Use this account to see the paywall and test the purchase.

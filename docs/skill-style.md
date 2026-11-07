@@ -41,6 +41,7 @@ Skills that produce submission artifacts write them under `store/` in the user's
 | `store/age-rating.md` | age-rating |
 | `store/screenshots/plan.md`; `store/screenshots/capture.json` and its seed file when capturing from web; images in `store/screenshots/ios/iphone/`, `ios/ipad/`, `android/phone/`, `android/tablet/`, `android/feature-graphic/`, `android/icon/` | store-screenshots |
 | `store/checklist.md` | submission-checklist |
+| `store/status.md` | store-ready |
 | `store/review-risks.md` | app-review-risk, mock-review |
 
 Listing file shapes (the checker validates them):

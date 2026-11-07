@@ -25,6 +25,7 @@ Source: https://developer.android.com/google/play/requirements/target-sdk
 - From 2026-08-31 new apps and updates must target API 36 (Android 16). Wear OS and Automotive need 35; TV and XR need 34.
 - Existing apps must target 35+ to stay visible to new users on newer Android versions.
 - Extensions could be requested until 2026-11-01, which has passed.
+- 16 KB page sizes (https://developer.android.com/guide/practices/page-sizes): apps targeting Android 15 (API 35) and higher must support 16 KB memory page sizes on 64-bit devices on Google Play. From 2027-02-01, updates that do not support 16 KB page sizes cannot be released. Apps whose code and libraries are all Java or Kotlin already support it; apps with native libraries (`.so` files, directly or through an SDK) must be 16 KB aligned. AGP 8.5.1+ and NDK r28+ with 16 KB-compatible prebuilt libraries are compatible by default. Check with APK Analyzer's Alignment column, `zipalign -c -P 16 -v 4 <app>.apk`, or the Play Console compatibility warning.
 
 ## Declarations
 
@@ -38,6 +39,8 @@ Source: https://developer.android.com/google/play/requirements/target-sdk
 - Exact alarms (https://support.google.com/googleplay/android-developer/answer/16558241): USE_EXACT_ALARM only for alarm, timer or calendar apps with a declaration; others use user-granted SCHEDULE_EXACT_ALARM.
 - Foreground services (https://support.google.com/googleplay/android-developer/answer/13392821): for target 14+, declare each type and its FOREGROUND_SERVICE_* permission; in App content give a description, the user impact if interrupted, a demo video and the use case.
 - USE_FULL_SCREEN_INTENT is auto-granted only for alarm and calling apps (Android 14+). MANAGE_EXTERNAL_STORAGE, QUERY_ALL_PACKAGES and Accessibility API use need declarations.
+- Ads declaration (https://support.google.com/googleplay/android-developer/answer/9859455): "You must declare whether your app contains ads." Ads from third-party SDKs count. It must be declared before the Target audience and content section (https://support.google.com/googleplay/android-developer/answer/9867159).
+- Target audience and content (https://support.google.com/googleplay/android-developer/answer/9859455, https://support.google.com/googleplay/android-developer/answer/9867159): "You must declare your app's target age group", when creating a new app and when publishing an update. If the app is designed primarily for children under 13 it must follow the Families policy, including using only Families Self-Certified Ads SDKs. This is separate from the IARC content rating.
 - Content rating (https://support.google.com/googleplay/android-developer/answer/9898843, /answer/9859655): every app needs an IARC rating from the App content questionnaire; unrated apps can be removed; retake it when content changes.
 
 ## App access for review

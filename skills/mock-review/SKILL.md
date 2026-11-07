@@ -47,7 +47,7 @@ It exits with code 1 when it finds errors; parse the output anyway. Treat each `
 
 ## 2. Check
 
-Work through every check in [references/checks.md](references/checks.md) for the stores in scope. These are mandatory, in this order, because a reviewer meets them in this order:
+Work through every check in [references/checks.md](references/checks.md) for the stores in scope. These are mandatory. The order is store-ready's, not the stores' (neither publishes how reviewers work through an app): it puts the checks that block the rest first.
 
 1. 2.1 demo account and reviewer access. If the reviewer cannot sign in, nothing else gets reviewed.
 2. 2.1 static completeness: placeholder text and accounts, dev URLs, template artwork, stub purchase buttons, "coming soon" screens, login buttons that never call their provider, recorded URLs that do not load.

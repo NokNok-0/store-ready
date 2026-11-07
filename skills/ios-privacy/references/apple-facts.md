@@ -54,7 +54,7 @@ Sources: https://docs.expo.dev/guides/apple-privacy/, https://docs.expo.dev/dist
 - Set required reasons in `expo.ios.privacyManifests.NSPrivacyAccessedAPITypes`, an array of entries with `NSPrivacyAccessedAPIType` and `NSPrivacyAccessedAPITypeReasons` (for example UserDefaults with `CA92.1`).
 - Expo SDK packages ship their own PrivacyInfo files, but Apple may not read them from static CocoaPods, so copy the reasons into app config.
 - Apple emails missing reasons after upload.
-- Apps using expo-updates should answer "Yes" and select Crash Data in App Privacy.
+- expo-updates with Expo Update as the update server: answer "Yes", and declare Identifiers > Device ID (App Functionality, Analytics) and Diagnostics > Crash Data (App Functionality), both not linked and not used for tracking. If the backend links the client ID to a user account, mark Device ID as linked. Self-hosted update server: declare what it stores instead. https://docs.expo.dev/eas-update/store-privacy-declarations/
 - A privacy policy is required.
 
 App config keys used by this skill (verified on Expo docs 2026-11-07, not yet recorded in `docs/sources/expo.md`):

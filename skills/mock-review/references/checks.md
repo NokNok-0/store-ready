@@ -12,7 +12,7 @@ Status words: **Blocking** means the files show a rule from this page being brok
 
 ### 2.1 App completeness: demo account and reviewer access
 
-Rule: crashes, placeholder content, broken links, missing or expired demo login, backend down, and IAP that cannot be reviewed lead to 2.1. Give a working demo account for every role in Review Notes, including the 2FA path. For subscriptions, also give an account with an expired subscription. Demo mode only with Apple's prior approval. Hardware-dependent apps attach a real-device video. Explain IAP that cannot be reviewed in the notes (2.1(b)). Review Notes limit: 4,000 bytes. Sources: https://developer.apple.com/help/app-review/before-submitting-for-review/complete-review ; https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information
+Rule: crashes, placeholder content, broken links, missing or expired demo login, backend down, and IAP that cannot be reviewed lead to 2.1. Give a working demo account for every role in Review Notes, including the 2FA path. If the app offers auto-renewable subscriptions, also give an account with an expired subscription. Demo mode only with Apple's prior approval. Hardware-dependent apps attach a real-device video. Explain IAP that cannot be reviewed in the notes (2.1(b)). Review Notes limit: 4,000 bytes. Sources: https://developer.apple.com/help/app-review/before-submitting-for-review/complete-review ; https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information
 
 Read:
 - Whether the app needs sign-in to reach its main features: auth guards in the root layout or navigator, redirects to a login route, a server that rejects anonymous calls.
@@ -23,7 +23,7 @@ Read:
 Fails (Blocking) when:
 - sign-in is needed and the notes have no username and password;
 - a role found in code has no account in the notes;
-- the app has subscriptions and there is no expired-subscription account;
+- the app offers auto-renewable subscriptions and there is no expired-subscription account;
 - the code sends a one-time code by SMS or email at login and the notes do not say how the reviewer gets it;
 - the app depends on hardware and the notes mention no video;
 - the notes describe a "demo mode" instead of an account, and do not mention Apple's approval;
@@ -82,7 +82,7 @@ Fails (Risk) when an asset says "free" or "free trial" (read 2.3.14 on whether t
 
 ### 2.5.19 Hidden features (and 2.5.2)
 
-Rule (added 2026-10-16): no hidden, dormant or undocumented features; obfuscating to hide features can end the developer account. 2.5.2: downloaded code that changes features is not allowed. Fix: remove or disclose. Sources: https://developer.apple.com/news/?id=92th7e5i ; guidelines.
+Rule (added 2026-10-16): no hidden, dormant or undocumented features; obfuscating to hide features can end the developer account. 2.5.2: downloaded code that changes features is not allowed. Fix: remove the feature, or make it available and describe how to reach it. Disclosure alone does not make a dormant feature allowed. Sources: https://developer.apple.com/news/?id=92th7e5i ; guidelines.
 
 Read:
 - Feature flags and remote config (LaunchDarkly, Firebase Remote Config, Statsig, custom `/flags` endpoints, `if (config.enableX)`).
@@ -91,7 +91,9 @@ Read:
 - Code that is obfuscated or encoded beyond what the build does by default.
 - OTA update tooling (`expo-updates`, CodePush).
 
-Fails (Blocking) when a feature is switched off at review time by a flag, date, region or server switch and the review notes do not describe it; or code is deliberately obfuscated to hide what it does.
+Fails (Blocking) when a feature is switched off in the submitted build by a flag, date, region or server switch, whether or not the review notes mention it; or code is deliberately obfuscated to hide what it does. Describing a dormant feature in the notes does not fix it: remove it from the build, or make it available to users before submitting.
+
+Fails (Risk) when a feature users can reach is not obvious from the first screen and the review notes do not give the steps to it.
 
 Fails (Risk) when a debug or admin screen ships in the production build without being gated to the developer.
 
@@ -163,9 +165,9 @@ Fails (Blocking) when user content or personal data is sent to an AI or other th
 
 ### App Privacy details and age rating (consistency only)
 
-App Privacy details must include data collected by third-party SDKs. Apps using `expo-updates` should answer Yes and select Crash Data. New age rating descriptors Shared Location and Dating & Relationships are required on submissions from 2026-11-16. Sources: https://developer.apple.com/app-store/app-privacy-details/ ; https://docs.expo.dev/guides/apple-privacy/ ; https://developer.apple.com/news/?id=yxkh08us
+App Privacy details must include data collected by third-party SDKs. Apps using `expo-updates` with Expo Update declare Device ID and Crash Data on Apple, and Device or other IDs and Crash logs on Google Play. New age rating descriptors Shared Location and Dating & Relationships are required on submissions from 2026-11-16. Sources: https://developer.apple.com/app-store/app-privacy-details/ ; https://docs.expo.dev/eas-update/store-privacy-declarations/ ; https://developer.apple.com/news/?id=yxkh08us
 
-Fails (Risk) when `store/privacy.ios.md` omits an SDK found in dependencies, or `store/age-rating.md` lacks an answer the app clearly needs (location sharing, dating). Route the fix to `ios-privacy` or `age-rating`.
+Fails (Risk) when `store/privacy.ios.md` omits an SDK found in dependencies, or lists `expo-updates` without Device ID, or `store/age-rating.md` lacks an answer the app clearly needs (location sharing, dating). Route the fix to `ios-privacy` or `age-rating`.
 
 ### 1.2 User-generated content and 1.5 developer information
 

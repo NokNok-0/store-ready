@@ -1,5 +1,14 @@
-ABOUT THE APP
-Streaks is a habit tracker: add daily habits, check them off once a day, see each habit's current and best streak, and attach a photo to a habit. All data is stored on the device. The app has no server, no ads, no tracking and no in-app purchases.
+APP PURPOSE AND AUDIENCE
+Streaks is a habit tracker for anyone building daily habits: add daily habits, check them off once a day, see each habit's current and best streak, and attach a photo to a habit. All data is stored on the device. The app is free, with no server, no ads, no tracking and no in-app purchases.
+
+TESTED DEVICES AND OS VERSIONS
+This is a sample app and has not been submitted. Before submitting, the developer replaces this line with the device models and OS versions they tested on.
+
+EXTERNAL SERVICES
+- Sign in with Apple: optional sign-in. No other service is used; habit data stays on the device.
+
+REGIONAL AVAILABILITY
+Features and content are the same in every region.
 
 DEMO ACCOUNT
 Accounts are created and stored on the device, so there is no server-side account to share. Create the demo account on the review device:

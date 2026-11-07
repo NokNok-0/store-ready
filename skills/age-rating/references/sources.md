@@ -16,7 +16,7 @@ Copied from `docs/sources/` in the store-ready repo, checked 2026-11-07. The que
 | Random or anonymous chat apps fall under 1.2 (2026-02-06 update). | https://developer.apple.com/news/?id=d75yllv4 |
 | 1.2 covers nonconsensual intimate imagery, including AI-generated (2026-10-16 update). | https://developer.apple.com/news/?id=92th7e5i |
 | 1.2 user-generated content needs moderation: a content filter, a way to report content, user blocking, and published contact info. | https://developer.apple.com/app-store/review/guidelines/ |
-| 5.1.1(ix): apps in regulated fields (banking, health, gambling, crypto, air travel) must be submitted by the legal entity, not an individual. | https://developer.apple.com/app-store/review/guidelines/ |
+| 5.1.1(ix): apps in highly regulated fields (banking and financial services, healthcare, gambling, legal cannabis, air travel, crypto exchanges) "should be submitted by a legal entity that provides the services, and not by an individual developer". | https://developer.apple.com/app-store/review/guidelines/ |
 
 The App Store Connect age-rating help page is not in our sources. Open App Store Connect, go to the app's age rating section, and read each question as it is shown.
 
@@ -27,6 +27,9 @@ The App Store Connect age-rating help page is not in our sources. Open App Store
 | Every app needs an IARC content rating, from the questionnaire in the App content section of Play Console. | https://support.google.com/googleplay/android-developer/answer/9898843 |
 | Unrated apps can be removed. | https://support.google.com/googleplay/android-developer/answer/9859655 |
 | Retake the questionnaire when the app's content changes. | https://support.google.com/googleplay/android-developer/answer/9859655 |
+| "You must declare whether your app contains ads." Ads from third-party SDKs count. | https://support.google.com/googleplay/android-developer/answer/9859455 |
+| "You must declare your app's target age group" in Target audience and content, for new apps and updates. It is a separate section from the IARC questionnaire, and the ads declaration must be done first. | https://support.google.com/googleplay/android-developer/answer/9859455, https://support.google.com/googleplay/android-developer/answer/9867159 |
+| An app designed primarily for children under 13 must follow the Families policy, including only Families Self-Certified Ads SDKs. | https://support.google.com/googleplay/android-developer/answer/9867159 |
 | The Developer Program Policy has Restricted Content areas for user-generated content, health, AI-generated content, financial services and real-money gambling, and a Families area. | https://play.google/developer-content-policy/ |
 
 If the app is aimed at children, or children are part of its audience, read the Families section of the Developer Program Policy before answering anything. Our sources do not copy its requirements.

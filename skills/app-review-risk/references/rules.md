@@ -87,13 +87,17 @@ Google Play has Impersonation and Intellectual Property policy areas (https://pl
 
 **Severity.** High when another brand's name or icon is used. Medium for close UI imitation.
 
+**Third-party content rights (5.2.1, 5.2.2).** Apple: "Don't use protected third-party material such as trademarks, copyrighted works, or patented ideas in your app without permission", and an app that uses or displays content from a third-party service must be "specifically permitted to do so under the service's terms of use. Authorization must be provided upon request." Apple's complete-review page asks for that authorization up front for apps with third-party trademarks or copyrighted content (https://developer.apple.com/distribute/app-review/). Source: https://developer.apple.com/app-store/review/guidelines/
+
+List the third-party content the app ships or shows: images, illustrations, fonts, icon sets, music and sound effects, video, datasets, and content loaded from other services (APIs, feeds, maps, streaming). For each, record the creator or provider, the license or permission, whether commercial use is allowed, any attribution it requires, and the evidence (license file, receipt, terms URL). Anything without evidence is a Medium risk: "license not confirmed", never "licensed". Content streamed or downloaded from another service with no permission in its terms is High. Write the list into `store/review-risks.md`.
+
 ## A6. Apple 5.1.1(ix): regulated fields from an individual
 
-**Rule.** Apps in regulated fields (our sources list banking, health, gambling, crypto, air travel; crypto exchanges were added 2025-11-13) must be submitted by the legal entity, not an individual. Sources: guidelines; https://developer.apple.com/news/?id=ey6d8onl. Read 5.1.1(ix) for the full list and wording; ours may be incomplete.
+**Rule.** Apps in regulated fields (our sources list banking, health, gambling, crypto, air travel; crypto exchanges were added 2025-11-13) "should be submitted by a legal entity that provides the services, and not by an individual developer" (5.1.1(ix); it also covers legal cannabis and apps that require sensitive user information). Apple says "should", so treat an individual account as a high review risk, not a certain rejection. Sources: guidelines; https://developer.apple.com/news/?id=ey6d8onl. Read 5.1.1(ix) for the full list and wording; ours may be incomplete.
 
 Related, from the same sources:
 - 3.2.2(ix): loan apps capped at 36% APR (https://developer.apple.com/news/?id=ey6d8onl).
-- Health and medical apps need a regulated medical device declaration in the EU, UK and US (https://developer.apple.com/news/?id=nyqbfz1y).
+- Apps in the Health & Fitness or Medical category (primary or secondary), or with "Frequent" Medical or Treatment Information, declare whether they are a regulated medical device in the EU/EEA, UK and US (https://developer.apple.com/help/app-store-connect/manage-app-information/declare-regulated-medical-device-status). The answer is the developer's; most declare No.
 - Google Play lists Health, Financial Services and Real-Money Gambling under Restricted Content (https://play.google/developer-content-policy/). Read the relevant section; our sources do not detail them.
 - A Play organization account needs a D-U-N-S number, which can take 30+ days (https://support.google.com/googleplay/android-developer/answer/13628312). This is a timeline risk on its own.
 
@@ -102,7 +106,7 @@ Related, from the same sources:
 - HealthKit or Health Connect use that goes beyond fitness logging. A step counter is not automatically a regulated health app: read 5.1.1(ix) and say Medium if unsure.
 - Ask: is the Apple developer account an individual or an organization? Same for Play.
 
-**Change.** Enrol or move the app to an organization account for the legal entity that provides the service, and start D-U-N-S now if needed. If the user has no legal entity, say the regulated feature cannot ship under an individual account and offer the version without it.
+**Change.** Enrol or move the app to an organization account for the legal entity that provides the service, and start D-U-N-S now if needed. If the user has no legal entity, say an individual account is a high risk of rejection for this feature, and offer the version without it.
 
 **Severity.** High for a clearly regulated feature on an individual account. Medium when the field is borderline or the account type is unknown.
 

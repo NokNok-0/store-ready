@@ -42,7 +42,7 @@ Not in our sources, so read guideline 3.1 on the guidelines page before deciding
 Source: https://developer.apple.com/help/app-review/before-submitting-for-review/complete-review
 
 - In-app purchases that cannot be reviewed are a 2.1 rejection. Explain them in Review Notes (2.1(b)).
-- For subscriptions, give the reviewer an account with an expired subscription as well as the working demo account.
+- For auto-renewable subscriptions, give the reviewer an account with an expired subscription as well as the working demo account, so they can go through the whole purchase flow (https://developer.apple.com/help/app-review/before-submitting-for-review/complete-review/).
 
 ## Account deletion and subscriptions
 

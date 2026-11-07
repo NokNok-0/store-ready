@@ -11,6 +11,8 @@ Source: https://support.google.com/googleplay/android-developer/answer/10787469
 - A privacy policy is required.
 - An inaccurate form can block updates or get the app removed.
 
+expo-updates with Expo Update as the update server (https://docs.expo.dev/eas-update/store-privacy-declarations/, updated 2026-11-05): declare Device or other IDs (the client ID; collected, required; App functionality, Analytics) and App info and performance > Crash logs (failed update IDs and launch error text; collected, required; Analytics). Collected, not shared, because Expo acts as a service provider; sent over HTTPS. A self-hosted update server: declare what that server stores instead.
+
 The data types, purposes and questions in the form are defined on that page and in Play Console. Read them before filling `store/data-safety.android.md`; use Google's names exactly.
 
 ## Account deletion

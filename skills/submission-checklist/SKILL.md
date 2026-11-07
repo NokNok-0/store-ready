@@ -67,8 +67,8 @@ Ask, in one message, only for what lives in their accounts:
 - Google Play: account created? Personal or organization? When was it created (before or after 2023-11-13)? Identity verification done? D-U-N-S number (organizations)?
 - Closed test: started? Start date and number of opted-in testers?
 - EU DSA trader status: are they a trader? Our sources say the declaration is required even if they do not distribute in the EU, but do not record how Apple decides who is a trader. Before you ask, open https://developer.apple.com/help/app-store-connect/manage-compliance-information/manage-european-union-digital-services-act-trader-requirements, read the factors and examples it gives, and quote them to the user with the URL. Suggest an answer only from what that page says; the user decides and declares it.
-- Is the app a health or medical app (regulated medical device declaration for the EU, UK and US)?
-- Is the app in a regulated field (banking, health, gambling, crypto, air travel)? If so, it must be published by the legal entity.
+- Is the app's primary or secondary category Health & Fitness or Medical, or does it have frequent medical or treatment information? Then it declares, yes or no, whether it is a regulated medical device (EU/EEA, UK, US). Only the user can say which.
+- Is the app in a regulated field (banking, healthcare, gambling, crypto exchanges, air travel) or does it require sensitive user information? Apple says it should be submitted by the legal entity that provides the service; from an individual account it is a high review risk.
 - Export compliance: does the app use encryption beyond standard OS networking? If unsure, point them to https://developer.apple.com/help/app-store-connect/manage-app-information/overview-of-export-compliance; do not answer this for them.
 - Which EAS plan they are on and how many builds they have used this month.
 
@@ -93,15 +93,19 @@ Rules:
 
 ## 5. The EAS path
 
-If the project uses Expo, fill the "Build and submit (EAS)" section from [references/eas.md](references/eas.md). The order:
+If the project uses Expo, fill the "Build and submit (EAS)" section from [references/eas.md](references/eas.md).
+
+Write these steps into the checklist for the user. Do not run `eas submit`, `eas build --auto-submit`, or press submit for review in either console unless the user approves that specific upload in this conversation. Before asking, show the platform, version and build number, the destination (TestFlight, Play internal track, review), and the exact command. A finished build is not approval to upload it, and a draft upload still needs approval.
+
+The order:
 
 1. `npm i -g eas-cli`, `eas login`, `eas build:configure`.
 2. Confirm `eas.json` has development, preview and production profiles, and how build numbers increment.
 3. `eas build -p all --profile production` (cloud builds work from Windows; `eas build --local` does not).
 4. Android: create the app in Play Console, give EAS a Google service account key, then `eas submit -p android`. The first upload goes to the internal track. Use `releaseStatus: "draft"` so nothing rolls out by accident. Read https://docs.expo.dev/submit/android/ for whether the first upload of a new app must be made by hand.
-5. iOS: `eas submit -p ios`. It creates the App Store Connect app if missing. CI needs an App Store Connect API key from an Account Holder or Admin. The build appears in TestFlight; external testers need Beta App Review for the first build of each version.
+5. iOS: `eas submit -p ios`. It creates the App Store Connect app if missing. CI needs an App Store Connect API key from an Account Holder or Admin. The build appears in TestFlight. The first build added to an external testing group goes to Beta App Review; later builds may not need a full review.
 6. New personal Play account: move the build to a closed testing release, add 12+ testers, start the 14 days.
-7. When everything in the checklist is `done` or `n/a`: submit for review in each console.
+7. When everything in the checklist is `done` or `n/a`, the user submits for review in each console, or approves you doing it as above.
 
 Every upload needs a new build number or versionCode. On the free plan, the user has up to 15 Android and 15 iOS builds a month with a 45-minute timeout; say how many builds this plan uses.
 

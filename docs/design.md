@@ -2,9 +2,9 @@
 
 ## Intent
 
-People now build working mobile apps with AI coding agents in a weekend, then lose weeks to the part after: App Store rejections, Play policy declarations, privacy forms, screenshots, signing, a 14-day closed test nobody warned them about. store-ready is the part after. It is a set of agent skills plus a deterministic checker that take an app from "it runs" to "it passes review", for Expo, React Native and native iOS/Android projects.
+People now build working mobile apps with AI coding agents in a weekend, then lose weeks to the part after: App Store rejections, Play policy declarations, privacy forms, screenshots, signing, a 14-day closed test nobody warned them about. store-ready is the part after. It is a set of agent skills plus a deterministic checker that take an app from "it runs" to "ready for review", for Expo, React Native and native iOS/Android projects.
 
-Tagline: **Your AI built the app. store-ready gets it approved.**
+Tagline: **Your AI built the app. store-ready gets it ready for review.**
 
 ## Who it is for
 
@@ -41,7 +41,7 @@ Spec-pure Agent Skills (https://agentskills.io/specification): `name` matches th
 
 | Skill | Job | Output |
 |---|---|---|
-| `store-ready` | Entry point. Detects the project type and stage, runs the checker, routes to the right skills in order | A short status report and next step |
+| `store-ready` | Entry point. Detects the project type and stage, runs the checker, routes to the right skills in order | `store/status.md`: a short status report and next step |
 | `app-review-risk` | Before or early in building: flags minimum-functionality, spam, copycat, template and regulated-field risks (Apple 4.2/4.3/4.1/4.2.6/5.1.1(ix), Play spam and functionality) | Risk list with concrete changes |
 | `ios-privacy` | Purpose strings, privacy manifest required-reason APIs, App Privacy label answers, tracking permission rules, AI data sharing consent | Edited app config / Info.plist / PrivacyInfo, plus label answers file |
 | `play-data-safety` | Data safety form answers including SDK data, permission declarations (photo/video, background location, exact alarm, foreground service), target API | Form answers file, manifest fixes |

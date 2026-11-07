@@ -6,7 +6,7 @@ Rules from our sources:
 
 - App Privacy details are required for new apps and for updates, and must include data collected by third-party SDKs. https://developer.apple.com/app-store/app-privacy-details/
 - They can be changed without a new build, so fix them as soon as the app's data use changes.
-- Apps using expo-updates answer "Yes" (the app collects data) and select Crash Data. https://docs.expo.dev/distribution/app-stores/
+- Apps using expo-updates with Expo Update answer "Yes" (the app collects data) and declare Device ID and Crash Data. Read https://docs.expo.dev/eas-update/store-privacy-declarations/ for the purposes and the linked answer; a self-hosted update server needs its own answers.
 
 How to fill it:
 
@@ -30,6 +30,7 @@ Data collected: Yes | No
 | Data type | Collected by | Purposes | Linked to the user | Used for tracking | Notes |
 |---|---|---|---|---|---|
 | Crash Data | expo-updates, @sentry/react-native | App Functionality | No | No | Sentry `sendDefaultPii` is off in src/lib/sentry.ts |
+| Device ID | expo-updates (client ID sent to Expo Update) | App Functionality, Analytics | No | No | The backend never receives the client ID |
 | Email Address | Supabase Auth (own account system) | App Functionality | Yes | No | Used for sign-in and account recovery only |
 | Photos or Videos | Own backend (check-in photos upload) | App Functionality | Yes | No | Only photos the user attaches; uploaded to storage bucket `checkins` |
 
@@ -41,7 +42,7 @@ Data collected: Yes | No
 
 | Package | Version | What it sends | Source checked |
 |---|---|---|---|
-| expo-updates | 58.x | Crash Data per Expo guidance | https://docs.expo.dev/distribution/app-stores/ |
+| expo-updates | 58.x | Client ID (Device ID), failed update IDs and launch errors (Crash Data) | https://docs.expo.dev/eas-update/store-privacy-declarations/ |
 | @sentry/react-native | 7.x | Crash reports, device model, OS version | SDK docs URL, project config file |
 
 ## Third-party AI

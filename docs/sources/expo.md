@@ -23,10 +23,10 @@ Sources: https://docs.expo.dev/versions/latest/, https://expo.dev/changelog/sdk-
 
 ## Store guidance from Expo
 
-Sources: https://docs.expo.dev/distribution/app-stores/, https://docs.expo.dev/guides/apple-privacy/
+Sources: https://docs.expo.dev/distribution/app-stores/, https://docs.expo.dev/guides/apple-privacy/, https://docs.expo.dev/eas-update/store-privacy-declarations/
 
 - A privacy policy is required.
-- Apps using expo-updates should answer "Yes" and select Crash Data in App Privacy.
+- expo-updates with Expo Update as the update server (https://docs.expo.dev/eas-update/store-privacy-declarations/, updated 2026-11-05): Apple App Privacy: answer Yes (data is collected), Identifiers > Device ID (the client ID; App Functionality, Analytics; not linked, not tracking) and Diagnostics > Crash Data (failed update IDs and launch error text; App Functionality; not linked, not tracking). Google Play Data safety: Device or other IDs (collected, required; App functionality, Analytics) and App info and performance > Crash logs (collected, required; Analytics); collected, not shared, since Expo acts as a service provider; encrypted in transit. If the backend links the client ID to a user account, declare it as linked on Apple. Self-hosted update server: declare what that server stores instead. Older guidance on https://docs.expo.dev/distribution/app-stores/ lists only Crash Data; the dedicated page is newer and more specific.
 - Test on iPad even if `supportsTablet` is false.
 - Privacy manifests: set `expo.ios.privacyManifests.NSPrivacyAccessedAPITypes` with entries of `NSPrivacyAccessedAPIType` and `NSPrivacyAccessedAPITypeReasons` (for example UserDefaults with `CA92.1`). Expo SDK packages ship their own PrivacyInfo files, but Apple may not read them from static CocoaPods, so copy the reasons into app config. Apple emails missing reasons after upload.
 

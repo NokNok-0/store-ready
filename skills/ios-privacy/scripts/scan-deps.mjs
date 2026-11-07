@@ -40,7 +40,7 @@ const PERMISSION_HINTS = {
 };
 
 const DATA_HINTS = {
-  'expo-updates': { review: ['Crash Data'], note: 'Expo guidance: answer Yes and select Crash Data in App Privacy.' },
+  'expo-updates': { review: ['Device ID', 'Crash Data'], note: 'With Expo Update: answer Yes, declare Device ID and Crash Data (Play: Device or other IDs, Crash logs). Self-hosted: declare what your server stores. https://docs.expo.dev/eas-update/store-privacy-declarations/' },
   '@sentry/react-native': { review: ['crash reports', 'performance diagnostics'] },
   '@react-native-firebase/crashlytics': { review: ['crash reports'] },
   '@react-native-firebase/analytics': { review: ['usage analytics', 'device or app identifiers'] },

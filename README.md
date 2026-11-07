@@ -2,9 +2,9 @@
 
 # store-ready
 
-**Your AI built the app. store-ready gets it approved.**
+**Your AI built the app. store-ready gets it ready for review.**
 
-Agent skills and a checker that take a mobile app from "it runs" to "it passes App Store and Google Play review".
+Agent skills and a checker that take a mobile app from "it runs" to "ready for App Store and Google Play review".
 Works with Claude Code, Codex, Cursor, Gemini CLI and any agent that reads Agent Skills.
 
 [![ci](https://github.com/NokNok-0/store-ready/actions/workflows/ci.yml/badge.svg)](https://github.com/NokNok-0/store-ready/actions/workflows/ci.yml)

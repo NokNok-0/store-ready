@@ -34,7 +34,8 @@ export const PLACEHOLDER_PATTERNS = [
   { label: '"coming soon"', pattern: /\bcoming soon\b/i, where: ['code', 'store'] },
   { label: '"not available yet"', pattern: /\bnot (?:available yet|yet available)\b/i, where: ['code', 'store'] },
   { label: '"TODO"', pattern: /\bTODO\b/, where: ['jsx-text', 'store'] },
-  { label: 'unfilled {{TEMPLATE}} field', pattern: /\{\{\s*[A-Z][A-Z0-9_]*\s*\}\}/, where: ['store'] },
+  // {{PASSWORD_*}} stays in the file on purpose: real passwords are typed into the console, never committed.
+  { label: 'unfilled {{TEMPLATE}} field', pattern: /\{\{\s*(?!PASSWORD)[A-Z][A-Z0-9_]*\s*\}\}/, where: ['store'] },
 ];
 
 /** Store text that is pasted into the consoles. Markdown working notes in store/ are not scanned. */

@@ -109,6 +109,12 @@ describe('app.template-content: placeholder text', () => {
     assert.doesNotMatch(JSON.stringify(issues), /checklist\.md/);
   });
 
+  it('leaves {{PASSWORD_*}} placeholders alone, since real passwords never go in the file', () => {
+    assert.deepEqual(placeholders({ 'store/review-notes.txt': 'Username: demo@acme.app\nPassword: {{PASSWORD_MEMBER}}\n' }), []);
+    const issues = placeholders({ 'store/review-notes.txt': 'Password: {{PASSWORD_MEMBER}}\nTESTED DEVICES\n{{TESTED_DEVICES}}\n' });
+    assert.match(issues[0]?.message ?? '', /store\/review-notes\.txt:3 \("\{\{TESTED_DEVICES\}\}"\)/);
+  });
+
   it('flags TODO in store files only in upper case, so the keyword "todo" passes', () => {
     assert.deepEqual(placeholders({ 'store/listing.ios.json': { name: 'App', keywords: 'habit,todo,list', description: 'x' } }), []);
     assert.equal(placeholders({ 'store/review-notes.txt': 'Steps: TODO\n' }).length, 1);

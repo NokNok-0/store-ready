@@ -1,6 +1,6 @@
 ---
 name: age-rating
-description: Prepares answers for the App Store age rating questionnaire (tiers 4+, 9+, 13+, 16+, 18+, social-media capability questions, the new Shared Location and Dating & Relationships descriptors) and the Google Play content rating (IARC) questionnaire, from facts found in the app's code - user-generated content, chat, location sharing, web access, gambling and contests, mature themes, AI generation, ads and purchases. Use when the user asks about age rating, content rating, the IARC questionnaire, "what age rating should my app be", the App Store Connect age rating section, Play Console content rating, the 2026 age rating changes, or after adding chat, a feed, a web view or AI features. Produces store/age-rating.md with facts, suggested answers and what the user must confirm.
+description: Prepares answers for the App Store age rating questionnaire (tiers 4+, 9+, 13+, 16+, 18+, social-media capability questions, the new Shared Location and Dating & Relationships descriptors) the Google Play content rating (IARC) questionnaire, and Play's ads and target audience declarations, from facts found in the app's code - user-generated content, chat, location sharing, web access, gambling and contests, mature themes, AI generation, ads and purchases. Use when the user asks about age rating, content rating, the IARC questionnaire, "what age rating should my app be", the App Store Connect age rating section, Play Console content rating, the 2026 age rating changes, or after adding chat, a feed, a web view or AI features. Produces store/age-rating.md with facts, suggested answers and what the user must confirm.
 license: MIT
 ---
 
@@ -27,6 +27,7 @@ The exact question wording of both questionnaires is not in store-ready's source
 - Apple's social-media capability questions are required from September 2026.
 - Apple's **Shared Location** and **Dating & Relationships** descriptors are required on submissions from **2026-11-16** and for all apps by **2027-01-12**. Dating & Relationships forces 18+.
 - Play: every app needs an IARC rating; unrated apps can be removed; retake the questionnaire when content changes.
+- Play also needs two separate App content declarations: whether the app contains ads (SDK ads count), and Target audience and content (the target age groups). Neither is part of IARC.
 
 If today is close to or after 2026-11-16 and the app shares location with other people or has dating features, the next submission needs these answers. Say this first in the output.
 
@@ -101,6 +102,11 @@ Estimated tier: <4+ | 9+ | 13+ | 16+ | 18+> (estimate)
 | ... | | |
 Retake this questionnaire whenever the app's content changes.
 
+## Google Play (ads and target audience)
+Contains ads: <Yes / No> (based on: <ad SDKs in dependencies, ad code, or none found>)
+Target age groups: <suggested groups> (based on: <facts>; the user decides)
+Designed primarily for children under 13: <Yes / No>. If Yes: the Families policy applies, including only Families Self-Certified Ads SDKs.
+
 ## You must confirm
 - [ ] <each "unclear" fact, and each answer that depends on server content or intent>
 - [ ] Read every question in App Store Connect and Play Console as shown, and check it against the facts above.
@@ -114,7 +120,7 @@ If the user pasted the actual questions from either console, replace that store'
 ## 4. Tell the user where to answer
 
 - Apple: App Store Connect, the app's age rating section. Answer every question, including the social-media capability questions and the new descriptors.
-- Google Play: Play Console, App content, Content rating. Start or retake the questionnaire.
+- Google Play: Play Console, App content: Ads, then Target audience and content, then Content rating (start or retake the questionnaire).
 
 Do not tell the user the app "will be rated" a given tier. Say "the answers above point to <tier>; the store sets the rating".
 
@@ -127,3 +133,4 @@ Do not tell the user the app "will be rated" a given tier. Say "the answers abov
 - [ ] Every suggested answer points to a fact in the table.
 - [ ] The file says the tier is an estimate and lists what the user must confirm.
 - [ ] Review risks that are not age-rating answers are listed separately, not mixed into the answers.
+- [ ] If Android is in scope, the Google Play ads and target audience section is filled, with the ad SDKs found (or "none found") as evidence.

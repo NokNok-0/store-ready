@@ -40,7 +40,7 @@ A verb phrase, not a slogan. Do not repeat the name.
 - Leave out other apps' names, company names and trademarks. The keywords rule forbids them.
 - Leave out the category name and the word "app" only if you are short of bytes; they are not forbidden.
 - Prefer one form of a word. Do not spend bytes on both singular and plural without a reason.
-- Fill the field close to 100 bytes; unused bytes are wasted.
+- Use the space for accurate, relevant search terms only. Unused bytes are fine; do not add weak or unrelated words to reach 100 (2.3.7: keywords must accurately describe the app).
 
 Count with the script, not by eye. A keyword string that looks short in Japanese or German can be over 100 bytes.
 

@@ -1,6 +1,6 @@
 ---
 name: store-ready
-description: 'Entry point for getting a mobile app through App Store and Google Play review. Use when the user says "get my app ready for the App Store", "submit my app", "publish to Google Play", "release my Expo app", "is my app ready for review", "what is left before I can submit", "why would Apple reject this", or "prepare for App Store submission". Detects the project type (Expo, bare React Native, native iOS, native Android) and how far along the store work is, runs npx store-ready check, routes to the other store-ready skills in dependency order, and ends with a short status report and the next step.'
+description: 'Entry point for getting a mobile app through App Store and Google Play review. Use when the user says "get my app ready for the App Store", "submit my app", "publish to Google Play", "release my Expo app", "is my app ready for review", "what is left before I can submit", "why would Apple reject this", or "prepare for App Store submission". Detects the project type (Expo, bare React Native, native iOS, native Android) and how far along the store work is, runs npx store-ready check, routes to the other store-ready skills in dependency order, and ends with a short status report in store/status.md and the next step.'
 license: MIT
 ---
 
@@ -8,7 +8,7 @@ license: MIT
 
 Use this first whenever the user wants to ship, submit, or understand what stands between their app and the stores. It does not fix things itself; it finds out where the project stands, runs the checker, and sends the work to the right skill in the right order.
 
-Output: a status report of about 20 lines (format below) and, if the user asked you to get the app ready, the next skill started.
+Output: `store/status.md`, a status report of about 20 lines (format below), shown to the user as well, and, if the user asked you to get the app ready, the next skill started.
 
 If the user pasted a rejection from App Store Connect or a Google Play policy email, skip everything here and use `rejection-fix`.
 
@@ -140,7 +140,7 @@ Then:
 
 ## 7. Report
 
-Print the report. Do not write it to a file; the files belong to the other skills.
+Write the report to `store/status.md`, replacing the previous one, and show it to the user. It is a snapshot of this run, so the date line matters; the answers for the consoles stay in the other skills' files.
 
 ```
 store-ready: <App name> <version> (<build>), <project type>, <date>
@@ -172,12 +172,13 @@ Rules for the report:
 - Never write "ready to submit" or "will be approved". The furthest you go is "passes the checks we know about; run mock-review and submission-checklist before submitting".
 - If the checker did not run, say "Checker: not run (<reason>)".
 
-If the user asked you to get the app ready (not just for status), start the "Next" skill after the report. If they asked only where things stand, stop at the report.
+If the user asked you to get the app ready (not just for status), start the "Next" skill after the report. If they asked only where things stand, stop after writing `store/status.md`.
 
 ## Verify
 
 Before you finish:
 
+- `store/status.md` exists and has today's date.
 - The project type and store list in the report match what is on disk.
 - Every issue in the report comes from this checker run or from a missing `store/` file. Nothing is from memory.
 - The error and warning counts match the JSON issues for the platforms in scope (count `severity` values; `info` is not a warning).
