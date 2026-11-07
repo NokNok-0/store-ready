@@ -35,11 +35,11 @@ Skills that produce submission artifacts write them under `store/` in the user's
 | File | Written by |
 |---|---|
 | `store/listing.ios.json`, `store/listing.android.json` | store-listing |
-| `store/review-notes.txt` | review-notes |
+| `store/review-notes.txt`, `store/app-access.android.txt` | review-notes |
 | `store/privacy.ios.md` | ios-privacy |
 | `store/data-safety.android.md` | play-data-safety |
 | `store/age-rating.md` | age-rating |
-| `store/screenshots/<platform>/<size>/*.png` | store-screenshots |
+| `store/screenshots/plan.md`; images in `store/screenshots/ios/iphone/`, `ios/ipad/`, `android/phone/`, `android/tablet/`, `android/feature-graphic/`, `android/icon/` | store-screenshots |
 | `store/checklist.md` | submission-checklist |
 | `store/review-risks.md` | app-review-risk, mock-review |
 
