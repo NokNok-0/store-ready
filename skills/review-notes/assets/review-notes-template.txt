@@ -1,0 +1,43 @@
+ABOUT THE APP
+<One or two sentences: what the user does with the app.>
+
+DEMO ACCOUNTS
+All accounts below work against the production server this build uses and do not expire.
+
+1. <Role, e.g. Member>
+   Username: <demo.member@example.com>
+   Password: {{PASSWORD_MEMBER}}
+   Sees: <what this role can do>
+
+2. <Role, e.g. Coach>
+   Username: <demo.coach@example.com>
+   Password: {{PASSWORD_COACH}}
+   Sees: <what this role adds>
+
+3. Expired subscription
+   Username: <demo.expired@example.com>
+   Password: {{PASSWORD_EXPIRED}}
+   Use this account to see the paywall and test the purchase.
+
+SIGN-IN AND TWO-FACTOR AUTHENTICATION
+<Exactly what happens after the password, e.g.:
+"Two-factor authentication is turned off for the demo accounts." or
+"Enter 246810 when asked for the code; it is fixed for the demo accounts only.">
+
+HOW TO REACH EACH FEATURE
+New in this version:
+- <Feature>: <Tab or screen> > <tap> > <tap>.
+Other features that are not visible on the first screen:
+- <Feature>: <steps>.
+- Delete account: Settings > Account > Delete account.
+
+PURCHASES
+- <Product>: <where to find it>. <What it unlocks.>
+- <Any purchase that cannot be reviewed and why, e.g. "Gift codes are issued only to partner schools; the demo Member account already has one applied.">
+
+HARDWARE, REGION AND OTHER DEPENDENCIES
+- <e.g. "Pairs with the Acme bluetooth scale. A video of the app running on a real iPhone with the scale is attached.">
+- <e.g. "Store listings are shown only in Germany. The demo accounts are set to Berlin, so content shows from any location.">
+
+CONTACT
+<Name>, <email>, <phone with country code>, <time zone>
