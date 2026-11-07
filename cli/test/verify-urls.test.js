@@ -76,6 +76,15 @@ describe('verifyUrl host safety', () => {
     assert.match(result.ok ? '' : result.error ?? '', /not a public address/);
   });
 
+  it('refuses at connect time when the name resolves to a private address after the pre-check', async () => {
+    const port = new URL(base).port;
+    const before = requests.length;
+    const result = await verifyUrl(`http://localhost.:${port}/privacy`, { resolve: publicDns });
+    assert.equal(result.ok, false);
+    assert.match(result.ok ? '' : result.error ?? '', /not a public address/);
+    assert.equal(requests.length, before);
+  });
+
   it('checks every redirect hop', async () => {
     /** @type {typeof fetch} */
     const fetchImpl = async () => new Response(null, { status: 302, headers: { location: 'http://169.254.169.254/' } });
@@ -94,7 +103,7 @@ describe('verifyUrl host safety', () => {
     const { isPublicAddress } = await import('../src/verify-urls.js');
     assert.equal(isPublicAddress('93.184.216.34'), true);
     assert.equal(isPublicAddress('2606:4700::1111'), true);
-    for (const address of ['127.0.0.1', '10.1.2.3', '172.20.0.1', '192.168.0.1', '169.254.169.254', '100.64.0.1', '0.0.0.0', '::1', 'fd00::1', 'fe80::1', '::ffff:10.0.0.1']) {
+    for (const address of ['127.0.0.1', '10.1.2.3', '172.20.0.1', '192.168.0.1', '169.254.169.254', '100.64.0.1', '0.0.0.0', '::1', 'fd00::1', 'fe80::1', '::ffff:10.0.0.1', '::7f00:1', '2002:7f00:1::1', '2001::1', 'fec0::1', '64:ff9b:1::a00:1', '2001:db8::1']) {
       assert.equal(isPublicAddress(address), false, address);
     }
   });
