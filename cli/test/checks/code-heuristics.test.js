@@ -64,6 +64,25 @@ describe('login.apple-equivalent', () => {
     assert.equal(issues[0].file, 'src/login.ts');
   });
 
+  for (const [label, code] of [
+    ['a custom sign-in function', 'export async function signInWithGoogle() {}'],
+    ['button text', '<Button label="Continue with Google" />'],
+    ['JSX text', '<Text>Sign in with Facebook</Text>'],
+  ]) {
+    it(`detects third-party login from ${label}`, () => {
+      assert.equal(runCheck(loginApple, expoProject({}, {}, { 'src/components/social.tsx': code })).length, 1);
+    });
+  }
+
+  it('does not treat Sign in with Apple text as third-party login', () => {
+    assert.deepEqual(runCheck(loginApple, expoProject({}, {}, { 'src/login.tsx': '<Button label="Sign in with Apple" />' })), []);
+  });
+
+  it('accepts a custom Apple sign-in function next to Google', () => {
+    const code = 'signInWithGoogle(); signInWithApple();';
+    assert.deepEqual(runCheck(loginApple, expoProject({}, {}, { 'src/login.ts': code })), []);
+  });
+
   it('passes when an Apple login is present', () => {
     assert.deepEqual(runCheck(loginApple, expoProject({}, { 'react-native-fbsdk-next': '13', 'expo-apple-authentication': '1' })), []);
     assert.deepEqual(runCheck(loginApple, expoProject({}, {}, { 'src/login.ts': "signInWithOAuth({ provider: 'google' }); signInWithOAuth({ provider: 'apple' });" })), []);

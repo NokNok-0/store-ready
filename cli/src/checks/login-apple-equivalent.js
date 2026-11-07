@@ -15,6 +15,8 @@ export const THIRD_PARTY_LOGIN_CODE = [
   { label: 'GoogleSignin', pattern: /\bGoogleSignin\b/ },
   { label: 'OAuth provider option', pattern: /\bprovider\s*:\s*['"](?:google|facebook|github|twitter|discord|linkedin|linkedin_oidc)['"]/ },
   { label: 'Clerk OAuth strategy', pattern: /['"]oauth_(?:google|facebook|github|twitter|discord|linkedin|linkedin_oidc)['"]/ },
+  { label: 'sign-in function for a third-party provider', pattern: /\bsignInWith(?:Google|Facebook|GitHub|Github|Twitter|Discord|LinkedIn|Microsoft)\b/ },
+  { label: 'third-party sign-in button text', pattern: /['"`>]\s*(?:Continue|Sign in|Log in|Login|Sign up) with (?:Google|Facebook|GitHub|Twitter|X|Discord|LinkedIn|Microsoft)\b/i },
 ];
 
 export const APPLE_LOGIN_PACKAGES = ['expo-apple-authentication', '@invertase/react-native-apple-authentication'];
@@ -25,6 +27,7 @@ export const APPLE_LOGIN_CODE = [
   /\bprovider\s*:\s*['"]apple['"]/,
   /['"]apple\.com['"]/,
   /['"]oauth_apple['"]/,
+  /\bsignInWithApple\b/,
 ];
 
 /** @param {import('../project/load-project.js').Project} project */
