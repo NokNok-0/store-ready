@@ -1,0 +1,14 @@
+{
+  "name": "store-ready",
+  "description": "Get a mobile app through App Store and Google Play review: compliance checks, privacy and data safety forms, store listings, screenshots, review notes and rejection fixes.",
+  "owner": { "name": "NokNok-0", "url": "https://github.com/NokNok-0" },
+  "plugins": [
+    {
+      "name": "store-ready",
+      "description": "Get a mobile app through App Store and Google Play review: compliance checks, privacy and data safety forms, store listings, screenshots, review notes and rejection fixes.",
+      "version": "0.1.0",
+      "source": "./",
+      "author": { "name": "NokNok-0", "url": "https://github.com/NokNok-0" }
+    }
+  ]
+}

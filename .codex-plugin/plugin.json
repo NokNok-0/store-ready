@@ -1,0 +1,21 @@
+{
+  "name": "store-ready",
+  "version": "0.1.0",
+  "description": "Get a mobile app through App Store and Google Play review: compliance checks, privacy and data safety forms, store listings, screenshots, review notes and rejection fixes.",
+  "author": { "name": "NokNok-0", "url": "https://github.com/NokNok-0" },
+  "homepage": "https://github.com/NokNok-0/store-ready",
+  "repository": "https://github.com/NokNok-0/store-ready",
+  "license": "MIT",
+  "keywords": ["app-store", "google-play", "app-review", "expo", "react-native", "ios", "android"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "store-ready",
+    "shortDescription": "Get your app through App Store and Google Play review",
+    "longDescription": "Get a mobile app through App Store and Google Play review: compliance checks, privacy and data safety forms, store listings, screenshots, review notes and rejection fixes.",
+    "developerName": "NokNok-0",
+    "category": "Developer Tools",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "defaultPrompt": ["Get my app ready for the App Store and Google Play.", "Apple rejected my app, here is the message."],
+    "websiteURL": "https://github.com/NokNok-0/store-ready"
+  }
+}
