@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="577" viewBox="0 0 960 577" role="img" aria-label="store-ready check run on the sample app: 6 errors, 13 warnings, 6 info">
+<title>npx store-ready check on the sample app: 6 errors, 13 warnings, 6 info</title>
+<style>
+text{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;font-size:13px}
+.cmd{clip-path:inset(0 100% 0 0);animation:type 16s steps(44) infinite}
+@keyframes type{0%{clip-path:inset(0 100% 0 0)}8.75%,94%{clip-path:inset(0 0 0 0)}100%{clip-path:inset(0 100% 0 0)}}
+@keyframes l0{0%,10.00%{opacity:0}10.01%,94%{opacity:1}100%{opacity:0}}
+@keyframes l1{0%,11.75%{opacity:0}11.76%,94%{opacity:1}100%{opacity:0}}
+@keyframes l2{0%,13.50%{opacity:0}13.51%,94%{opacity:1}100%{opacity:0}}
+@keyframes l3{0%,15.25%{opacity:0}15.26%,94%{opacity:1}100%{opacity:0}}
+@keyframes l4{0%,17.00%{opacity:0}17.01%,94%{opacity:1}100%{opacity:0}}
+@keyframes l5{0%,18.75%{opacity:0}18.76%,94%{opacity:1}100%{opacity:0}}
+@keyframes l6{0%,20.50%{opacity:0}20.51%,94%{opacity:1}100%{opacity:0}}
+@keyframes l7{0%,22.25%{opacity:0}22.26%,94%{opacity:1}100%{opacity:0}}
+@keyframes l8{0%,24.00%{opacity:0}24.01%,94%{opacity:1}100%{opacity:0}}
+@keyframes l9{0%,25.75%{opacity:0}25.76%,94%{opacity:1}100%{opacity:0}}
+@keyframes l10{0%,27.50%{opacity:0}27.51%,94%{opacity:1}100%{opacity:0}}
+@keyframes l11{0%,29.25%{opacity:0}29.26%,94%{opacity:1}100%{opacity:0}}
+@keyframes l12{0%,31.00%{opacity:0}31.01%,94%{opacity:1}100%{opacity:0}}
+@keyframes l13{0%,32.75%{opacity:0}32.76%,94%{opacity:1}100%{opacity:0}}
+@keyframes l14{0%,34.50%{opacity:0}34.51%,94%{opacity:1}100%{opacity:0}}
+@keyframes l15{0%,36.25%{opacity:0}36.26%,94%{opacity:1}100%{opacity:0}}
+@keyframes l16{0%,38.00%{opacity:0}38.01%,94%{opacity:1}100%{opacity:0}}
+@keyframes l17{0%,39.75%{opacity:0}39.76%,94%{opacity:1}100%{opacity:0}}
+@keyframes l18{0%,41.50%{opacity:0}41.51%,94%{opacity:1}100%{opacity:0}}
+@keyframes l19{0%,43.25%{opacity:0}43.26%,94%{opacity:1}100%{opacity:0}}
+@keyframes l20{0%,45.00%{opacity:0}45.01%,94%{opacity:1}100%{opacity:0}}
+@keyframes l21{0%,46.75%{opacity:0}46.76%,94%{opacity:1}100%{opacity:0}}
+@keyframes l22{0%,48.50%{opacity:0}48.51%,94%{opacity:1}100%{opacity:0}}
+@keyframes l23{0%,50.25%{opacity:0}50.26%,94%{opacity:1}100%{opacity:0}}
+@keyframes l24{0%,52.00%{opacity:0}52.01%,94%{opacity:1}100%{opacity:0}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;opacity:1!important;clip-path:none!important}}
+</style>
+<rect width="960" height="577" rx="10" fill="#0d1117"/>
+<rect width="960" height="34" rx="10" fill="#161b22"/>
+<rect y="24" width="960" height="10" fill="#161b22"/>
+<circle cx="22" cy="17" r="6" fill="#ff5f57"/><circle cx="42" cy="17" r="6" fill="#febc2e"/><circle cx="62" cy="17" r="6" fill="#28c840"/>
+<text x="480" y="21" fill="#8b949e" text-anchor="middle">examples/habit-tracker: before the skills ran</text>
+<text x="24" y="64" xml:space="preserve"><tspan fill="#3fb950">$ </tspan><tspan class="cmd" fill="#c9d1d9">npx store-ready check examples/habit-tracker</tspan></text>
+<text x="24" y="102" fill="#c9d1d9" font-weight="bold" style="animation:l1 16s infinite">iOS</text>
+<text x="24" y="121" xml:space="preserve" style="animation:l2 16s infinite"><tspan fill="#ff7b72" font-weight="bold">  ERROR </tspan><tspan fill="#79c0ff"> ios.purpose-strings    </tspan><tspan fill="#c9d1d9"> NSPhotoLibraryUsageDescription is not set, but expo-image-picker uses…</tspan></text>
+<text x="24" y="140" xml:space="preserve" style="animation:l3 16s infinite"><tspan fill="#ff7b72" font-weight="bold">  ERROR </tspan><tspan fill="#79c0ff"> ios.purpose-strings    </tspan><tspan fill="#c9d1d9"> NSCameraUsageDescription is not set, but expo-image-picker uses that p…</tspan></text>
+<text x="24" y="159" xml:space="preserve" style="animation:l4 16s infinite"><tspan fill="#ff7b72" font-weight="bold">  ERROR </tspan><tspan fill="#79c0ff"> app.identity           </tspan><tspan fill="#c9d1d9"> No iOS bundle identifier found.</tspan></text>
+<text x="24" y="178" xml:space="preserve" style="animation:l5 16s infinite"><tspan fill="#ff7b72" font-weight="bold">  ERROR </tspan><tspan fill="#79c0ff"> app.template-content   </tspan><tspan fill="#c9d1d9"> Template artwork: assets/images/icon.png (icon) is the Expo SDK 58 def…</tspan></text>
+<text x="24" y="197" xml:space="preserve" style="animation:l6 16s infinite"><tspan fill="#e3b341" font-weight="bold">  WARN  </tspan><tspan fill="#79c0ff"> ios.purpose-strings    </tspan><tspan fill="#c9d1d9"> expo-image-picker is installed and not in plugins; if Expo applies its…</tspan></text>
+<text x="24" y="216" xml:space="preserve" style="animation:l7 16s infinite"><tspan fill="#e3b341" font-weight="bold">  WARN  </tspan><tspan fill="#79c0ff"> ios.privacy-manifest   </tspan><tspan fill="#c9d1d9"> NSPrivacyAccessedAPICategoryFileTimestamp is declared by 3 packages in…</tspan></text>
+<text x="24" y="235" xml:space="preserve" style="animation:l8 16s infinite"><tspan fill="#e3b341" font-weight="bold">  WARN  </tspan><tspan fill="#79c0ff"> ios.privacy-manifest   </tspan><tspan fill="#c9d1d9"> NSPrivacyAccessedAPICategoryUserDefaults is declared by 3 packages in…</tspan></text>
+<text x="24" y="254" xml:space="preserve" style="animation:l9 16s infinite"><tspan fill="#e3b341" font-weight="bold">  WARN  </tspan><tspan fill="#79c0ff"> ios.privacy-manifest   </tspan><tspan fill="#c9d1d9"> NSPrivacyAccessedAPICategoryDiskSpace is declared by a package in node…</tspan></text>
+<text x="24" y="273" xml:space="preserve" style="animation:l10 16s infinite"><tspan fill="#e3b341" font-weight="bold">  WARN  </tspan><tspan fill="#79c0ff"> ios.privacy-manifest   </tspan><tspan fill="#c9d1d9"> NSPrivacyAccessedAPICategorySystemBootTime is declared by a package in…</tspan></text>
+<text x="24" y="292" xml:space="preserve" style="animation:l11 16s infinite"><tspan fill="#e3b341" font-weight="bold">  WARN  </tspan><tspan fill="#79c0ff"> app.template-content   </tspan><tspan fill="#c9d1d9"> Placeholder content: "not available yet" in src/app/paywall.tsx:34 ("n…</tspan></text>
+<text x="24" y="311" xml:space="preserve" style="animation:l12 16s infinite"><tspan fill="#e3b341" font-weight="bold">  WARN  </tspan><tspan fill="#79c0ff"> account.deletion       </tspan><tspan fill="#c9d1d9"> Sign-up found ("auth.signUp" in src/session.tsx:31), no "Delete accoun…</tspan></text>
+<text x="24" y="330" xml:space="preserve" style="animation:l13 16s infinite"><tspan fill="#e3b341" font-weight="bold">  WARN  </tspan><tspan fill="#79c0ff"> login.apple-equivalent </tspan><tspan fill="#c9d1d9"> Third-party login found (sign-in function for a third-party provider i…</tspan></text>
+<text x="24" y="349" xml:space="preserve" style="animation:l14 16s infinite"><tspan fill="#e3b341" font-weight="bold">  WARN  </tspan><tspan fill="#79c0ff"> privacy.policy-url     </tspan><tspan fill="#c9d1d9"> No privacy policy URL found in store/listing.*.json, app config "extra…</tspan></text>
+<text x="24" y="387" fill="#c9d1d9" font-weight="bold" style="animation:l16 16s infinite">Android</text>
+<text x="24" y="406" xml:space="preserve" style="animation:l17 16s infinite"><tspan fill="#ff7b72" font-weight="bold">  ERROR </tspan><tspan fill="#79c0ff"> app.identity           </tspan><tspan fill="#c9d1d9"> No Android package name (applicationId) found.</tspan></text>
+<text x="24" y="425" xml:space="preserve" style="animation:l18 16s infinite"><tspan fill="#ff7b72" font-weight="bold">  ERROR </tspan><tspan fill="#79c0ff"> app.template-content   </tspan><tspan fill="#c9d1d9"> Template artwork: assets/images/icon.png (icon) is the Expo SDK 58 def…</tspan></text>
+<text x="24" y="444" xml:space="preserve" style="animation:l19 16s infinite"><tspan fill="#e3b341" font-weight="bold">  WARN  </tspan><tspan fill="#79c0ff"> android.permissions    </tspan><tspan fill="#c9d1d9"> READ_MEDIA_IMAGES is declared (expo.android.permissions).</tspan></text>
+<text x="24" y="463" xml:space="preserve" style="animation:l20 16s infinite"><tspan fill="#e3b341" font-weight="bold">  WARN  </tspan><tspan fill="#79c0ff"> app.template-content   </tspan><tspan fill="#c9d1d9"> Placeholder content: "not available yet" in src/app/paywall.tsx:34 ("n…</tspan></text>
+<text x="24" y="482" xml:space="preserve" style="animation:l21 16s infinite"><tspan fill="#e3b341" font-weight="bold">  WARN  </tspan><tspan fill="#79c0ff"> account.deletion       </tspan><tspan fill="#c9d1d9"> Sign-up found ("auth.signUp" in src/session.tsx:31), no "Delete accoun…</tspan></text>
+<text x="24" y="501" xml:space="preserve" style="animation:l22 16s infinite"><tspan fill="#e3b341" font-weight="bold">  WARN  </tspan><tspan fill="#79c0ff"> privacy.policy-url     </tspan><tspan fill="#c9d1d9"> No privacy policy URL found in store/listing.*.json, app config "extra…</tspan></text>
+<text x="24" y="539" font-weight="bold" style="animation:l24 16s infinite"><tspan fill="#ff7b72">6 errors</tspan><tspan fill="#c9d1d9">, </tspan><tspan fill="#e3b341">13 warnings</tspan><tspan fill="#8b949e">, 6 info</tspan></text>
+</svg>

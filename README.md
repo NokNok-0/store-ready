@@ -14,36 +14,28 @@ Works with Claude Code, Codex, Cursor, Gemini CLI and any agent that reads Agent
 
 </div>
 
-```text
-$ npx store-ready check examples/habit-tracker
+<p align="center">
+  <img src="docs/images/check.svg" alt="npx store-ready check on the sample app finds 6 errors and 13 warnings: missing purpose strings, no bundle identifier, Expo template icons, undeclared privacy manifest reasons, no account deletion, Google login without Sign in with Apple, no privacy policy" width="100%">
+</p>
 
-iOS
-  ERROR  ios.purpose-strings  app.json
-         NSCameraUsageDescription is not set, but expo-image-picker uses that permission. Without your own
-         text the app ships no purpose string or the package's generic default.
-         Fix:    Add "NSCameraUsageDescription" to expo.ios.infoPlist in app.json, or set the
-                 "cameraPermission" option of the expo-image-picker config plugin. Say what the app does
-                 with the data and give an example.
-         Source: https://developer.apple.com/help/app-review/guideline-reference/5-1-1-purpose-strings
-
-  ERROR  app.template-content  app.json
-         Template artwork: assets/images/icon.png (icon) is the Expo SDK 58 default template icon.png; ...
-
-  WARN   login.apple-equivalent  src/auth.ts
-         Third-party login found (sign-in function for a third-party provider in src/auth.ts) but no
-         Sign in with Apple or other equivalent login was detected.
-  ...
-
-6 errors, 13 warnings, 6 info
-```
-
-Every finding comes with the fix and a link to the official Apple or Google page it is based on. Excerpt from the [full report](examples/habit-tracker/docs/check-before.txt), wrapped for width.
+The checker run above is the sample app before the skills ran, one line per finding. In the [full report](examples/habit-tracker/docs/check-before.txt), every finding also has the fix and a link to the official Apple or Google page it is based on.
 
 ## Why
 
 Building an app with an AI agent takes a weekend now. Getting it through review still takes weeks: a rejection for a vague camera permission string, a missing "delete account" button, Google login without Sign in with Apple, a Data safety form that doesn't match the SDKs, screenshots in the wrong size, and, for new Google Play accounts, a 14-day closed test with 12 testers that nobody mentions until you hit it.
 
 store-ready does that part. Your agent runs the checker, fixes the code, and writes the forms you paste into App Store Connect and Play Console.
+
+## Two parts
+
+| | The checker | The skills |
+|---|---|---|
+| What it is | A command: `npx store-ready check` | Instructions your AI agent loads |
+| What it does | Reads the project and reports what would get it rejected | Fixes what the checker found and writes the store forms |
+| Changes your files | Never. Read-only, offline unless you pass `--verify-urls` | Yes: code, app config, and the files under `store/` |
+| Needs an agent | No. Run it yourself or in CI | Yes: Claude Code, Codex, Cursor, Gemini CLI |
+
+Use the checker alone to see where you stand. Install the skills when you want your agent to do the work.
 
 ## Install
 
@@ -103,12 +95,11 @@ Already rejected? Paste the message and say "fix this rejection".
 
 [`examples/habit-tracker`](examples/habit-tracker) is a real Expo SDK 58 app, built the way a typical AI-assisted weekend app ends up: email sign-up, "Continue with Google", photos, a Pro paywall. It passes its own tests and runs.
 
-| | Errors | Warnings |
-|---|---|---|
-| [Before](examples/habit-tracker/docs/check-before.txt) | 6 | 13 |
-| [After](examples/habit-tracker/docs/check-after.txt), once an agent ran the pack on it | 0 | 0 |
+<p align="center">
+  <img src="docs/images/before-after.svg" alt="Sample app: 6 errors and 13 warnings before, 0 errors and 0 warnings after an agent ran the skills. It added account deletion and Sign in with Apple, wrote specific purpose strings, declared privacy manifest reasons, blocked 4 Android permissions, replaced the template icon and removed a fake Google button and a dead paywall." width="100%">
+</p>
 
-What the agent changed, following the skills: added account deletion and Sign in with Apple (with tests), wrote specific camera and photo purpose strings, declared the privacy manifest reasons its dependencies use, blocked four Android permissions it did not need, replaced Expo's template icon, and removed a "Continue with Google" button and a disabled paywall that did nothing, because reviewers reject features that don't work (guideline 2.1).
+Full reports: [before](examples/habit-tracker/docs/check-before.txt) and [after](examples/habit-tracker/docs/check-after.txt). The agent removed the "Continue with Google" button and the disabled paywall because they did nothing, and reviewers reject features that don't work (guideline 2.1).
 
 - Everything the pack wrote is committed in [`examples/habit-tracker/store/`](examples/habit-tracker/store): listing text, review notes, App Privacy and Data safety answers, age rating, checklist and screenshots at the required sizes.
 - The agent's own notes on where the skills helped and where they fell short, which drove the next round of fixes: [`evals/results/`](evals/results).
@@ -137,11 +128,27 @@ What the agent changed, following the skills: added account deletion and Sign in
 
 Flags: `--json`, `--github` (pull request annotations), `--platform ios|android`, `--strict` (warnings fail), `--config <file>` (output of `npx expo config --type introspect --json`, which includes what config plugins add), `--verify-urls` (open the links it found; public hosts only). Exit code 1 on errors. Details in [cli/README.md](cli/README.md).
 
-Add it to CI:
+## Automate with CI
+
+Run the checker on every pull request, so a new permission without a purpose string, a dropped privacy policy link or an over-long subtitle is caught before it reaches App Review. `--github` turns each finding into an annotation on the file it concerns, shown in the pull request; `--strict` fails the job on warnings as well as errors.
+
+`.github/workflows/store-ready.yml`:
 
 ```yaml
-- run: npx store-ready check --github --strict
+name: store-ready
+on: [pull_request]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - run: npx store-ready check --github --strict
 ```
+
+For an `app.config.js` or `app.config.ts` project, install dependencies first, save the effective config (`npx expo config --type introspect --json > expo-config.json` works on Linux runners), and add `--config expo-config.json`. The checker stays offline in CI unless you add `--verify-urls`, which only contacts public hosts.
 
 ## Why you can trust the rules
 

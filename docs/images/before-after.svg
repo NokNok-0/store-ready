@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="330" viewBox="0 0 960 330" role="img" aria-label="Sample app before: 6 errors and 13 warnings. After the skills ran: 0 errors and 0 warnings.">
+<title>Sample app: 6 errors and 13 warnings before, 0 and 0 after</title>
+<style>text{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace}</style>
+<rect width="960" height="330" rx="10" fill="#0d1117"/>
+<text x="32" y="38" fill="#c9d1d9" font-size="15" font-weight="bold">examples/habit-tracker, checked before and after an agent ran the skills</text>
+
+<text x="32" y="70" fill="#8b949e" font-size="14">Before</text>
+<text x="32" y="122" fill="#ff7b72" font-size="36" font-weight="bold">6 errors</text>
+<text x="32" y="150" fill="#8b949e" font-size="13">13 warnings</text>
+<text x="236" y="116" fill="#8b949e" font-size="30">→</text>
+
+<text x="296" y="70" fill="#8b949e" font-size="14">After</text>
+<text x="296" y="122" fill="#3fb950" font-size="36" font-weight="bold">0 errors</text>
+<text x="296" y="150" fill="#8b949e" font-size="13">0 warnings</text>
+<line x1="520" y1="56" x2="520" y2="302" stroke="#30363d"/>
+<text x="548" y="70" fill="#8b949e" font-size="14">What the agent changed</text>
+<text x="548" y="98" fill="#c9d1d9" font-size="13"><tspan fill="#3fb950">✓ </tspan>Account deletion in Settings, with tests</text>
+<text x="548" y="122" fill="#c9d1d9" font-size="13"><tspan fill="#3fb950">✓ </tspan>Sign in with Apple next to email sign-up</text>
+<text x="548" y="146" fill="#c9d1d9" font-size="13"><tspan fill="#3fb950">✓ </tspan>Specific camera and photo purpose strings</text>
+<text x="548" y="170" fill="#c9d1d9" font-size="13"><tspan fill="#3fb950">✓ </tspan>Privacy manifest reasons its packages use</text>
+<text x="548" y="194" fill="#c9d1d9" font-size="13"><tspan fill="#3fb950">✓ </tspan>4 unneeded Android permissions blocked</text>
+<text x="548" y="218" fill="#c9d1d9" font-size="13"><tspan fill="#3fb950">✓ </tspan>Original icon instead of the Expo template</text>
+<text x="548" y="242" fill="#c9d1d9" font-size="13"><tspan fill="#3fb950">✓ </tspan>Fake Google button and dead paywall removed</text>
+<text x="32" y="196" fill="#8b949e" font-size="14">Files it wrote under store/</text>
+<text x="32" y="224" fill="#79c0ff" font-size="13">listing.ios.json</text>
+<text x="262" y="224" fill="#79c0ff" font-size="13">listing.android.json</text>
+<text x="32" y="246" fill="#79c0ff" font-size="13">review-notes.txt</text>
+<text x="262" y="246" fill="#79c0ff" font-size="13">privacy.ios.md</text>
+<text x="32" y="268" fill="#79c0ff" font-size="13">data-safety.android.md</text>
+<text x="262" y="268" fill="#79c0ff" font-size="13">age-rating.md</text>
+<text x="32" y="290" fill="#79c0ff" font-size="13">checklist.md</text>
+<text x="262" y="290" fill="#79c0ff" font-size="13">screenshots/</text>
+</svg>
