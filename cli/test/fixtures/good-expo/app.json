@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "Habit Lens",
+    "slug": "habit-lens",
+    "version": "1.0.0",
+    "icon": "./assets/icon.png",
+    "ios": {
+      "bundleIdentifier": "com.example.habitlens",
+      "buildNumber": "1",
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSCameraUsageDescription": "The camera is used to take a photo for a habit check-in, for example a picture of your morning run."
+      },
+      "privacyManifests": {
+        "NSPrivacyAccessedAPITypes": [
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+          }
+        ]
+      }
+    },
+    "android": {
+      "package": "com.example.habitlens",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "permissions": ["CAMERA"]
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Your photo library is used when you attach an existing picture to a habit check-in, such as a meal photo."
+        }
+      ]
+    ]
+  }
+}

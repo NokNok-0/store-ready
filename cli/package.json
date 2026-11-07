@@ -1,0 +1,29 @@
+{
+  "name": "store-ready",
+  "version": "0.1.0",
+  "description": "Checks an Expo, React Native, iOS or Android project for issues that get apps rejected by App Store and Google Play review.",
+  "type": "module",
+  "bin": {
+    "store-ready": "./bin/store-ready.mjs"
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "app-store",
+    "google-play",
+    "expo",
+    "react-native",
+    "app-review",
+    "checker"
+  ],
+  "license": "MIT"
+}

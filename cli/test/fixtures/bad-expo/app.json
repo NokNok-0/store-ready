@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "Bad App",
+    "slug": "bad-app",
+    "icon": "./assets/icon.png",
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Location needed",
+        "NSContactsUsageDescription": "This app needs access to your contacts."
+      },
+      "privacyManifests": {
+        "NSPrivacyAccessedAPITypes": [
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryDiskSpace",
+            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+          },
+          {
+            "NSPrivacyAccessedAPIType": "UserDefaults",
+            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+          }
+        ]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/missing-foreground.png"
+      },
+      "permissions": [
+        "CAMERA",
+        "READ_MEDIA_IMAGES",
+        "ACCESS_BACKGROUND_LOCATION",
+        "USE_EXACT_ALARM",
+        "FOREGROUND_SERVICE_LOCATION",
+        "USE_FULL_SCREEN_INTENT",
+        "MANAGE_EXTERNAL_STORAGE",
+        "QUERY_ALL_PACKAGES"
+      ]
+    },
+    "plugins": [
+      ["expo-build-properties", { "android": { "targetSdkVersion": 34 } }]
+    ]
+  }
+}

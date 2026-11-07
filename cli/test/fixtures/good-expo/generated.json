@@ -1,0 +1,15 @@
+{
+  "images": {
+    "assets/icon.png": { "png": [1024, 1024] },
+    "assets/adaptive-icon.png": { "png": [1024, 1024], "alpha": true },
+    "store/screenshots/ios/iphone/01-home.png": { "png": [1206, 2622] },
+    "store/screenshots/ios/iphone/02-check-in.png": { "png": [1179, 2556] },
+    "store/screenshots/ios/iphone/03-calendar.jpg": { "jpeg": [1290, 2796] },
+    "store/screenshots/android/phone/01-home.png": { "png": [1080, 1920] },
+    "store/screenshots/android/phone/02-check-in.png": { "png": [1080, 1920] },
+    "store/screenshots/android/phone/03-calendar.png": { "png": [1080, 1920] },
+    "store/screenshots/android/phone/04-settings.jpg": { "jpeg": [1080, 1920] },
+    "store/screenshots/android/feature-graphic/feature.png": { "png": [1024, 500] },
+    "store/screenshots/android/icon/icon.png": { "png": [512, 512], "alpha": true }
+  }
+}
