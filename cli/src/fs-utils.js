@@ -11,17 +11,39 @@ export function readText(file) {
 }
 
 /**
- * @param {string} file
- * @returns {{ exists: false } | { exists: true, value: unknown } | { exists: true, error: string }}
+ * @typedef {{ exists: false } | { exists: true, value: unknown } | { exists: true, error: string }} JsonRead
  */
+
+/** @param {string} file @returns {JsonRead} */
 export function readJsonFile(file) {
   const text = readText(file);
   if (text === null) return { exists: false };
+  return parseJsonText(text);
+}
+
+/** @param {string} text @returns {JsonRead} */
+export function parseJsonText(text) {
   try {
     return { exists: true, value: JSON.parse(text) };
   } catch (error) {
-    return { exists: true, error: error instanceof Error ? error.message : String(error) };
+    const location = jsonErrorLocation(text, error instanceof Error ? error.message : '');
+    return { exists: true, error: location ? `not valid JSON (${location})` : 'not valid JSON' };
   }
+}
+
+/**
+ * Turns a JSON.parse message into "line L, column C" without repeating any of the file's text.
+ * @param {string} text
+ * @param {string} message
+ */
+export function jsonErrorLocation(text, message) {
+  const lineColumn = /line (\d+) column (\d+)/.exec(message);
+  if (lineColumn) return `line ${lineColumn[1]}, column ${lineColumn[2]}`;
+  const position = /position (\d+)/.exec(message);
+  const offset = position ? Number(position[1]) : /end of (?:JSON|data)/i.test(message) ? text.length : null;
+  if (offset === null) return null;
+  const before = text.slice(0, offset).split('\n');
+  return `line ${before.length}, column ${before[before.length - 1].length + 1}`;
 }
 
 /** @param {string} p */
@@ -40,36 +62,6 @@ export function isDirectory(p) {
   } catch {
     return false;
   }
-}
-
-/**
- * @param {string} dir
- * @param {{ maxDepth?: number, skipDir?: (name: string) => boolean }} [options]
- * @returns {string[]}
- */
-export function walk(dir, { maxDepth = Infinity, skipDir = () => false } = {}) {
-  /** @type {string[]} */
-  const files = [];
-  /** @param {string} current @param {number} depth */
-  const visit = (current, depth) => {
-    let entries;
-    try {
-      entries = fs.readdirSync(current, { withFileTypes: true });
-    } catch {
-      return;
-    }
-    entries.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
-    for (const entry of entries) {
-      const full = path.join(current, entry.name);
-      if (entry.isDirectory()) {
-        if (depth < maxDepth && !skipDir(entry.name)) visit(full, depth + 1);
-      } else if (entry.isFile()) {
-        files.push(full);
-      }
-    }
-  };
-  visit(dir, 0);
-  return files;
 }
 
 /** @param {string} root @param {string} file */

@@ -2,6 +2,7 @@ import { SOURCES } from '../sources.js';
 
 export const id = 'login.apple-equivalent';
 export const title = 'Equivalent login option next to third-party login (heuristic)';
+export const source = SOURCES.appleGuidelines;
 
 export const THIRD_PARTY_LOGIN_PACKAGES = [
   '@react-native-google-signin/google-signin',

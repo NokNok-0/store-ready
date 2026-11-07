@@ -1,9 +1,9 @@
-import fs from 'node:fs';
-import { isObject, readJsonFile } from '../fs-utils.js';
+import { isObject } from '../fs-utils.js';
 import { SOURCES } from '../sources.js';
 
 export const id = 'store.listing-limits';
 export const title = 'Store listing text limits';
+export const source = SOURCES.appleAppInformation;
 
 /**
  * @typedef {{ max: number, min?: number, unit: 'characters' | 'bytes', required?: boolean }} FieldLimit
@@ -90,19 +90,19 @@ export function run(project) {
   /** @type {Omit<import('../issue.js').Issue, 'id'>[]} */
   const issues = [];
   for (const spec of LISTINGS) {
-    const read = readJsonFile(project.resolve(spec.file));
+    const read = project.files.readJson(spec.file);
     if (!read.exists) continue;
     if ('error' in read) {
-      issues.push({ severity: 'error', platform: spec.platform, message: `${spec.file} is not valid JSON: ${read.error}`, fix: 'Fix the JSON syntax.', source: spec.source, file: spec.file });
+      issues.push({ severity: 'error', platform: spec.platform, message: `${spec.file} is ${read.error}.`, fix: 'Fix the JSON syntax.', source: spec.source, file: spec.file });
     } else if ('value' in read && !isObject(read.value)) {
       issues.push({ severity: 'error', platform: spec.platform, message: `${spec.file} must contain a JSON object.`, fix: `Use the shape { ${Object.keys(spec.fields).map((f) => `"${f}": ""`).join(', ')} }.`, source: spec.source, file: spec.file });
     } else if ('value' in read && isObject(read.value)) {
       issues.push(...checkListing(spec, read.value));
     }
   }
-  const notesPath = project.resolve(REVIEW_NOTES_FILE);
-  if (fs.existsSync(notesPath)) {
-    const bytes = Buffer.byteLength(fs.readFileSync(notesPath, 'utf8').trimEnd(), 'utf8');
+  const notes = project.files.readText(REVIEW_NOTES_FILE);
+  if (notes !== null) {
+    const bytes = Buffer.byteLength(notes.trimEnd(), 'utf8');
     if (bytes > REVIEW_NOTES_MAX_BYTES) {
       issues.push({
         severity: 'error',

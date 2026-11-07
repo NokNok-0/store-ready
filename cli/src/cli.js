@@ -3,6 +3,7 @@ import { parseArgs } from 'node:util';
 import { UsageError } from './project/usage-error.js';
 import { formatGithub } from './report/github.js';
 import { formatHuman } from './report/human.js';
+import { stripControl } from './report/sanitize.js';
 import { check } from './run-checks.js';
 
 export const EXIT_OK = 0;
@@ -88,7 +89,7 @@ export function main(argv, io) {
     throw error;
   }
 
-  if (values.json) io.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
+  if (values.json) io.stdout.write(`${toJson(result)}\n`);
   else if (values.github) io.stdout.write(formatGithub(result, { cwd: io.cwd }));
   else io.stdout.write(formatHuman(result, { color: useColor(io), strict: values.strict, version: packageVersion() }));
 
@@ -98,8 +99,13 @@ export function main(argv, io) {
 
 /** @param {{ stderr: { write: (text: string) => unknown } }} io @param {string} message */
 function usage(io, message) {
-  io.stderr.write(`store-ready: ${message}\nRun "store-ready --help" for usage.\n`);
+  io.stderr.write(`store-ready: ${stripControl(message)}\nRun "store-ready --help" for usage.\n`);
   return EXIT_USAGE;
+}
+
+/** JSON.stringify escapes C0 controls but writes DEL and C1 controls raw. @param {unknown} value */
+export function toJson(value) {
+  return JSON.stringify(value, null, 2).replace(/[\u007f-\u009f]/g, (ch) => `\\u${ch.charCodeAt(0).toString(16).padStart(4, '0')}`);
 }
 
 /** @param {{ stdout: { isTTY?: boolean }, env: Record<string, string | undefined> }} io */

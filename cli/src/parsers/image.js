@@ -10,6 +10,11 @@ const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0
 
 export class ImageError extends Error {}
 
+/** @param {unknown} error a fixed description that never includes file contents or system paths */
+export function imageErrorText(error) {
+  return error instanceof ImageError ? error.message : 'the file could not be read';
+}
+
 /** @param {Buffer} buffer @returns {ImageInfo} */
 export function readImageInfo(buffer) {
   if (isPng(buffer)) return readPngInfo(buffer);

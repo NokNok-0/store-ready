@@ -1,6 +1,5 @@
 import path from 'node:path';
-import { isDirectory, readJsonFile, readText, relativePath, walk } from '../fs-utils.js';
-import { parsePlist } from '../parsers/plist.js';
+import { parsePlist, PlistError } from '../parsers/plist.js';
 
 const SKIP_DIRS = new Set(['Pods', 'build', 'DerivedData', 'node_modules', 'vendor']);
 
@@ -15,25 +14,24 @@ const SKIP_DIRS = new Set(['Pods', 'build', 'DerivedData', 'node_modules', 'vend
  * }} IosProject
  */
 
-/** @param {string} root @returns {IosProject} */
-export function loadIos(root) {
+/** @param {import('./project-files.js').ProjectFiles} files @returns {IosProject} */
+export function loadIos(files) {
   /** @type {IosProject} */
   const ios = { present: false, infoPlists: [], privacyInfos: [], projects: [], appIconSets: [] };
-  const dir = path.join(root, 'ios');
-  if (!isDirectory(dir)) return ios;
-  const files = walk(dir, { maxDepth: 6, skipDir: (name) => SKIP_DIRS.has(name) || name.startsWith('.') });
-  for (const file of files) {
+  if (!files.isDirectory('ios')) return ios;
+  const paths = files.walk('ios', { maxDepth: 6, skipDir: (name) => SKIP_DIRS.has(name) || name.startsWith('.') });
+  for (const file of paths) {
     const name = path.basename(file);
     const parent = path.basename(path.dirname(file));
-    const relative = relativePath(root, file);
-    if (name === 'Info.plist' && !isTestPath(relative)) ios.infoPlists.push(parsePlistFile(file, relative));
-    else if (name === 'PrivacyInfo.xcprivacy') ios.privacyInfos.push(parsePlistFile(file, relative));
-    else if (name === 'project.pbxproj' && parent.endsWith('.xcodeproj')) ios.projects.push({ file: relative, text: readText(file) ?? '' });
+    const relative = files.relative(file);
+    if (name === 'Info.plist' && !isTestPath(relative)) ios.infoPlists.push(parsePlistFile(files, file, relative));
+    else if (name === 'PrivacyInfo.xcprivacy') ios.privacyInfos.push(parsePlistFile(files, file, relative));
+    else if (name === 'project.pbxproj' && parent.endsWith('.xcodeproj')) ios.projects.push({ file: relative, text: files.readText(file) ?? '' });
     else if (name === 'Contents.json' && /^AppIcon.*\.appiconset$/.test(parent)) {
-      const read = readJsonFile(file);
+      const read = files.readJson(file);
       ios.appIconSets.push({
         file: relative,
-        dir: relativePath(root, path.dirname(file)),
+        dir: files.relative(path.dirname(file)),
         data: 'value' in read ? read.value : null,
         ...('error' in read ? { error: read.error } : {}),
       });
@@ -48,12 +46,19 @@ function isTestPath(relative) {
   return relative.split('/').some((segment) => /Tests$/.test(segment));
 }
 
-/** @param {string} file @param {string} relative @returns {ParsedFile} */
-function parsePlistFile(file, relative) {
+/**
+ * @param {import('./project-files.js').ProjectFiles} files
+ * @param {string} file
+ * @param {string} relative
+ * @returns {ParsedFile}
+ */
+function parsePlistFile(files, file, relative) {
+  const text = files.readText(file) ?? '';
   try {
-    return { file: relative, data: parsePlist(readText(file) ?? '') };
+    return { file: relative, data: parsePlist(text) };
   } catch (error) {
-    return { file: relative, data: null, error: error instanceof Error ? error.message : String(error) };
+    const binary = error instanceof PlistError && text.startsWith('bplist');
+    return { file: relative, data: null, error: binary ? 'a binary property list, which is not supported' : 'not a valid XML property list' };
   }
 }
 

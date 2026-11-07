@@ -5,6 +5,7 @@ import { configFileName, nonEmptyString } from './expo-helpers.js';
 
 export const id = 'app.identity';
 export const title = 'Bundle identifier, package name and version';
+export const source = SOURCES.expoSubmit;
 
 /** @param {import('../project/load-project.js').Project} project */
 function iosIdentity(project) {

@@ -2,6 +2,7 @@ import { SOURCES } from '../sources.js';
 
 export const id = 'play.closed-testing';
 export const title = 'Play closed testing for new personal accounts (reminder)';
+export const source = SOURCES.playTesting;
 
 /** @param {import('../project/load-project.js').Project} project */
 export function run(project) {

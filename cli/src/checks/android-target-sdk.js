@@ -4,6 +4,7 @@ import { configFileName, pluginOptions } from './expo-helpers.js';
 
 export const id = 'android.target-sdk';
 export const title = 'Android target API level';
+export const source = SOURCES.playTargetSdk;
 
 export const MIN_TARGET_SDK = 36;
 export const EXPO_SDK_WITH_DEFAULT_36 = 58;

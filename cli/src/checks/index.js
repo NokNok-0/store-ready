@@ -12,7 +12,7 @@ import * as storeListingLimits from './store-listing-limits.js';
 import * as storeScreenshots from './store-screenshots.js';
 
 /**
- * @typedef {{ id: string, title: string, run: (project: import('../project/load-project.js').Project) => Omit<import('../issue.js').Issue, 'id'>[] }} Check
+ * @typedef {{ id: string, title: string, source: string, run: (project: import('../project/load-project.js').Project) => Omit<import('../issue.js').Issue, 'id'>[] }} Check
  * @type {Check[]}
  */
 export const CHECKS = [

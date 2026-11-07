@@ -1,6 +1,5 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { isDirectory, readText, relativePath, walk } from '../fs-utils.js';
 
 export const SCAN_DIRS = ['src', 'app', 'components', 'screens', 'lib', 'features', 'hooks', 'services', 'context', 'contexts', 'navigation', 'utils'];
 const SKIP_DIRS = new Set(['node_modules', 'ios', 'android', 'dist', 'build', 'web-build', 'coverage', '__tests__', '__mocks__']);
@@ -15,18 +14,18 @@ const MAX_FILE_BYTES = 512 * 1024;
  * @typedef {{ files: () => CodeFile[], search: (pattern: RegExp) => CodeMatch | null }} CodeIndex
  */
 
-/** @param {string} root @returns {CodeIndex} */
-export function createCodeIndex(root) {
+/** @param {import('./project-files.js').ProjectFiles} files @returns {CodeIndex} */
+export function createCodeIndex(files) {
   /** @type {CodeFile[] | null} */
   let cache = null;
-  const files = () => {
-    cache ??= collect(root);
+  const list = () => {
+    cache ??= collect(files);
     return cache;
   };
   return {
-    files,
+    files: list,
     search(pattern) {
-      for (const { file, text } of files()) {
+      for (const { file, text } of list()) {
         pattern.lastIndex = 0;
         const match = pattern.exec(text);
         if (match) return { file, match: match[0] };
@@ -36,28 +35,28 @@ export function createCodeIndex(root) {
   };
 }
 
-/** @param {string} root @returns {CodeFile[]} */
-function collect(root) {
+/** @param {import('./project-files.js').ProjectFiles} files @returns {CodeFile[]} */
+function collect(files) {
   /** @type {string[]} */
   const paths = [];
   for (const dir of SCAN_DIRS) {
-    const full = path.join(root, dir);
-    if (isDirectory(full)) paths.push(...walk(full, { maxDepth: 12, skipDir: (name) => SKIP_DIRS.has(name) || name.startsWith('.') }));
+    if (files.isDirectory(dir)) paths.push(...files.walk(dir, { maxDepth: 12, skipDir: (name) => SKIP_DIRS.has(name) || name.startsWith('.') }));
   }
-  for (const entry of fs.readdirSync(root, { withFileTypes: true })) {
-    if (entry.isFile() && ROOT_FILE.test(entry.name)) paths.push(path.join(root, entry.name));
+  for (const entry of fs.readdirSync(files.root, { withFileTypes: true })) {
+    if ((entry.isFile() || entry.isSymbolicLink()) && ROOT_FILE.test(entry.name) && files.isFile(entry.name)) paths.push(path.join(files.root, entry.name));
   }
   /** @type {CodeFile[]} */
-  const files = [];
+  const code = [];
   for (const file of paths) {
     if (!CODE_FILE.test(file) || TEST_FILE.test(file)) continue;
+    const real = files.resolve(file);
     try {
-      if (fs.statSync(file).size > MAX_FILE_BYTES) continue;
+      if (!real || fs.statSync(real).size > MAX_FILE_BYTES) continue;
     } catch {
       continue;
     }
-    const text = readText(file);
-    if (text !== null) files.push({ file: relativePath(root, file), text });
+    const text = files.readText(file);
+    if (text !== null) code.push({ file: files.relative(file), text });
   }
-  return files;
+  return code;
 }

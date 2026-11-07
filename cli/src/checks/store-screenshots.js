@@ -1,12 +1,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { isDirectory, relativePath, walk } from '../fs-utils.js';
-import { readImageFile } from '../parsers/image.js';
+import { relativePath } from '../fs-utils.js';
+import { imageErrorText, readImageFile } from '../parsers/image.js';
 import { buildSettingValues } from '../project/native-ios.js';
 import { SOURCES } from '../sources.js';
 
 export const id = 'store.screenshots';
 export const title = 'Store screenshot sizes and formats';
+export const source = SOURCES.appleScreenshots;
 
 export const SCREENSHOTS_DIR = 'store/screenshots';
 export const IOS_FOLDERS = ['iphone', 'ipad'];
@@ -76,7 +77,7 @@ export function closestIosSizes(width, height, count = 3) {
 function readShots(project, dir, platform, source, issues) {
   /** @type {Shot[]} */
   const shots = [];
-  for (const absolute of walk(dir, { maxDepth: 3, skipDir: (name) => name.startsWith('.') })) {
+  for (const absolute of project.files.walk(dir, { maxDepth: 3, skipDir: (name) => name.startsWith('.') })) {
     const file = relativePath(project.root, absolute);
     const extension = path.extname(absolute).toLowerCase();
     if (path.basename(absolute).startsWith('.') || IGNORED_EXTENSIONS.has(extension)) continue;
@@ -88,7 +89,7 @@ function readShots(project, dir, platform, source, issues) {
       const info = readImageFile(absolute);
       shots.push({ file, folder: relativePath(project.root, path.dirname(absolute)), width: info.width, height: info.height, format: info.format, hasAlpha: info.hasAlpha });
     } catch (error) {
-      issues.push({ severity: 'error', platform, message: `Could not read ${file}: ${error instanceof Error ? error.message : error}.`, fix: 'Re-export it as PNG or JPEG.', source, file });
+      issues.push({ severity: 'error', platform, message: `Could not read ${file}: ${imageErrorText(error)}.`, fix: 'Re-export it as PNG or JPEG.', source, file });
     }
   }
   return shots;
@@ -133,7 +134,7 @@ function checkIos(project, dir) {
   const folder = relativePath(project.root, dir);
   /** @type {RawIssue[]} */
   const issues = unknownEntries(project, dir, IOS_FOLDERS, 'ios', source);
-  const shots = IOS_FOLDERS.map((name) => path.join(dir, name)).filter(isDirectory).flatMap((sub) => readShots(project, sub, 'ios', source, issues));
+  const shots = IOS_FOLDERS.map((name) => path.join(dir, name)).filter((sub) => project.files.isDirectory(sub)).flatMap((sub) => readShots(project, sub, 'ios', source, issues));
   /** @type {Map<string, Shot[]>} */
   const byClass = new Map();
   for (const shot of shots) {
@@ -215,7 +216,7 @@ function checkAndroid(project, dir) {
   let total = 0;
   for (const name of ANDROID_SCREENSHOT_FOLDERS) {
     const sub = path.join(dir, name);
-    if (!isDirectory(sub)) continue;
+    if (!project.files.isDirectory(sub)) continue;
     const shots = readShots(project, sub, 'android', source, issues);
     total += shots.length;
     for (const shot of shots) {
@@ -242,7 +243,7 @@ function checkAndroid(project, dir) {
 
 /** @param {import('../project/load-project.js').Project} project @param {string} dir @param {string} source @returns {RawIssue[]} */
 function checkFeatureGraphic(project, dir, source) {
-  if (!isDirectory(dir)) return [];
+  if (!project.files.isDirectory(dir)) return [];
   /** @type {RawIssue[]} */
   const issues = [];
   const [width, height] = FEATURE_GRAPHIC_SIZE;
@@ -260,7 +261,7 @@ function checkFeatureGraphic(project, dir, source) {
 /** @param {import('../project/load-project.js').Project} project */
 export function run(project) {
   const root = project.resolve(SCREENSHOTS_DIR);
-  if (!isDirectory(root)) return [];
+  if (!root || !project.files.isDirectory(root)) return [];
   /** @type {RawIssue[]} */
   const issues = [];
   for (const entry of fs.readdirSync(root, { withFileTypes: true }).sort((a, b) => (a.name < b.name ? -1 : 1))) {

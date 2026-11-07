@@ -11,10 +11,15 @@ export function decodeEntities(text) {
   return text.replace(/&(#x[0-9a-fA-F]+|#[0-9]+|[a-zA-Z]+);/g, (match, body) => {
     if (body[0] === '#') {
       const code = body[1] === 'x' || body[1] === 'X' ? parseInt(body.slice(2), 16) : parseInt(body.slice(1), 10);
-      return Number.isFinite(code) ? String.fromCodePoint(code) : match;
+      return isScalarValue(code) ? String.fromCodePoint(code) : match;
     }
     return ENTITIES[body] ?? match;
   });
+}
+
+/** @param {number} code */
+export function isScalarValue(code) {
+  return Number.isInteger(code) && code >= 0 && code <= 0x10ffff && (code < 0xd800 || code > 0xdfff);
 }
 
 /**

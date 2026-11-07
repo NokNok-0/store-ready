@@ -1,4 +1,5 @@
 import { relative, sep } from 'node:path';
+import { stripControl } from './sanitize.js';
 
 const GROUPS = /** @type {const} */ ([['ios', 'iOS'], ['android', 'Android'], ['both', 'Both platforms']]);
 const BADGES = { error: 'ERROR', warning: 'WARN ', info: 'INFO ' };
@@ -12,18 +13,20 @@ const INDENT = ' '.repeat(9);
 export function formatHuman(result, { color, strict, version }) {
   /** @param {string} code @param {string} text */
   const paint = (code, text) => (color ? `\u001b[${code}m${text}\u001b[0m` : text);
+  /** @param {unknown} value */
+  const clean = (value) => stripControl(value).replace(/\n/g, `\n${INDENT}`);
   const shown = relative(process.cwd(), result.project.path).split(sep).join('/') || '.';
-  const lines = [`store-ready ${version}: checked ${result.project.type} project at ${shown}`, ''];
+  const lines = [`store-ready ${clean(version)}: checked ${clean(result.project.type)} project at ${clean(shown)}`, ''];
 
   for (const [platform, label] of GROUPS) {
     const issues = result.issues.filter((issue) => issue.platform === platform);
     if (issues.length === 0) continue;
     lines.push(paint('1', label));
     for (const issue of issues) {
-      lines.push(`  ${paint(COLORS[issue.severity], BADGES[issue.severity])}  ${paint('1', issue.id)}${issue.file ? `  ${issue.file}` : ''}`);
-      lines.push(`${INDENT}${issue.message}`);
-      lines.push(`${INDENT}Fix:    ${issue.fix}`);
-      lines.push(`${INDENT}Source: ${issue.source}`);
+      lines.push(`  ${paint(COLORS[issue.severity], BADGES[issue.severity])}  ${paint('1', clean(issue.id))}${issue.file ? `  ${clean(issue.file)}` : ''}`);
+      lines.push(`${INDENT}${clean(issue.message)}`);
+      lines.push(`${INDENT}Fix:    ${clean(issue.fix)}`);
+      lines.push(`${INDENT}Source: ${clean(issue.source)}`);
       lines.push('');
     }
   }

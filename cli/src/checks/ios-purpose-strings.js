@@ -4,6 +4,7 @@ import { configFileName, pluginOptions, truncate } from './expo-helpers.js';
 
 export const id = 'ios.purpose-strings';
 export const title = 'iOS permission purpose strings';
+export const source = SOURCES.applePurposeStrings;
 
 /**
  * Expo packages whose config plugin writes a purpose string. `option` is the plugin option that sets it;
@@ -150,7 +151,7 @@ export function run(project) {
     issues.push({
       severity: 'warning',
       platform: 'ios',
-      message: `Could not read ${plist.file}: ${plist.error}. Purpose strings in it were not checked.`,
+      message: `${plist.file} is ${plist.error}, so purpose strings in it were not checked.`,
       fix: 'Make sure the file is a valid XML property list.',
       source: SOURCES.applePurposeStrings,
       file: plist.file,

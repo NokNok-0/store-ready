@@ -1,12 +1,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { isDirectory, isObject, relativePath, walk } from '../fs-utils.js';
-import { readImageFile } from '../parsers/image.js';
+import { isObject } from '../fs-utils.js';
+import { imageErrorText, readImageFile } from '../parsers/image.js';
 import { SOURCES } from '../sources.js';
 import { configFileName, nonEmptyString } from './expo-helpers.js';
 
 export const id = 'app.icon';
 export const title = 'App icon files and sizes';
+export const source = SOURCES.appleAppIcons;
 
 export const IOS_ICON_SIZE = 1024;
 export const PLAY_ICON_SIZE = 512;
@@ -31,15 +32,16 @@ function iosIconPath(config) {
  */
 function checkIosIconFile(project, file, origin) {
   const source = SOURCES.appleAppIcons;
-  const absolute = project.resolve(file);
-  if (!fs.existsSync(absolute)) {
+  const location = project.files.locate(file);
+  if (location.status === 'outside') return [];
+  if (location.status === 'missing') {
     return [{ severity: 'error', platform: 'ios', message: `The iOS icon ${file} (${origin}) does not exist.`, fix: `Add a ${IOS_ICON_SIZE}x${IOS_ICON_SIZE} PNG at that path or fix the path.`, source, file: origin }];
   }
   let info;
   try {
-    info = readImageFile(absolute);
+    info = readImageFile(location.path);
   } catch (error) {
-    return [{ severity: 'error', platform: 'ios', message: `Could not read the iOS icon ${file}: ${error instanceof Error ? error.message : error}.`, fix: `Export the icon as a ${IOS_ICON_SIZE}x${IOS_ICON_SIZE} PNG.`, source, file }];
+    return [{ severity: 'error', platform: 'ios', message: `Could not read the iOS icon ${file}: ${imageErrorText(error)}.`, fix: `Export the icon as a ${IOS_ICON_SIZE}x${IOS_ICON_SIZE} PNG.`, source, file }];
   }
   /** @type {RawIssue[]} */
   const issues = [];
@@ -84,7 +86,7 @@ function checkExpoIcons(project) {
         file,
       });
     } else if (iconPath.endsWith('.icon')) {
-      if (!project.exists(iconPath)) {
+      if (project.files.locate(iconPath).status === 'missing') {
         issues.push({ severity: 'error', platform: 'ios', message: `The iOS icon ${iconPath} does not exist.`, fix: 'Fix the path to the Icon Composer file.', source: SOURCES.appleAppIcons, file });
       }
     } else {
@@ -103,7 +105,7 @@ function checkExpoIcons(project) {
     ];
     for (const [field, value] of androidPaths) {
       const iconPath = nonEmptyString(value);
-      if (iconPath && !project.exists(iconPath)) {
+      if (iconPath && project.files.locate(iconPath).status === 'missing') {
         issues.push({
           severity: 'error',
           platform: 'android',
@@ -126,6 +128,9 @@ function checkNativeIosIcon(project) {
     return [{ severity: 'error', platform: 'ios', message: 'No AppIcon.appiconset found in the iOS project.', fix: `Add an app icon set with a ${IOS_ICON_SIZE}x${IOS_ICON_SIZE} image in Xcode.`, source: SOURCES.appleAppIcons, file: project.ios.infoPlists[0]?.file }];
   }
   const set = sets[0];
+  if (set.error) {
+    return [{ severity: 'error', platform: 'ios', message: `${set.file} is ${set.error}.`, fix: 'Fix the JSON syntax of the app icon set.', source: SOURCES.appleAppIcons, file: set.file }];
+  }
   const images = Array.isArray(set.data?.images) ? set.data.images : [];
   const large = images.find((image) => isObject(image) && image.size === `${IOS_ICON_SIZE}x${IOS_ICON_SIZE}` && typeof image.filename === 'string');
   if (!large) {
@@ -136,16 +141,15 @@ function checkNativeIosIcon(project) {
 
 /** @param {import('../project/load-project.js').Project} project @returns {RawIssue[]} */
 function checkPlayIcons(project) {
-  const dir = project.resolve(PLAY_ICON_DIR);
-  if (!isDirectory(dir)) return [];
-  return walk(dir, { maxDepth: 0 })
+  if (!project.files.isDirectory(PLAY_ICON_DIR)) return [];
+  return project.files.walk(PLAY_ICON_DIR, { maxDepth: 0 })
     .filter((file) => IMAGE_FILE.test(path.basename(file)))
     .flatMap((file) => checkPlayIcon(project, file));
 }
 
 /** @param {import('../project/load-project.js').Project} project @param {string} absolute @returns {RawIssue[]} */
 function checkPlayIcon(project, absolute) {
-  const relative = relativePath(project.root, absolute);
+  const relative = project.files.relative(absolute);
   const source = SOURCES.playGraphics;
   /** @type {RawIssue[]} */
   const issues = [];
@@ -153,7 +157,7 @@ function checkPlayIcon(project, absolute) {
   try {
     info = readImageFile(absolute);
   } catch (error) {
-    return [{ severity: 'error', platform: 'android', message: `Could not read the Play icon ${relative}: ${error instanceof Error ? error.message : error}.`, fix: `Export a ${PLAY_ICON_SIZE}x${PLAY_ICON_SIZE} 32-bit PNG.`, source, file: relative }];
+    return [{ severity: 'error', platform: 'android', message: `Could not read the Play icon ${relative}: ${imageErrorText(error)}.`, fix: `Export a ${PLAY_ICON_SIZE}x${PLAY_ICON_SIZE} 32-bit PNG.`, source, file: relative }];
   }
   if (info.format !== 'png') {
     issues.push({ severity: 'error', platform: 'android', message: `The Play icon ${relative} is ${info.format.toUpperCase()}; Play needs a PNG.`, fix: `Export a ${PLAY_ICON_SIZE}x${PLAY_ICON_SIZE} 32-bit PNG.`, source, file: relative });

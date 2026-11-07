@@ -1,5 +1,3 @@
-import path from 'node:path';
-import { isDirectory, readText } from '../fs-utils.js';
 import { decodeEntities } from '../parsers/plist.js';
 
 export const MANIFEST_PATH = 'android/app/src/main/AndroidManifest.xml';
@@ -16,18 +14,18 @@ const GRADLE_FILES = ['android/app/build.gradle', 'android/app/build.gradle.kts'
  * }} AndroidProject
  */
 
-/** @param {string} root @returns {AndroidProject} */
-export function loadAndroid(root) {
+/** @param {import('./project-files.js').ProjectFiles} files @returns {AndroidProject} */
+export function loadAndroid(files) {
   /** @type {AndroidProject} */
   const android = { present: false, manifest: null, gradle: [], gradleProperties: null };
-  if (!isDirectory(path.join(root, 'android'))) return android;
-  const manifestText = readText(path.join(root, MANIFEST_PATH));
+  if (!files.isDirectory('android')) return android;
+  const manifestText = files.readText(MANIFEST_PATH);
   if (manifestText !== null) android.manifest = { file: MANIFEST_PATH, ...parseManifest(manifestText) };
   for (const file of GRADLE_FILES) {
-    const text = readText(path.join(root, file));
+    const text = files.readText(file);
     if (text !== null) android.gradle.push({ file, text });
   }
-  const properties = readText(path.join(root, 'android/gradle.properties'));
+  const properties = files.readText('android/gradle.properties');
   if (properties !== null) android.gradleProperties = { file: 'android/gradle.properties', text: properties };
   android.present = android.manifest !== null || android.gradle.length > 0;
   return android;

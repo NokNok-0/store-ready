@@ -16,7 +16,7 @@ process.on('exit', () => {
 });
 
 function tempDir() {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'store-ready-test-'));
+  const dir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'store-ready-test-')));
   created.push(dir);
   return dir;
 }

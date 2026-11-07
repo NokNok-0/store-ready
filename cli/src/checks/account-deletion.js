@@ -3,6 +3,7 @@ import { SCAN_DIRS } from '../project/code-scan.js';
 
 export const id = 'account.deletion';
 export const title = 'Account deletion when users can sign up (heuristic)';
+export const source = SOURCES.appleAccountDeletion;
 
 /** Code or UI text that suggests users can create an account. */
 export const SIGN_UP_INDICATORS = [

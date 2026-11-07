@@ -1,8 +1,9 @@
-import { isObject, readJsonFile } from '../fs-utils.js';
+import { isObject } from '../fs-utils.js';
 import { SOURCES } from '../sources.js';
 
 export const id = 'privacy.policy-url';
 export const title = 'Privacy policy URL';
+export const source = SOURCES.appleGuidelines;
 
 export const PRIVACY_URL = /https?:\/\/[^\s'"`<>)\]]*privacy[^\s'"`<>)\]]*/i;
 export const LISTING_FILES = ['store/listing.ios.json', 'store/listing.android.json'];
@@ -27,7 +28,7 @@ function findInValue(value) {
  */
 export function findPrivacyPolicyUrl(project) {
   for (const file of LISTING_FILES) {
-    const read = readJsonFile(project.resolve(file));
+    const read = project.files.readJson(file);
     if (!('value' in read)) continue;
     const declared = isObject(read.value) && typeof read.value.privacyPolicyUrl === 'string' && /^https?:\/\/\S+$/.test(read.value.privacyPolicyUrl.trim())
       ? read.value.privacyPolicyUrl.trim()

@@ -3,6 +3,7 @@ import { configFileName, pluginOptions } from './expo-helpers.js';
 
 export const id = 'android.permissions';
 export const title = 'Android permissions that need Play declarations';
+export const source = SOURCES.playPolicy;
 
 const PREFIX = 'android.permission.';
 

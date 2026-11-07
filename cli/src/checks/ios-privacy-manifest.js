@@ -4,6 +4,7 @@ import { configFileName } from './expo-helpers.js';
 
 export const id = 'ios.privacy-manifest';
 export const title = 'iOS privacy manifest required-reason APIs';
+export const source = SOURCES.expoApplePrivacy;
 
 /** Required-reason API categories and their valid reason codes. */
 export const REQUIRED_REASON_CATEGORIES = Object.freeze({
@@ -57,7 +58,7 @@ export function run(project) {
     issues.push({ severity: 'error', platform: 'ios', message, fix, source, file });
 
   for (const info of project.ios.privacyInfos) {
-    if (info.error) error(`Could not read ${info.file}: ${info.error}.`, 'Make sure the privacy manifest is a valid XML property list.', info.file);
+    if (info.error) error(`${info.file} is ${info.error}.`, 'Make sure the privacy manifest is a valid XML property list.', info.file);
   }
 
   /** @type {Set<string>} */

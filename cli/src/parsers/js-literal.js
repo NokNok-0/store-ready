@@ -1,3 +1,5 @@
+import { isScalarValue } from './plist.js';
+
 /**
  * @typedef {{ ok: true, value: unknown } | { ok: false, reason: string }} StaticReadResult
  */
@@ -18,8 +20,7 @@ export function readStaticConfig(source) {
     const parser = new LiteralParser(masked, start);
     return { ok: true, value: parser.parseValue() };
   } catch (error) {
-    if (error instanceof NotLiteral) return { ok: false, reason: error.message };
-    throw error;
+    return { ok: false, reason: error instanceof NotLiteral ? error.message : 'it could not be parsed' };
   }
 }
 
@@ -83,11 +84,11 @@ function findExportedObject(source) {
     throw new NotLiteral('the default export is a function or expression');
   }
   const declaration = new RegExp(`\\b(?:const|let|var)\\s+${escapeRegExp(name)}\\s*(?::[^=]+)?=\\s*`).exec(source);
-  if (!declaration) throw new NotLiteral(`"${name}" is not declared as an object literal in this file`);
+  if (!declaration) throw new NotLiteral('the exported name is not declared as an object literal in this file');
   const objectStart = declaration.index + declaration[0].length;
-  if (source[objectStart] !== '{') throw new NotLiteral(`"${name}" is not an object literal`);
+  if (source[objectStart] !== '{') throw new NotLiteral('the exported name is not an object literal');
   const mutation = new RegExp(`\\b${escapeRegExp(name)}\\s*(?:\\.[\\w$]+|\\[[^\\]]*\\])+\\s*=(?!=)|Object\\.assign\\(\\s*${escapeRegExp(name)}\\b`);
-  if (mutation.test(source)) throw new NotLiteral(`"${name}" is changed after it is declared`);
+  if (mutation.test(source)) throw new NotLiteral('the exported object is changed after it is declared');
   return objectStart;
 }
 
@@ -120,8 +121,8 @@ class LiteralParser {
 
   /** @param {string} message @returns {never} */
   fail(message) {
-    const near = this.source.slice(this.index, this.index + 30).split('\n')[0].trim();
-    throw new NotLiteral(`${message} near "${near}"`);
+    const before = this.source.slice(0, this.index).split('\n');
+    throw new NotLiteral(`${message} at line ${before.length}, column ${before[before.length - 1].length + 1}`);
   }
 
   /** @returns {unknown} */
@@ -140,7 +141,7 @@ class LiteralParser {
         if (/^\s*[.(\[?]/.test(this.source.slice(this.index, this.index + 3)) && word !== 'undefined') this.fail('uses an expression');
         return word === 'true' ? true : word === 'false' ? false : word === 'null' ? null : undefined;
       }
-      this.fail(`uses the non-literal value "${word}"`);
+      this.fail('uses a non-literal value');
     }
     this.fail('uses a non-literal value');
   }
@@ -158,7 +159,7 @@ class LiteralParser {
       if (this.source.startsWith('...', this.index)) this.fail('uses a spread');
       if (ch === '[') this.fail('uses a computed key');
       const key = this.parseKey();
-      if (this.peek() !== ':') this.fail(`uses shorthand or a method for "${key}"`);
+      if (this.peek() !== ':') this.fail('uses a shorthand property or a method');
       this.index += 1;
       const value = this.parseValue();
       if (value !== undefined) {
@@ -242,6 +243,13 @@ class LiteralParser {
   }
 }
 
+/** @param {string} digits @param {number} length exact length, or 0 for 1-6 digits */
+function hexValue(digits, length) {
+  const valid = length === 0 ? /^[0-9a-fA-F]{1,6}$/ : new RegExp(`^[0-9a-fA-F]{${length}}$`);
+  if (!valid.test(digits)) throw new NotLiteral('has an invalid escape sequence');
+  return parseInt(digits, 16);
+}
+
 const SIMPLE_ESCAPES = /** @type {Record<string, string>} */ ({ n: '\n', t: '\t', r: '\r', b: '\b', f: '\f', v: '\v', 0: '\0' });
 
 /** @param {string} source @param {number} i @returns {[string, number]} */
@@ -250,13 +258,15 @@ function readEscape(source, i) {
   if (ch in SIMPLE_ESCAPES) return [SIMPLE_ESCAPES[ch], 1];
   if (ch === '\r' && source[i + 1] === '\n') return ['', 2];
   if (ch === '\n') return ['', 1];
-  if (ch === 'x') return [String.fromCharCode(parseInt(source.slice(i + 1, i + 3), 16)), 3];
+  if (ch === 'x') return [String.fromCharCode(hexValue(source.slice(i + 1, i + 3), 2)), 3];
   if (ch === 'u') {
     if (source[i + 1] === '{') {
       const end = source.indexOf('}', i);
-      return [String.fromCodePoint(parseInt(source.slice(i + 2, end), 16)), end - i + 1];
+      const code = end === -1 ? NaN : hexValue(source.slice(i + 2, end), 0);
+      if (!isScalarValue(code)) throw new NotLiteral('has an invalid unicode escape');
+      return [String.fromCodePoint(code), end - i + 1];
     }
-    return [String.fromCharCode(parseInt(source.slice(i + 1, i + 5), 16)), 5];
+    return [String.fromCharCode(hexValue(source.slice(i + 1, i + 5), 4)), 5];
   }
   return [ch ?? '', 1];
 }

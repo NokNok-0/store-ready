@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { isFile, isObject, readJsonFile, readText, relativePath } from '../fs-utils.js';
+import { isFile, isObject, readJsonFile, relativePath } from '../fs-utils.js';
 import { readStaticConfig } from '../parsers/js-literal.js';
 import { SOURCES } from '../sources.js';
 import { UsageError } from './usage-error.js';
@@ -17,25 +17,26 @@ export const DYNAMIC_CONFIG_FILES = ['app.config.ts', 'app.config.js', 'app.conf
  */
 
 /**
- * @param {string} root
+ * @param {import('./project-files.js').ProjectFiles} files
  * @param {{ configFile?: string, cwd: string, hasExpoDependency: boolean }} options
  * @returns {ExpoConfigResult}
  */
-export function loadExpoConfig(root, { configFile, cwd, hasExpoDependency }) {
+export function loadExpoConfig(files, { configFile, cwd, hasExpoDependency }) {
+  const root = files.root;
   /** @type {import('../issue.js').Issue[]} */
   const notes = [];
   if (configFile) {
     const resolved = [path.resolve(cwd, configFile), path.resolve(root, configFile)].find(isFile);
     if (!resolved) throw new UsageError(`Config file not found: ${configFile}`);
     const read = readJsonFile(resolved);
-    if ('error' in read) throw new UsageError(`Config file is not valid JSON: ${configFile} (${read.error})`);
+    if ('error' in read) throw new UsageError(`Config file ${configFile} is ${read.error}.`);
     if (!('value' in read) || !isObject(read.value)) throw new UsageError(`Config file must contain a JSON object: ${configFile}`);
     return { isExpo: true, config: unwrapExpoConfig(read.value), complete: true, file: displayPath(root, resolved), notes };
   }
 
-  const appJson = readJsonFile(path.join(root, 'app.json'));
+  const appJson = files.readJson('app.json');
   const appJsonValue = 'value' in appJson && isObject(appJson.value) ? appJson.value : null;
-  const dynamicFile = DYNAMIC_CONFIG_FILES.find((name) => isFile(path.join(root, name))) ?? null;
+  const dynamicFile = DYNAMIC_CONFIG_FILES.find((name) => files.isFile(name)) ?? null;
   const isExpo = hasExpoDependency || Boolean(dynamicFile) || isObject(appJsonValue?.expo);
   if (!isExpo) return { isExpo: false, config: {}, complete: true, file: null, notes };
   if ('error' in appJson) {
@@ -43,7 +44,7 @@ export function loadExpoConfig(root, { configFile, cwd, hasExpoDependency }) {
       id: 'project.config',
       severity: 'error',
       platform: 'both',
-      message: `app.json is not valid JSON: ${appJson.error}`,
+      message: `app.json is ${appJson.error}.`,
       fix: 'Fix the JSON syntax in app.json.',
       source: SOURCES.expoVersions,
       file: 'app.json',
@@ -52,7 +53,7 @@ export function loadExpoConfig(root, { configFile, cwd, hasExpoDependency }) {
 
   const fromJson = appJsonValue ? unwrapExpoConfig(appJsonValue) : null;
   if (dynamicFile) {
-    const result = readStaticConfig(readText(path.join(root, dynamicFile)) ?? '');
+    const result = readStaticConfig(files.readText(dynamicFile) ?? '');
     if (result.ok && isObject(result.value)) {
       return { isExpo, config: unwrapExpoConfig(result.value), complete: true, file: dynamicFile, notes };
     }

@@ -1,11 +1,11 @@
-import fs from 'node:fs';
 import path from 'node:path';
-import { isDirectory, isObject, readJsonFile } from '../fs-utils.js';
+import { isDirectory, isObject } from '../fs-utils.js';
 import { SOURCES } from '../sources.js';
 import { createCodeIndex } from './code-scan.js';
 import { loadExpoConfig } from './expo-config.js';
 import { loadAndroid } from './native-android.js';
 import { loadIos } from './native-ios.js';
+import { createProjectFiles } from './project-files.js';
 import { UsageError } from './usage-error.js';
 
 /**
@@ -21,7 +21,8 @@ import { UsageError } from './usage-error.js';
  *   ios: import('./native-ios.js').IosProject,
  *   android: import('./native-android.js').AndroidProject,
  *   code: import('./code-scan.js').CodeIndex,
- *   resolve: (relative: string) => string,
+ *   files: import('./project-files.js').ProjectFiles,
+ *   resolve: (relative: string) => string | null,
  *   exists: (relative: string) => boolean,
  *   notes: import('../issue.js').Issue[],
  * }} Project
@@ -35,16 +36,17 @@ import { UsageError } from './usage-error.js';
 export function loadProject(root, { configFile, cwd = process.cwd() } = {}) {
   const absoluteRoot = path.resolve(cwd, root);
   if (!isDirectory(absoluteRoot)) throw new UsageError(`Not a directory: ${root}`);
+  const files = createProjectFiles(absoluteRoot);
   /** @type {import('../issue.js').Issue[]} */
   const notes = [];
 
-  const packageRead = readJsonFile(path.join(absoluteRoot, 'package.json'));
+  const packageRead = files.readJson('package.json');
   if ('error' in packageRead) {
     notes.push({
       id: 'project.config',
       severity: 'error',
       platform: 'both',
-      message: `package.json is not valid JSON: ${packageRead.error}`,
+      message: `package.json is ${packageRead.error}.`,
       fix: 'Fix the JSON syntax in package.json.',
       source: SOURCES.expoVersions,
       file: 'package.json',
@@ -53,18 +55,18 @@ export function loadProject(root, { configFile, cwd = process.cwd() } = {}) {
   const packageJson = 'value' in packageRead && isObject(packageRead.value) ? packageRead.value : null;
   const dependencies = collectDependencies(packageJson);
 
-  const expo = loadExpoConfig(absoluteRoot, { configFile, cwd, hasExpoDependency: dependencies.has('expo') });
+  const expo = loadExpoConfig(files, { configFile, cwd, hasExpoDependency: dependencies.has('expo') });
   notes.push(...expo.notes);
-  const ios = loadIos(absoluteRoot);
-  const android = loadAndroid(absoluteRoot);
+  const ios = loadIos(files);
+  const android = loadAndroid(files);
 
   const type = detectType({ isExpo: expo.isExpo, dependencies, ios, android });
   if (!type) {
-    throw new UsageError(`No mobile project found in ${absoluteRoot} (looked for package.json with expo or react-native, app.json, app.config.*, ios/ and android/).`);
+    throw new UsageError(`No mobile project found in ${files.root} (looked for package.json with expo or react-native, app.json, app.config.*, ios/ and android/).`);
   }
 
   return {
-    root: absoluteRoot,
+    root: files.root,
     type,
     platforms: detectPlatforms(type, expo.config, ios.present, android.present),
     packageJson,
@@ -73,9 +75,10 @@ export function loadProject(root, { configFile, cwd = process.cwd() } = {}) {
     expo,
     ios,
     android,
-    code: createCodeIndex(absoluteRoot),
-    resolve: (relative) => path.resolve(absoluteRoot, relative),
-    exists: (relative) => fs.existsSync(path.resolve(absoluteRoot, relative)),
+    code: createCodeIndex(files),
+    files,
+    resolve: (relative) => files.resolve(relative),
+    exists: (relative) => files.resolve(relative) !== null,
     notes,
   };
 }

@@ -64,6 +64,6 @@ describe('ios.privacy-manifest', () => {
     assert.deepEqual(runCheck(check, { ...base, 'ios/App/PrivacyInfo.xcprivacy': xcprivacy }), []);
     assert.equal(runCheck(check, { ...base, 'ios/Pods/Some/PrivacyInfo.xcprivacy': xcprivacy }).length, 1);
     const broken = runCheck(check, { ...base, 'ios/App/PrivacyInfo.xcprivacy': '<plist><dict><key>A</key></dict></plist>' });
-    assert.ok(broken.some((issue) => issue.severity === 'error' && /Could not read/.test(issue.message)));
+    assert.ok(broken.some((issue) => issue.severity === 'error' && /is not a valid XML property list./.test(issue.message)));
   });
 });
