@@ -1,4 +1,4 @@
-import { relative } from 'node:path';
+import { relative, sep } from 'node:path';
 
 const GROUPS = /** @type {const} */ ([['ios', 'iOS'], ['android', 'Android'], ['both', 'Both platforms']]);
 const BADGES = { error: 'ERROR', warning: 'WARN ', info: 'INFO ' };
@@ -12,7 +12,7 @@ const INDENT = ' '.repeat(9);
 export function formatHuman(result, { color, strict, version }) {
   /** @param {string} code @param {string} text */
   const paint = (code, text) => (color ? `\u001b[${code}m${text}\u001b[0m` : text);
-  const shown = relative(process.cwd(), result.project.path).replaceAll('\', '/') || '.';
+  const shown = relative(process.cwd(), result.project.path).split(sep).join('/') || '.';
   const lines = [`store-ready ${version}: checked ${result.project.type} project at ${shown}`, ''];
 
   for (const [platform, label] of GROUPS) {

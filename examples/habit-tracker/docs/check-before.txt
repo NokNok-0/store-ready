@@ -1,0 +1,86 @@
+store-ready 0.1.0: checked expo project at examples/habit-tracker
+
+iOS
+  ERROR  ios.purpose-strings  app.json
+         NSPhotoLibraryUsageDescription is not set, but expo-image-picker uses that permission. Without your own text the app ships no purpose string or the package's generic default.
+         Fix:    Add "NSPhotoLibraryUsageDescription" to expo.ios.infoPlist in app.json, or set the "photosPermission" option of the expo-image-picker config plugin. Say what the app does with the data and give an example, such as "Your photo library is used when you choose a picture to attach to a note."
+         Source: https://developer.apple.com/help/app-review/guideline-reference/5-1-1-purpose-strings
+
+  ERROR  ios.purpose-strings  app.json
+         NSCameraUsageDescription is not set, but expo-image-picker uses that permission. Without your own text the app ships no purpose string or the package's generic default.
+         Fix:    Add "NSCameraUsageDescription" to expo.ios.infoPlist in app.json, or set the "cameraPermission" option of the expo-image-picker config plugin. Say what the app does with the data and give an example, such as "The camera is used to scan receipts and attach them to an expense."
+         Source: https://developer.apple.com/help/app-review/guideline-reference/5-1-1-purpose-strings
+
+  ERROR  app.identity  app.json
+         No iOS bundle identifier found.
+         Fix:    Set expo.ios.bundleIdentifier in app.json to a reverse-DNS ID you own, for example "com.yourcompany.yourapp".
+         Source: https://docs.expo.dev/submit/introduction/
+
+  WARN   ios.privacy-manifest  app.json
+         @react-native-async-storage/async-storage is a dependency, and no UserDefaults reason is declared in app config. Packages ship their own privacy manifests, but Apple may not read them from static CocoaPods, and Apple emails missing reasons after upload.
+         Fix:    Add { "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults", "NSPrivacyAccessedAPITypeReasons": ["<code>"] } to expo.ios.privacyManifests.NSPrivacyAccessedAPITypes in app.json. Valid codes: CA92.1, 1C8F.1, C56D.1, AC6B.1 (Expo's example uses CA92.1); pick the one that matches your use.
+         Source: https://docs.expo.dev/guides/apple-privacy/
+
+  WARN   account.deletion  src/session.tsx
+         Sign-up code found (auth.signUp (Supabase and others) in src/session.tsx) but no account deletion path was detected in src/, app/, components/ and similar folders. This is a heuristic.
+         Fix:    Let users start account deletion inside the app; deactivation alone is not enough. If deletion finishes on the web, link straight to that page. Apps using Sign in with Apple must revoke tokens through the REST API, and subscribers should be told Apple billing continues until they cancel.
+         Source: https://developer.apple.com/help/app-review/guideline-reference/5-1-1-account-deletion
+
+  WARN   login.apple-equivalent  src/auth.ts
+         Third-party login found (sign-in function for a third-party provider in src/auth.ts) but no Sign in with Apple or other equivalent login was detected. This is a heuristic.
+         Fix:    Guideline 4.8: also offer a login that limits data to name and email, lets users hide their email, and does no ad tracking without consent; Sign in with Apple qualifies (for example expo-apple-authentication). Exceptions: accounts only for your own company, education or enterprise apps, government ID logins, and clients for a specific third-party service.
+         Source: https://developer.apple.com/app-store/review/guidelines/
+
+  WARN   privacy.policy-url
+         No privacy policy URL found in store/listing.*.json, app config "extra", or source code.
+         Fix:    Publish a privacy policy and link it both in App Store Connect and inside the app (guideline 5.1.1(i)). Add "privacyPolicyUrl" to store/listing.ios.json so this check can find it.
+         Source: https://developer.apple.com/app-store/review/guidelines/
+
+  INFO   app.identity  app.json
+         No iOS build number is set in the project. Every upload needs a new build number.
+         Fix:    Set expo.ios.buildNumber in app.json (or let your build service manage it) and raise it for each upload.
+         Source: https://docs.expo.dev/submit/introduction/
+
+  INFO   app.icon  assets/images/icon.png
+         The iOS icon ./assets/images/icon.png has an alpha channel. Apple's pages we checked do not confirm a "no transparency" rule, so this is only a note.
+         Fix:    If App Store Connect rejects the icon, export it without an alpha channel.
+         Source: https://developer.apple.com/design/human-interface-guidelines/app-icons
+
+Android
+  ERROR  app.identity  app.json
+         No Android package name (applicationId) found.
+         Fix:    Set expo.android.package in app.json to a reverse-DNS ID you own, for example "com.yourcompany.yourapp".
+         Source: https://docs.expo.dev/submit/introduction/
+
+  WARN   android.permissions  app.json
+         READ_MEDIA_IMAGES is declared (expo.android.permissions). Play allows it only when the system photo picker cannot support the core feature, and requires a Photo and video permissions declaration.
+         Fix:    If the app needs it, complete the declaration in Play Console under App content. If not, remove it from expo.android.permissions, or add "android.permission.READ_MEDIA_IMAGES" to expo.android.blockedPermissions if a library adds it.
+         Source: https://support.google.com/googleplay/android-developer/answer/14115180
+
+  WARN   account.deletion  src/session.tsx
+         Sign-up code found (auth.signUp (Supabase and others) in src/session.tsx) but no account deletion path was detected in src/, app/, components/ and similar folders. This is a heuristic.
+         Fix:    Offer deletion inside the app and a web link where users can request deletion without reinstalling, delete the associated data (disclose anything you keep), and declare it in the Data safety form.
+         Source: https://support.google.com/googleplay/android-developer/answer/13327111
+
+  WARN   privacy.policy-url
+         No privacy policy URL found in store/listing.*.json, app config "extra", or source code.
+         Fix:    Play requires a privacy policy for the Data safety section. Add its URL in Play Console, link it inside the app, and add "privacyPolicyUrl" to store/listing.android.json so this check can find it.
+         Source: https://support.google.com/googleplay/android-developer/answer/10787469
+
+  INFO   android.permissions  app.json
+         Declared Android permissions: CAMERA, READ_MEDIA_IMAGES. Libraries can add more when the manifest is merged at build time.
+         Fix:    Keep only the permissions the app uses, and make sure the Data safety form covers the data they give access to.
+         Source: https://support.google.com/googleplay/android-developer/answer/10787469
+
+  INFO   app.identity  app.json
+         No Android versionCode is set in the project. Every upload needs a new versionCode.
+         Fix:    Set expo.android.versionCode in app.json (or let your build service manage it) and raise it for each upload.
+         Source: https://docs.expo.dev/submit/introduction/
+
+  INFO   play.closed-testing
+         Personal Play developer accounts created after 2023-11-13 must run a closed test with at least 12 testers opted in for at least 14 days in a row before applying for production access. This cannot be detected from the project.
+         Fix:    If this applies to your account, start the closed test early and keep 12 or more testers opted in for the full 14 days.
+         Source: https://support.google.com/googleplay/android-developer/answer/14151465
+
+4 errors, 7 warnings, 5 info
+Fix the errors above, then run the check again.
