@@ -27,7 +27,12 @@ const FIELDS = {
   ],
 };
 
-const OPTIONAL_KEYS = ['privacyPolicyUrl'];
+// Same lists as the checker's OPTIONAL_KEYS in cli/src/checks/store-listing-limits.js.
+const OPTIONAL_KEYS = {
+  ios: ['privacyPolicyUrl', 'supportUrl', 'marketingUrl', 'primaryCategory', 'secondaryCategory'],
+  android: ['privacyPolicyUrl', 'category', 'tags'],
+};
+const URL_KEYS = ['privacyPolicyUrl', 'supportUrl', 'marketingUrl'];
 const SHORT_FIELDS = new Set(['name', 'subtitle', 'title']);
 // Price and superlative words. The store-ready checker (cli/src/checks/store-listing-limits.js CLAIM_WORDS) flags
 // free, sale, % off, $, €, best, top, ultimate, #1, number one and No. 1 in name, subtitle and title. This script
@@ -132,13 +137,21 @@ function measure(platform, data, allow) {
   const notes = [];
   const known = new Set(FIELDS[platform].map((f) => f.key));
 
+  const optional = OPTIONAL_KEYS[platform];
   for (const key of Object.keys(data)) {
-    if (!known.has(key) && !OPTIONAL_KEYS.includes(key)) {
-      warnings.push(`${key}: unexpected key; the listing shape allows only ${[...known, ...OPTIONAL_KEYS].join(', ')}`);
+    if (!known.has(key) && !optional.includes(key)) {
+      warnings.push(`${key}: unexpected key; the listing shape allows only ${[...known, ...optional].join(', ')}`);
     }
   }
-  if ('privacyPolicyUrl' in data && !(typeof data.privacyPolicyUrl === 'string' && /^https:\/\/[^\s/]+\.[^\s]+$/.test(data.privacyPolicyUrl))) {
-    warnings.push('privacyPolicyUrl: not an https URL');
+  for (const key of URL_KEYS) {
+    if (optional.includes(key) && key in data && !(typeof data[key] === 'string' && /^https:\/\/[^\s/]+\.[^\s]+$/.test(data[key]))) {
+      warnings.push(`${key}: not an https URL`);
+    }
+  }
+  if (platform === 'android' && 'tags' in data) {
+    const tags = data.tags;
+    if (!Array.isArray(tags) || tags.some((tag) => typeof tag !== 'string')) warnings.push('tags: must be a list of strings');
+    else if (tags.length > 5) warnings.push(`tags: ${tags.length} tags; Google Play allows at most 5`);
   }
 
   for (const f of FIELDS[platform]) {

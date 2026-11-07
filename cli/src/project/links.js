@@ -99,6 +99,8 @@ function collectLinks(project) {
     const declared = asHttpUrl(read.value.privacyPolicyUrl);
     if (declared) add('privacy', declared, file);
     for (const url of privacyUrlsIn(read.value)) add('privacy', url, file);
+    const support = asHttpUrl(read.value.supportUrl);
+    if (support) add('support', support, file);
   }
 
   if (project.expo.isExpo && isObject(project.expo.config.extra)) {

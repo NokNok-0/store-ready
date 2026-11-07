@@ -81,7 +81,13 @@ The checker is heuristic and local. It cannot see App Store Connect or Play Cons
 
 It reports URLs it finds (privacy policy, support, deletion page) as "found, not verified": it does not open them unless you pass `--verify-urls`. Run `npx store-ready check --json --verify-urls` once when you have network access. A URL that does not load is a blocking item in the report, routed to the skill that recorded it.
 
-For an `app.config.js`/`.ts` project, or to see what config plugins add to Info.plist, pass the effective config: `npx expo config --type introspect --json` saved to a file outside `store/`, then `npx store-ready check --json --config <file>` (the `ios-privacy` skill shows a shell-safe way to save it).
+For an `app.config.js`/`.ts` project, or to see what config plugins add to Info.plist, pass the effective config. Save it with this command, which writes plain UTF-8 in bash, zsh and PowerShell alike (a `>` redirect in Windows PowerShell can write UTF-16, which the checker cannot read):
+
+```
+node -e "require('fs').writeFileSync('expo-introspect.json', require('child_process').execSync('npx expo config --type introspect --json', { maxBuffer: 1 << 26 }))"
+```
+
+Then run `npx store-ready check --json --config expo-introspect.json`, and delete `expo-introspect.json` when you are done.
 
 ## 4. Ask once
 
@@ -134,7 +140,7 @@ Then:
 
 1. Fix checker warnings that apply, through their skills.
 2. Re-read `store/review-notes.txt` with the user: are the demo accounts still valid, and do the steps match this version's screens? Expired demo logins are a 2.1 rejection.
-3. If this is an update, check what changed since the last release (new permissions, SDKs, login methods, paid features). Send each change to its skill only.
+3. If this is an update, find what changed since the last store release: new permissions, SDKs, login methods, paid features. In a git repository, `git tag --sort=-creatordate` lists tags; if one marks the last release, run `git diff <tag> -- package.json app.json app.config.js app.config.ts eas.json` and read `git log --oneline <tag>..HEAD`. If there is no release tag or no git history, ask the user what changed since the last release and which version it was. Do not guess. Send each change to its skill only.
 4. Run `mock-review`.
 5. Run `submission-checklist` for the remaining non-code items and the build and submit steps.
 

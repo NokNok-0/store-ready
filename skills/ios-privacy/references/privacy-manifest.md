@@ -16,6 +16,8 @@ Run the scanner from the skill directory against the project:
 node <this-skill>/scripts/scan-deps.mjs <project-root>
 ```
 
+(`<this-skill>` is the skill's own folder; see the SKILL.md.)
+
 `requiredReasonApis.fromPackageManifests` lists every `PrivacyInfo.xcprivacy` found in `node_modules`, the package it belongs to, and the categories and reasons inside. `requiredReasonApis.aggregated` merges them. These are facts read from files.
 
 `requiredReasonApis.heuristic` lists packages the scanner associates with a category even though no manifest was found for them. These are guesses. Confirm each one by reading the package's iOS source or its documentation before declaring anything.

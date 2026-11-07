@@ -15,7 +15,7 @@ It produces:
 - An in-app deletion flow: entry in settings, explanation, confirmation, server call, sign-out, local wipe.
 - A backend endpoint (or function) that deletes the account and its data, and revokes Sign in with Apple tokens where used.
 - A public web page for deletion requests (required by Google Play for app accounts), or the plan and copy for it if it lives outside this repository.
-- The delete account URL with the date you opened it and the HTTP status, written into `store/data-safety.android.md` when that file exists, and the in-app path for the review notes.
+- `store/account-deletion.md`: the in-app path, the delete account URL with the date you opened it and the HTTP status (or the offline-accounts reasoning), and any data kept after deletion. `play-data-safety` and `review-notes` read it, so write it every time, even when the other store files do not exist yet.
 
 If the accounts exist only on the device (no server, no hosted auth provider), use "Local-only accounts" below instead of steps 2 and 4.
 
@@ -94,14 +94,26 @@ Use this when step 1.6 found that accounts exist only on the device.
 
 - **Apple still requires deletion.** 5.1.1(v) applies to all account types, so the in-app flow from step 3 is required. It deletes on the device: every record keyed to the user, files the app wrote for them (photos under the document directory), secure-store keys, then the profile; then it signs out to the start screen. Leave other local users' data alone. On failure, keep the user signed in and say so.
 - **Sign in with Apple with no server.** Our source says apps using Sign in with Apple revoke tokens via the REST API. Revoke tokens if your server received them. If no identity token or authorization code ever left the device, there is nothing on a server to revoke: record that in your report with the file that shows it, and give the user Apple's pages to read (https://developer.apple.com/help/app-review/guideline-reference/5-1-1-account-deletion, https://developer.apple.com/documentation/sign_in_with_apple/revoke_tokens). Do not add a server just to make revocation possible.
-- **Google Play.** Quote the policy line to the user: "accounts that are created and operated offline are not app accounts and do not fall within policy scope." Ask them to confirm that no account data leaves the device; it is their declaration. Record the reasoning in `store/data-safety.android.md`. If they still want a deletion page, or the Console asks for a URL, the page must load and follow the "No server" section of [references/web-deletion-page.md](references/web-deletion-page.md).
+- **Google Play.** Quote the policy line to the user: "accounts that are created and operated offline are not app accounts and do not fall within policy scope." Ask them to confirm that no account data leaves the device; it is their declaration. Record the reasoning in `store/account-deletion.md`. If they still want a deletion page, or the Console asks for a URL, the page must load and follow the "No server" section of [references/web-deletion-page.md](references/web-deletion-page.md).
 - **Do not deploy a backend** for deletion alone.
 
 ## 5. Record the outputs
 
-- Delete account URL: if `store/data-safety.android.md` exists, set its "Delete account URL" line with the check result, for example `https://example.org/delete-account (opened 2026-11-07: HTTP 200)` or `... (opened 2026-11-07: HTTP 404, not published; blocking)`; otherwise tell the user it is pending for `play-data-safety`. For local-only accounts with no page: `none: accounts are created and operated offline, out of policy scope (confirmed by the user on <date>)`.
+Write `store/account-deletion.md` with these lines, replacing any previous version:
+
+```
+# Account deletion
+In-app path: <e.g. Settings > Account > Delete account>
+Delete account URL: <url> (opened <date>: HTTP <status>)
+Data kept after deletion: <what, why, how long; or "none">
+Sign in with Apple tokens: <revoked by <file> | none left the device (<file>) | n/a>
+```
+
+Then:
+
+- Delete account URL: also, if `store/data-safety.android.md` exists, set its "Delete account URL" line with the check result, for example `https://example.org/delete-account (opened 2026-11-07: HTTP 200)` or `... (opened 2026-11-07: HTTP 404, not published; blocking)`; otherwise `play-data-safety` copies it from `store/account-deletion.md` later. For local-only accounts with no page: `none: accounts are created and operated offline, out of policy scope (confirmed by the user on <date>)`.
 - If deletion keeps any data, add it to the retention notes in `store/data-safety.android.md` and to the iOS answers in `store/privacy.ios.md` if those exist.
-- In-app path (for example "Settings > Account > Delete account"): give it to the user for `review-notes`, so the reviewer can find it. The demo account must survive or be replaceable: tell the user that a reviewer deleting the demo account needs a fresh one for the next review.
+- In-app path (for example "Settings > Account > Delete account"): it is in `store/account-deletion.md` for `review-notes`, so the reviewer can find it. The demo account must survive or be replaceable: tell the user that a reviewer deleting the demo account needs a fresh one for the next review.
 
 ## Verify
 
@@ -115,4 +127,5 @@ Use this when step 1.6 found that accounts exist only on the device.
 - [ ] No privileged key appears in the app bundle or the repository (search app code and config for service role keys, Admin SDK credentials, Management API tokens, `.p8` contents).
 - [ ] `npx store-ready check` no longer warns about sign-up without a deletion path (it looks for a visible deletion screen or button, not just a delete function).
 - [ ] The confirmation and explanation text name only what this app deletes; no wording from the reference snippet is left over.
+- [ ] `store/account-deletion.md` exists with the in-app path, the URL line (with status and date) or the offline reasoning, and the data kept.
 - [ ] Tell the user it passes the checks we know about. Do not say it will be approved.

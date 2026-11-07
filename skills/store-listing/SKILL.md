@@ -96,7 +96,13 @@ Write these keys. Use `""` for a field you are leaving empty.
 { "title": "", "shortDescription": "", "fullDescription": "" }
 ```
 
-If the app has a privacy policy URL, add `"privacyPolicyUrl": "https://..."` to both files. It is the one optional key: the store-ready checker reads it from here (it also accepts app config `extra` and a URL in source), and both consoles ask for the URL.
+Add these console fields when you have them. They are not measured text, but the checker reads them:
+
+- Both files: `"privacyPolicyUrl": "https://..."`. Both consoles ask for it; the checker also accepts app config `extra` and a URL in source.
+- `store/listing.ios.json`: `"supportUrl"` (required by App Store Connect; it "must lead to actual contact information" so users can reach you, https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information), optional `"marketingUrl"`, and `"primaryCategory"` / `"secondaryCategory"` (https://developer.apple.com/help/app-store-connect/reference/app-information/app-information).
+- `store/listing.android.json`: `"category"` and `"tags"`, a list of at most 5 (https://support.google.com/googleplay/android-developer/answer/9859673).
+
+Choose categories from the feature inventory: the category that matches what most of the inventory does. Read the category list in each console and use its names exactly. Picking Health & Fitness or Medical on Apple means a regulated medical device declaration (see `submission-checklist`), so say so to the user when you suggest it. If the project has no support page, ask the user for one; do not invent a URL.
 
 Open the URL before writing it, in a browser or with `node -e "fetch(process.argv[1]).then(r=>console.log(r.status,r.url),e=>console.log('failed',e.message))" <url>`. JSON has no place for a note, so tell the user the status and the date in your report. If it does not load, still write it (the checker needs it), but report it as blocking: the user must publish the page before submitting. `npx store-ready check --verify-urls` checks it again later.
 
@@ -111,6 +117,8 @@ Run the measuring script from the project root:
 ```
 node <this-skill>/scripts/measure.mjs
 ```
+
+`<this-skill>` is the folder that contains this SKILL.md. Replace it with that folder's full path before running the command; never type `<this-skill>` into a shell, and do not assume the skill sits inside the user's project. Most agents show the folder when they load a skill. If yours does not, search the installed skills for the script's file name.
 
 or pass the project root as the first argument. It prints every field's length against its limit (characters, and bytes for keywords), warns about spaces after commas, duplicate keywords, keywords already in the name, superlatives, emoji, prices and other platforms' names, and exits 1 if a field is over its limit, the name is missing or under 2 characters, a field is not a string, or a file is not valid JSON. Empty or missing required fields are warnings, because a draft can be measured before it is finished.
 

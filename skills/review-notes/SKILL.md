@@ -31,7 +31,7 @@ Read the code for:
 6. **New in this version.** Diff against the last released tag or ask. These need exact steps (2.3.1(a): describe new features specifically).
 7. **Dependencies on the outside world.** Hardware (Bluetooth devices, NFC tags, car, wearable, specific camera), region (content only in some countries, geofenced features), time (events, schedules), another account (a partner app, a school, an employer).
 8. **External services.** The services the core features depend on: auth provider, payment processor, data provider, AI service. Apple asks for this list. Take them from the dependencies and the network calls.
-9. **Account deletion path.** Where the user starts deleting their account in the app.
+9. **Account deletion path.** Where the user starts deleting their account in the app. Take it from `store/account-deletion.md` if it exists; otherwise find it in the code.
 
 If the store-listing skill wrote a feature inventory, start from it.
 

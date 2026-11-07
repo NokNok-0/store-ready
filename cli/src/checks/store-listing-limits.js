@@ -39,7 +39,13 @@ export const LISTINGS = [
   },
 ];
 
-export const OPTIONAL_KEYS = ['privacyPolicyUrl'];
+/** Console fields that are not limited text: URLs and categories. */
+export const OPTIONAL_KEYS = Object.freeze({
+  ios: ['privacyPolicyUrl', 'supportUrl', 'marketingUrl', 'primaryCategory', 'secondaryCategory'],
+  android: ['privacyPolicyUrl', 'category', 'tags'],
+});
+const URL_KEYS = ['privacyPolicyUrl', 'supportUrl', 'marketingUrl'];
+export const MAX_PLAY_TAGS = 5;
 
 /** Fields where price and ranking words are flagged. Descriptions are not checked. */
 export const CLAIM_FIELDS = Object.freeze({ ios: ['name', 'subtitle'], android: ['title'] });
@@ -112,13 +118,25 @@ function checkListing(spec, listing) {
       file: spec.file,
     });
   }
-  const privacyUrl = listing.privacyPolicyUrl;
-  if (privacyUrl !== undefined && (typeof privacyUrl !== 'string' || !/^https?:\/\/\S+$/.test(privacyUrl.trim()))) {
-    add('warning', `privacyPolicyUrl in ${spec.file} is not an http(s) URL.`, 'Set it to the full URL of your published privacy policy, for example "https://example.com/privacy".');
+  const optional = OPTIONAL_KEYS[spec.platform];
+  for (const key of URL_KEYS) {
+    const url = listing[key];
+    if (!optional.includes(key) || url === undefined) continue;
+    if (typeof url !== 'string' || !/^https?:\/\/\S+$/.test(url.trim())) {
+      add('warning', `${key} in ${spec.file} is not an http(s) URL.`, 'Set it to the full URL of the published page, including https://.');
+    }
+  }
+  const tags = listing.tags;
+  if (spec.platform === 'android' && tags !== undefined) {
+    if (!Array.isArray(tags) || tags.some((tag) => typeof tag !== 'string')) {
+      add('warning', `tags in ${spec.file} must be a list of strings.`, 'Use the shape "tags": ["Tag one", "Tag two"].');
+    } else if (tags.length > MAX_PLAY_TAGS) {
+      add('warning', `${spec.file} has ${tags.length} tags; Google Play allows at most ${MAX_PLAY_TAGS}.`, `Keep the ${MAX_PLAY_TAGS} that describe the app best. Source: https://support.google.com/googleplay/android-developer/answer/9859673`);
+    }
   }
   for (const key of Object.keys(listing)) {
-    if (key in spec.fields || OPTIONAL_KEYS.includes(key)) continue;
-    add('warning', `${spec.file} has an unknown field "${key}", so it was not checked.`, `Use only: ${[...Object.keys(spec.fields), ...OPTIONAL_KEYS].join(', ')}.`);
+    if (key in spec.fields || optional.includes(key)) continue;
+    add('warning', `${spec.file} has an unknown field "${key}", so it was not checked.`, `Use only: ${[...Object.keys(spec.fields), ...optional].join(', ')}.`);
   }
   return issues;
 }

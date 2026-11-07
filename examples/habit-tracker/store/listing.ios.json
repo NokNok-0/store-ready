@@ -5,5 +5,7 @@
   "promotionalText": "Check off each habit once a day, see your current and best streak, and add a photo to every habit. Everything stays on your device.",
   "description": "Streaks helps you build daily habits: check each one off once a day and watch the streak grow.\n\nAdd a habit, then tap its circle on the Today list when you have done it. Streaks counts the days in a row you kept it up. Miss a day and the streak starts again.\n\n- Add habits by name from the Today list\n- Check off today's habits and see how many are done\n- See the current streak for every habit at a glance\n- Open a habit to see its current streak, best streak and total check-ins\n- Add a photo to a habit with the camera or from your photo library\n- Delete a habit and its history when you no longer need it\n- Light and dark mode\n\nYour habits, check-ins and photos stay on your device. Streaks has no ads and no tracking, and you can delete your account and all of its data from Settings at any time.\n\nStreaks is free, with no in-app purchases.\n\nQuestions or problems: https://github.com/NokNok-0/store-ready/issues",
   "whatsNew": "First release.",
+  "supportUrl": "https://github.com/NokNok-0/store-ready/issues",
+  "primaryCategory": "Productivity",
   "privacyPolicyUrl": "https://github.com/NokNok-0/store-ready/blob/main/examples/habit-tracker/docs/privacy-policy.md"
 }

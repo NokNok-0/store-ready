@@ -42,7 +42,10 @@ Skills that produce submission artifacts write them under `store/` in the user's
 | `store/screenshots/plan.md`; `store/screenshots/capture.json` and its seed file when capturing from web; images in `store/screenshots/ios/iphone/`, `ios/ipad/`, `android/phone/`, `android/tablet/`, `android/feature-graphic/`, `android/icon/` | store-screenshots |
 | `store/checklist.md` | submission-checklist |
 | `store/status.md` | store-ready |
+| `store/account-deletion.md` | account-deletion |
 | `store/review-risks.md` | app-review-risk, mock-review |
+
+Scripts are run as `node <this-skill>/scripts/<name>.mjs`, where `<this-skill>` is the skill's own folder. Each SKILL.md says so next to the first command, because agents run commands literally and the skills are not inside the user's project.
 
 Listing file shapes (the checker validates them):
 
@@ -55,3 +58,5 @@ Listing file shapes (the checker validates them):
 ```json
 { "title": "", "shortDescription": "", "fullDescription": "" }
 ```
+
+Optional console fields: `privacyPolicyUrl` in both; `supportUrl`, `marketingUrl`, `primaryCategory`, `secondaryCategory` in the iOS file; `category` and `tags` (a list, at most 5) in the Android file.

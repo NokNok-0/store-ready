@@ -107,6 +107,8 @@ Run from the project root:
 node <this-skill>/scripts/check-sizes.mjs
 ```
 
+`<this-skill>` is the folder that contains this SKILL.md. Replace it with that folder's full path before running the command; never type `<this-skill>` into a shell, and do not assume the skill sits inside the user's project. Most agents show the folder when they load a skill. If yours does not, search the installed skills for the script's file name.
+
 Add `--ipad` when the app runs on iPad, so a missing iPad 13-inch screenshot is an error. Pass a project path as the first argument to check another folder.
 
 The script reads PNG and JPEG headers directly and reports, per file: pixel size, format, color type, whether it has alpha, and for iOS the Apple display class the size belongs to. It fails on:

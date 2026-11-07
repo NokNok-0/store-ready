@@ -11,6 +11,16 @@ describe('store.listing-limits', () => {
     assert.deepEqual(runCheck(check, expoProject({})), []);
   });
 
+  it('accepts URL and category fields for each store, and checks URLs and Play tags', () => {
+    assert.deepEqual(runCheck(check, ios({ supportUrl: 'https://acme.app/help', marketingUrl: 'https://acme.app', primaryCategory: 'Productivity', secondaryCategory: 'Health & Fitness' })), []);
+    assert.deepEqual(runCheck(check, android({ category: 'Productivity', tags: ['Habits', 'Productivity'] })), []);
+    const bad = runCheck(check, ios({ supportUrl: 'acme.app/help', category: 'Productivity' })).map((issue) => issue.message).join('\n');
+    assert.match(bad, /supportUrl in store\/listing\.ios\.json is not an http\(s\) URL/);
+    assert.match(bad, /unknown field "category"/);
+    assert.match(runCheck(check, android({ tags: ['a', 'b', 'c', 'd', 'e', 'f'] }))[0].message, /6 tags; Google Play allows at most 5/);
+    assert.match(runCheck(check, android({ tags: 'a,b' }))[0].message, /must be a list of strings/);
+  });
+
   it('passes listings at the exact limits', () => {
     assert.deepEqual(runCheck(check, ios({
       name: 'n'.repeat(30),

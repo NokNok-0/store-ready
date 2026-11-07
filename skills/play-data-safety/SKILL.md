@@ -22,7 +22,7 @@ Every Google and Expo fact this skill uses is in [references/play-facts.md](refe
 1. If `store/privacy.ios.md` exists and is current, start from its inventory (backend, auth, SDKs, AI providers). Re-check it for Android-only code and SDKs.
 2. Otherwise build it: read `package.json`, app config and `plugins`, and the source. For each network call that sends user data, note what is sent and to whom.
 3. Webviews count. Find every `WebView` (and in-app browser that runs inside the app) and note which sites and scripts it loads.
-4. Find the account deletion URL. If the app has accounts and no deletion path, stop and run `account-deletion` first; the URL goes in the form. If `account-deletion` recorded that the accounts are created and operated offline (out of the policy's scope), copy that line and its reasoning instead of a URL.
+4. Find the account deletion URL. If the app has accounts and no deletion path, stop and run `account-deletion` first; the URL goes in the form. Read `store/account-deletion.md`, which `account-deletion` writes: copy its delete account URL with the status and date it was opened, or, if it records that the accounts are created and operated offline (out of the policy's scope), copy that line and its reasoning instead of a URL. If the file is missing, run `account-deletion` first.
 5. Ask the user once, together, for what the code cannot tell you: the privacy policy URL (unless the project records one), what the backend does with the data if it is not in this repository, and whether any data is used for advertising.
 
 ## 2. Find every permission
@@ -33,12 +33,14 @@ Run from the project root:
 node <this-skill>/scripts/list-permissions.mjs .
 ```
 
+`<this-skill>` is the folder that contains this SKILL.md. Replace it with that folder's full path before running the command; never type `<this-skill>` into a shell, and do not assume the skill sits inside the user's project. Most agents show the folder when they load a skill. If yours does not, search the installed skills for the script's file name.
+
 It reads `android.permissions` and `android.blockedPermissions` from app config, `android/app/src/main/AndroidManifest.xml` if present, and every library manifest in `node_modules`, then prints JSON with each permission and where it came from, the ones that need a Play declaration (`needsDeclaration`), the ones that point to a Data safety data type (`dataSafety`), foreground services, and the target SDK.
 
 In an Expo project without `android/`, config plugins and the Expo template add permissions the script cannot see. Run `npx expo prebuild --platform android --no-install` and re-run the script. Always pass `--platform android`: Android prebuild runs on Windows, macOS and Linux, iOS prebuild does not run on Windows, and this skill needs only Android. (For the effective iOS Info.plist, `ios-privacy` reads `npx expo config --type introspect --json` instead.) Then clean up, because prebuild changes more than it adds:
 
 - restore the `scripts` block in `package.json`: prebuild rewrites `"android"` and `"ios"` to `expo run:android` / `expo run:ios`. Copy the block before running it;
-- delete `android/` (and `ios/`, if it appeared) if it was not there before or is in `.gitignore`;
+- delete `android/` (and `ios/`, if it appeared) only if this prebuild run created it. If it existed before, do not delete it, even if it is in `.gitignore`: revert only what prebuild changed, using version control, and ask the user if it has uncommitted changes you cannot account for;
 - compare the project with its state before and revert anything else you did not mean to change.
 
 The permissions report shows `maxSdkVersion` where a manifest limits a permission to older Android versions (for example storage permissions capped at 32). Such a permission is not requested on newer devices; still map it, but do not treat it as full storage access.
@@ -104,6 +106,6 @@ Tell the user to paste the answers into Play Console, App content, Data safety, 
 - [ ] `store/data-safety.android.md` exists, lists the privacy policy URL, the delete account URL (if the app has accounts), every SDK and webview, and no template example rows.
 - [ ] Each URL in it carries the status and date you opened it. Any that did not load is listed as blocking and was reported to the user.
 - [ ] If background location is kept: the disclosure screen exists in code, comes before the runtime prompt, and the video shot list is written.
-- [ ] If you generated `android/` only to inspect it, it is deleted again, and `package.json` `scripts` match their state before prebuild.
+- [ ] If this prebuild run created `android/` only to inspect it, it is deleted again; a folder that existed before is still there, and `package.json` `scripts` match their state before prebuild.
 - [ ] `npx store-ready check` reports no target SDK or permission errors.
 - [ ] Tell the user the result passes the checks we know about. Do not say it will be approved.

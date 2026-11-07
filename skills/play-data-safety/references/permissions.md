@@ -21,6 +21,8 @@ So the prebuild output is not the whole list. Use the script, then confirm again
 node <this-skill>/scripts/list-permissions.mjs .
 ```
 
+(`<this-skill>` is the skill's own folder; see the SKILL.md.)
+
 It reads app config, the app manifest under `android/` if present, and every library manifest in `node_modules`, subtracts `blockedPermissions`, and flags the ones that need a Play declaration or show up in the Data safety form. Library manifests under `src/debug` or test folders are skipped because they do not ship in release builds.
 
 To see what plugins and the template add in an Expo project, generate the native project first:

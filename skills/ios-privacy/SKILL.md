@@ -26,6 +26,8 @@ Find out what the app touches before changing anything.
    node <this-skill>/scripts/scan-deps.mjs .
    ```
 
+   `<this-skill>` is the folder that contains this SKILL.md. Replace it with that folder's full path before running the command; never type `<this-skill>` into a shell, and do not assume the skill sits inside the user's project. Most agents show the folder when they load a skill. If yours does not, search the installed skills for the script's file name.
+
    It prints JSON: privacy manifests found in `node_modules` (read from files), plus heuristic lists of packages linked to permissions, data collection and AI providers. The heuristic lists are prompts, not findings. Confirm each item in the code or the vendor's documentation before it goes into config or App Store Connect. Flags: `--config <file>` for `app.config.js/ts` projects (see [references/privacy-manifest.md](references/privacy-manifest.md)), `--modules <dir>` when dependencies are hoisted in a monorepo.
 
 2. Read `package.json`, the app config and its `plugins` array, and `ios/` if it exists. Note whether `ios/` is committed or generated (listed in `.gitignore`). If it is committed, the native files ship and app config only applies on the next prebuild.
@@ -61,7 +63,7 @@ A purpose string must say what data the app uses and what for, with an example. 
 `npx expo prebuild` (either platform) creates `ios/` or `android/` and rewrites the `"ios"` and `"android"` scripts in `package.json` to `expo run:ios` / `expo run:android`. Before running it, note whether those folders exist and are committed, and copy the `scripts` block. After reading what you need:
 
 - restore the `scripts` block in `package.json` exactly as it was;
-- delete `ios/` and `android/` if they did not exist before or are listed in `.gitignore`;
+- delete `ios/` or `android/` only if this prebuild run created it (it did not exist before you ran it). If a folder existed before, do not delete it, even if it is in `.gitignore`: revert only what prebuild changed in it, using version control. If you cannot tell what prebuild changed and the folder has uncommitted changes, stop and ask the user;
 - compare the project with its state before (version control status, or file modification times) and revert anything else prebuild changed that you did not mean to change.
 
 ## 3. Privacy manifest (required-reason APIs)
@@ -141,7 +143,7 @@ Tell the user to paste the answers into App Store Connect, App Privacy, and to u
 - [ ] Re-run `node <this-skill>/scripts/scan-deps.mjs .`: `missingDeclarations` is empty and `invalidReasonCodes` is empty. Every `heuristic` entry is either declared or noted as confirmed not needed.
 - [ ] In the introspect output (or the prebuild output, or the native project), every `NS…UsageDescription` value names a feature and gives an example; none is a plugin default such as "Allow $(PRODUCT_NAME) to access…".
 - [ ] The generated or edited `PrivacyInfo.xcprivacy` contains every category and reason from app config.
-- [ ] If you ran prebuild: `ios/` and `android/` are gone unless they were committed before, and `package.json` `scripts` match their state before. `expo-introspect.json` is deleted.
+- [ ] If you ran prebuild: any `ios/` or `android/` it created is gone, folders that existed before are still there with only prebuild's changes reverted, and `package.json` `scripts` match their state before. `expo-introspect.json` is deleted.
 - [ ] The privacy policy URL in `store/privacy.ios.md` has a status and a date from when you opened it, and it loaded; otherwise the user has been told it is blocking.
 - [ ] Each permission request has a denial path; you traced it in code (and on a device or simulator if one is available).
 - [ ] Every AI provider found has a consent screen gating its requests, and appears in `store/privacy.ios.md`.

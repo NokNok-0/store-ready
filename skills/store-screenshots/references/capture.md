@@ -71,6 +71,7 @@ Web renders differ from native. Expect differences in: system fonts, native cont
 4. Run it from the project root:
    ```
    node <this-skill>/scripts/capture.mjs store/screenshots/capture.json
+   (`<this-skill>` is the skill's own folder; see the SKILL.md.)
    ```
    It finds Chrome or Edge in the standard install folders (or use `--browser <path>` or `CHROME_PATH`) and exits 2 with a message if there is none. `--only iphone` re-captures one set. It paints an opaque `background` behind the page, captures the viewport with `captureBeyondViewport`, checks the pixel size, and writes 8-bit RGB PNGs with no alpha channel. `node <this-skill>/scripts/capture.mjs --flatten <file.png>` does the same flattening for an existing PNG (for example a feature graphic), on Node 20 too.
 5. Run `check-sizes.mjs`, then open every image. If the size is wrong, fix the viewport or scale; do not resize the image.
