@@ -42,7 +42,7 @@ export function packageVersion() {
 }
 
 /**
- * @typedef {{ stdout: { write: (text: string) => unknown, isTTY?: boolean }, stderr: { write: (text: string) => unknown }, cwd: string, env: Record<string, string | undefined>, fetchImpl?: typeof fetch, timeoutMs?: number }} Io
+ * @typedef {{ stdout: { write: (text: string) => unknown, isTTY?: boolean }, stderr: { write: (text: string) => unknown }, cwd: string, env: Record<string, string | undefined>, fetchImpl?: typeof fetch, timeoutMs?: number, allowPrivateHosts?: boolean }} Io
  */
 
 /**
@@ -93,7 +93,7 @@ export function main(argv, io) {
     cwd: io.cwd,
   };
   if (values['verify-urls']) {
-    return checkAsync(target, { ...options, verifyUrls: true, fetchImpl: io.fetchImpl, timeoutMs: io.timeoutMs }).then(
+    return checkAsync(target, { ...options, verifyUrls: true, fetchImpl: io.fetchImpl, timeoutMs: io.timeoutMs, allowPrivateHosts: io.allowPrivateHosts }).then(
       (result) => report(result, values, io),
       (error) => {
         if (error instanceof UsageError) return usage(io, error.message);

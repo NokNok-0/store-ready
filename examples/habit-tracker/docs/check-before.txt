@@ -16,14 +16,44 @@ iOS
          Fix:    Set expo.ios.bundleIdentifier in app.json to a reverse-DNS ID you own, for example "com.yourcompany.yourapp".
          Source: https://docs.expo.dev/submit/introduction/
 
+  ERROR  app.template-content  app.json
+         Template artwork: assets/images/icon.png (icon) is the Expo SDK 58 default template icon.png; assets/images/android-icon-foreground.png (android.adaptiveIcon.foregroundImage) is the Expo SDK 58 default template android-icon-foreground.png; assets/images/android-icon-background.png (android.adaptiveIcon.backgroundImage) is the Expo SDK 58 default template android-icon-background.png; assets/images/android-icon-monochrome.png (android.adaptiveIcon.monochromeImage) is the Expo SDK 58 default template android-icon-monochrome.png; assets/images/favicon.png (web.favicon) is the Expo SDK 58 default template favicon.png; assets/images/splash-icon.png (expo-splash-screen image) is the Expo SDK 58 default template splash-icon.png. Shipping the template's icon or splash image reads as an unfinished app and is not your own brand.
+         Fix:    Replace every listed image with your own artwork (icon 1024x1024). Guidelines 4.1(c) and 2.3 expect an original icon and accurate metadata.
+         Source: https://developer.apple.com/app-store/review/guidelines/
+
+  WARN   ios.purpose-strings  app.json
+         expo-image-picker is installed and not in plugins; if Expo applies its config plugin automatically, it runs without a "microphonePermission" option, and ios.infoPlist does not set NSMicrophoneUsageDescription. The package's generic default text ("Allow $(PRODUCT_NAME) to access ...") will ship, which is the vague kind of purpose string guideline 5.1.1(ii) rejects.
+         Fix:    If the app uses this permission, set "microphonePermission" in the expo-image-picker plugin options to a sentence that says what the data is for, with an example such as "The microphone is used to record voice notes that you attach to a task.". If it does not, set "microphonePermission": false to remove the key. To see the final values, run "npx expo config --type introspect --json > store/expo-config.json" and check with --config store/expo-config.json.
+         Source: https://developer.apple.com/help/app-review/guideline-reference/5-1-1-purpose-strings
+
   WARN   ios.privacy-manifest  app.json
-         @react-native-async-storage/async-storage is a dependency, and no UserDefaults reason is declared in app config. Packages ship their own privacy manifests, but Apple may not read them from static CocoaPods, and Apple emails missing reasons after upload.
-         Fix:    Add { "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults", "NSPrivacyAccessedAPITypeReasons": ["<code>"] } to expo.ios.privacyManifests.NSPrivacyAccessedAPITypes in app.json. Valid codes: CA92.1, 1C8F.1, C56D.1, AC6B.1 (Expo's example uses CA92.1); pick the one that matches your use.
+         NSPrivacyAccessedAPICategoryFileTimestamp is declared by 3 packages in node_modules but not in expo.ios.privacyManifests in app.json. Reasons they use: C617.1 (@react-native-async-storage/async-storage, react-native); 0A2A.1 (expo-file-system); 3B52.1 (expo-file-system). Apple may not read package manifests from static CocoaPods, and emails missing reasons after upload.
+         Fix:    Add { "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryFileTimestamp", "NSPrivacyAccessedAPITypeReasons": ["C617.1","0A2A.1","3B52.1"] } to expo.ios.privacyManifests.NSPrivacyAccessedAPITypes. These are the packages' reasons; confirm each one matches how your app uses the API before you submit.
          Source: https://docs.expo.dev/guides/apple-privacy/
 
+  WARN   ios.privacy-manifest  app.json
+         NSPrivacyAccessedAPICategoryUserDefaults is declared by 3 packages in node_modules but not in expo.ios.privacyManifests in app.json. Reasons they use: CA92.1 (expo-constants, expo-system-ui, react-native). Apple may not read package manifests from static CocoaPods, and emails missing reasons after upload.
+         Fix:    Add { "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults", "NSPrivacyAccessedAPITypeReasons": ["CA92.1"] } to expo.ios.privacyManifests.NSPrivacyAccessedAPITypes. These are the packages' reasons; confirm each one matches how your app uses the API before you submit.
+         Source: https://docs.expo.dev/guides/apple-privacy/
+
+  WARN   ios.privacy-manifest  app.json
+         NSPrivacyAccessedAPICategoryDiskSpace is declared by a package in node_modules but not in expo.ios.privacyManifests in app.json. Reasons they use: E174.1 (expo-file-system); 85F4.1 (expo-file-system). Apple may not read package manifests from static CocoaPods, and emails missing reasons after upload.
+         Fix:    Add { "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryDiskSpace", "NSPrivacyAccessedAPITypeReasons": ["E174.1","85F4.1"] } to expo.ios.privacyManifests.NSPrivacyAccessedAPITypes. These are the packages' reasons; confirm each one matches how your app uses the API before you submit.
+         Source: https://docs.expo.dev/guides/apple-privacy/
+
+  WARN   ios.privacy-manifest  app.json
+         NSPrivacyAccessedAPICategorySystemBootTime is declared by a package in node_modules but not in expo.ios.privacyManifests in app.json. Reasons they use: 35F9.1 (react-native). Apple may not read package manifests from static CocoaPods, and emails missing reasons after upload.
+         Fix:    Add { "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategorySystemBootTime", "NSPrivacyAccessedAPITypeReasons": ["35F9.1"] } to expo.ios.privacyManifests.NSPrivacyAccessedAPITypes. These are the packages' reasons; confirm each one matches how your app uses the API before you submit.
+         Source: https://docs.expo.dev/guides/apple-privacy/
+
+  WARN   app.template-content  src/app/paywall.tsx
+         Placeholder content: "not available yet" in src/app/paywall.tsx:34 ("not available yet"); example.com address in src/auth.ts:17 ("google.user@example.com"). Reviewers treat placeholder text, sample accounts and "coming soon" features as an incomplete app.
+         Fix:    Guideline 2.1: ship finished content. Replace sample addresses and text with real ones, remove features that do not work yet, and fill in template fields. Format hints in placeholder= props and test files are not flagged.
+         Source: https://developer.apple.com/app-store/review/guidelines/
+
   WARN   account.deletion  src/session.tsx
-         Sign-up code found (auth.signUp (Supabase and others) in src/session.tsx) but no account deletion path was detected in src/, app/, components/ and similar folders. This is a heuristic.
-         Fix:    Let users start account deletion inside the app; deactivation alone is not enough. If deletion finishes on the web, link straight to that page. Apps using Sign in with Apple must revoke tokens through the REST API, and subscribers should be told Apple billing continues until they cancel.
+         Sign-up found ("auth.signUp" in src/session.tsx:31), no "Delete account" text or delete-account route was found in src/, app/, components/ and similar folders. This is a heuristic.
+         Fix:    Let users start account deletion inside the app, from a screen or button they can find (for example Settings > Delete account); deactivation alone is not enough. If deletion finishes on the web, link straight to that page. Apps using Sign in with Apple must revoke tokens through the REST API, and subscribers should be told Apple billing continues until they cancel.
          Source: https://developer.apple.com/help/app-review/guideline-reference/5-1-1-account-deletion
 
   WARN   login.apple-equivalent  src/auth.ts
@@ -41,10 +71,10 @@ iOS
          Fix:    Set expo.ios.buildNumber in app.json (or let your build service manage it) and raise it for each upload.
          Source: https://docs.expo.dev/submit/introduction/
 
-  INFO   app.icon  assets/images/icon.png
-         The iOS icon ./assets/images/icon.png has an alpha channel. Apple's pages we checked do not confirm a "no transparency" rule, so this is only a note.
-         Fix:    If App Store Connect rejects the icon, export it without an alpha channel.
-         Source: https://developer.apple.com/design/human-interface-guidelines/app-icons
+  INFO   store.files
+         Not checked yet, because these App Store files do not exist: store/listing.ios.json, store/review-notes.txt, store/privacy.ios.md, store/screenshots/ios/ (no images). The checks that read them were skipped, so a clean run does not cover them.
+         Fix:    Create them (App Store name, subtitle, keywords and description; App Review notes and demo account; App Privacy answers; App Store screenshots), then check again. The store-ready skills write these files.
+         Source: https://developer.apple.com/help/app-store-connect/reference/app-information/app-information
 
 Android
   ERROR  app.identity  app.json
@@ -52,14 +82,24 @@ Android
          Fix:    Set expo.android.package in app.json to a reverse-DNS ID you own, for example "com.yourcompany.yourapp".
          Source: https://docs.expo.dev/submit/introduction/
 
+  ERROR  app.template-content  app.json
+         Template artwork: assets/images/icon.png (icon) is the Expo SDK 58 default template icon.png; assets/images/android-icon-foreground.png (android.adaptiveIcon.foregroundImage) is the Expo SDK 58 default template android-icon-foreground.png; assets/images/android-icon-background.png (android.adaptiveIcon.backgroundImage) is the Expo SDK 58 default template android-icon-background.png; assets/images/android-icon-monochrome.png (android.adaptiveIcon.monochromeImage) is the Expo SDK 58 default template android-icon-monochrome.png; assets/images/favicon.png (web.favicon) is the Expo SDK 58 default template favicon.png; assets/images/splash-icon.png (expo-splash-screen image) is the Expo SDK 58 default template splash-icon.png. Shipping the template's icon or splash image reads as an unfinished app and is not your own brand.
+         Fix:    Replace every listed image with your own artwork. Play's impersonation and metadata policies expect the icon and graphics to be your own.
+         Source: https://play.google/developer-content-policy/
+
   WARN   android.permissions  app.json
          READ_MEDIA_IMAGES is declared (expo.android.permissions). Play allows it only when the system photo picker cannot support the core feature, and requires a Photo and video permissions declaration.
          Fix:    If the app needs it, complete the declaration in Play Console under App content. If not, remove it from expo.android.permissions, or add "android.permission.READ_MEDIA_IMAGES" to expo.android.blockedPermissions if a library adds it.
          Source: https://support.google.com/googleplay/android-developer/answer/14115180
 
+  WARN   app.template-content  src/app/paywall.tsx
+         Placeholder content: "not available yet" in src/app/paywall.tsx:34 ("not available yet"); example.com address in src/auth.ts:17 ("google.user@example.com"). Reviewers treat placeholder text, sample accounts and "coming soon" features as an incomplete app.
+         Fix:    Play minimum functionality: ship finished content. Replace sample addresses and text with real ones, remove features that do not work yet, and fill in template fields. Format hints in placeholder= props and test files are not flagged.
+         Source: https://support.google.com/googleplay/android-developer/answer/9898783
+
   WARN   account.deletion  src/session.tsx
-         Sign-up code found (auth.signUp (Supabase and others) in src/session.tsx) but no account deletion path was detected in src/, app/, components/ and similar folders. This is a heuristic.
-         Fix:    Offer deletion inside the app and a web link where users can request deletion without reinstalling, delete the associated data (disclose anything you keep), and declare it in the Data safety form.
+         Sign-up found ("auth.signUp" in src/session.tsx:31), no "Delete account" text or delete-account route was found in src/, app/, components/ and similar folders. This is a heuristic.
+         Fix:    Offer deletion inside the app (a screen or button users can find) and a web link where users can request deletion without reinstalling, delete the associated data (disclose anything you keep), and declare it in the Data safety form.
          Source: https://support.google.com/googleplay/android-developer/answer/13327111
 
   WARN   privacy.policy-url
@@ -77,10 +117,15 @@ Android
          Fix:    Set expo.android.versionCode in app.json (or let your build service manage it) and raise it for each upload.
          Source: https://docs.expo.dev/submit/introduction/
 
+  INFO   store.files
+         Not checked yet, because these Google Play files do not exist: store/listing.android.json, store/data-safety.android.md, store/screenshots/android/ (no images). The checks that read them were skipped, so a clean run does not cover them.
+         Fix:    Create them (Play title and descriptions; Data safety answers; Play screenshots and graphics), then check again. The store-ready skills write these files.
+         Source: https://support.google.com/googleplay/android-developer/answer/9859152
+
   INFO   play.closed-testing
          Personal Play developer accounts created after 2023-11-13 must run a closed test with at least 12 testers opted in for at least 14 days in a row before applying for production access. This cannot be detected from the project.
          Fix:    If this applies to your account, start the closed test early and keep 12 or more testers opted in for the full 14 days.
          Source: https://support.google.com/googleplay/android-developer/answer/14151465
 
-4 errors, 7 warnings, 5 info
+6 errors, 13 warnings, 6 info
 Fix the errors above, then run the check again.

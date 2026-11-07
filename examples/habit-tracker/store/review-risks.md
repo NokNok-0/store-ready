@@ -152,7 +152,7 @@ Source: https://support.google.com/googleplay/android-developer/answer/13327111
 - Screenshots were captured from the web build: compare all 12 with a native build (headers, back button, fonts, status bar) before upload (`store/screenshots/plan.md`).
 - Store name: whether "Streaks" is already used by another habit app (4.1; Product risks R1). No check in this review's sources covers it.
 - Merged Android manifest of a release build (`store/data-safety.android.md`, Not verified).
-- App Store Connect and Play Console entries: App Privacy, Data safety, age rating, content rating, DSA trader status, export compliance, contact fields in App Review Information (`{{CONTACT_...}}` placeholders in `store/review-notes.txt`).
+- App Store Connect and Play Console entries: App Privacy, Data safety, age rating, content rating, DSA trader status, export compliance, contact fields in App Review Information.
 
 ### Result
 

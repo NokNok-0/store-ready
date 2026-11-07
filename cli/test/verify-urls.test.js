@@ -11,6 +11,7 @@ let server;
 let base = '';
 /** @type {string[]} */
 const requests = [];
+const local = { allowPrivateHosts: true };
 
 before(async () => {
   server = http.createServer((req, res) => {
@@ -34,26 +35,68 @@ after(() => {
 
 describe('verifyUrl', () => {
   it('accepts 2xx and followed redirects with HEAD', async () => {
-    assert.deepEqual(await verifyUrl(`${base}/privacy`), { ok: true, status: 200 });
-    assert.deepEqual(await verifyUrl(`${base}/moved`), { ok: true, status: 200 });
+    assert.deepEqual(await verifyUrl(`${base}/privacy`, local), { ok: true, status: 200 });
+    assert.deepEqual(await verifyUrl(`${base}/moved`, local), { ok: true, status: 200 });
     assert.ok(requests.includes('HEAD /privacy'));
   });
 
   it('falls back to GET when HEAD is refused', async () => {
-    assert.deepEqual(await verifyUrl(`${base}/no-head`), { ok: true, status: 200 });
+    assert.deepEqual(await verifyUrl(`${base}/no-head`, local), { ok: true, status: 200 });
     assert.ok(requests.includes('HEAD /no-head') && requests.includes('GET /no-head'));
   });
 
   it('reports 404s, redirects to a 404, timeouts and refused connections', async () => {
-    assert.deepEqual(await verifyUrl(`${base}/missing`), { ok: false, status: 404 });
-    assert.deepEqual(await verifyUrl(`${base}/moved-to-missing`), { ok: false, status: 404 });
-    const slow = await verifyUrl(`${base}/slow`, { timeoutMs: 150 });
+    assert.deepEqual(await verifyUrl(`${base}/missing`, local), { ok: false, status: 404 });
+    assert.deepEqual(await verifyUrl(`${base}/moved-to-missing`, local), { ok: false, status: 404 });
+    const slow = await verifyUrl(`${base}/slow`, { ...local, timeoutMs: 150 });
     assert.equal(slow.ok, false);
     assert.match(slow.ok ? '' : slow.error ?? '', /no response within 0\.2 s/);
-    const refused = await verifyUrl('http://127.0.0.1:9/privacy', { timeoutMs: 2000 });
+    const refused = await verifyUrl('http://127.0.0.1:9/privacy', { ...local, timeoutMs: 2000 });
     assert.equal(refused.ok, false);
     assert.match(refused.ok ? '' : refused.error ?? '', /^network error/);
     assert.deepEqual(await verifyUrl('ftp://example.com/privacy'), { ok: false, error: 'not an http(s) URL' });
+  });
+});
+
+describe('verifyUrl host safety', () => {
+  const publicDns = async () => [{ address: '93.184.216.34', family: 4 }];
+
+  it('refuses loopback, private, link-local and metadata addresses without contacting them', async () => {
+    const before = requests.length;
+    for (const url of [`${base}/privacy`, 'http://169.254.169.254/latest/meta-data/', 'http://10.0.0.5/', 'http://[::1]/', 'http://localhost/', 'http://[::ffff:127.0.0.1]/']) {
+      const result = await verifyUrl(url);
+      assert.equal(result.ok, false, url);
+      assert.match(result.ok ? '' : result.error ?? '', /not a public address/, url);
+    }
+    assert.equal(requests.length, before);
+  });
+
+  it('refuses a public name that resolves to a private address', async () => {
+    const result = await verifyUrl('https://intranet.example/privacy', { resolve: async () => [{ address: '192.168.1.10', family: 4 }] });
+    assert.match(result.ok ? '' : result.error ?? '', /not a public address/);
+  });
+
+  it('checks every redirect hop', async () => {
+    /** @type {typeof fetch} */
+    const fetchImpl = async () => new Response(null, { status: 302, headers: { location: 'http://169.254.169.254/' } });
+    const result = await verifyUrl('https://example.org/privacy', { fetchImpl, resolve: publicDns });
+    assert.match(result.ok ? '' : result.error ?? '', /not a public address/);
+  });
+
+  it('stops after too many redirects', async () => {
+    /** @type {typeof fetch} */
+    const fetchImpl = async (input) => new Response(null, { status: 302, headers: { location: `${input}x` } });
+    const result = await verifyUrl('https://example.org/a', { fetchImpl, resolve: publicDns });
+    assert.match(result.ok ? '' : result.error ?? '', /more than 5 redirects/);
+  });
+
+  it('classifies addresses', async () => {
+    const { isPublicAddress } = await import('../src/verify-urls.js');
+    assert.equal(isPublicAddress('93.184.216.34'), true);
+    assert.equal(isPublicAddress('2606:4700::1111'), true);
+    for (const address of ['127.0.0.1', '10.1.2.3', '172.20.0.1', '192.168.0.1', '169.254.169.254', '100.64.0.1', '0.0.0.0', '::1', 'fd00::1', 'fe80::1', '::ffff:10.0.0.1']) {
+      assert.equal(isPublicAddress(address), false, address);
+    }
   });
 });
 
@@ -62,7 +105,7 @@ describe('--verify-urls', () => {
   async function run(args, cwd) {
     let stdout = '';
     let stderr = '';
-    const code = await main(args, { stdout: { write: (t) => { stdout += t; } }, stderr: { write: (t) => { stderr += t; } }, cwd, env: {}, timeoutMs: 1000 });
+    const code = await main(args, { stdout: { write: (t) => { stdout += t; } }, stderr: { write: (t) => { stderr += t; } }, cwd, env: {}, timeoutMs: 1000, allowPrivateHosts: true });
     return { code, stdout, stderr };
   }
 

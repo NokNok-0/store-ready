@@ -20,7 +20,7 @@ npx store-ready check . --verify-urls       # also open the URLs it finds
 | `--platform ios\|android\|both` | Only show issues for one platform (issues for both are always shown) |
 | `--config <file>` | Use this Expo config JSON instead of reading app config. Best input: `npx expo config --type introspect --json`, whose `ios.infoPlist` includes the purpose strings config plugins write |
 | `--strict` | Warnings fail the run too |
-| `--verify-urls` | Off by default. Sends HTTP HEAD (GET if HEAD fails or is refused, redirects followed, 10 s timeout) to every privacy policy, support and account deletion URL found. A final status outside 2xx/3xx, a timeout or a network error is an error; a working URL is info. Only the status is checked, not the page content |
+| `--verify-urls` | Off by default. Sends HTTP HEAD (GET if HEAD fails or is refused, 10 s timeout) to every privacy policy, support and account deletion URL found, at most 20. The URLs come from the project, which may not be trusted, so only public hosts are contacted: each host and every redirect hop (up to 5) is resolved and refused if it is loopback, private, link-local or otherwise non-public. A final status outside 2xx, a timeout, a refused host or a network error is an error; a working URL is info. Only the status is checked, not the page content |
 | `-h`, `--help` / `-v`, `--version` | Help / version |
 
 Exit codes: `0` no errors (and no warnings with `--strict`), `1` errors found (or warnings with `--strict`), `2` usage error.

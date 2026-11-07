@@ -27,5 +27,5 @@ PURCHASES
 None. The app has no in-app purchases or subscriptions in this version.
 
 CONTACT
-{{CONTACT_NAME}}, {{CONTACT_EMAIL}}, {{CONTACT_PHONE}}, {{TIME_ZONE}}
+The reviewer contact (name, email, phone) is entered in App Store Connect > App Review Information.
 Issues: https://github.com/NokNok-0/store-ready/issues

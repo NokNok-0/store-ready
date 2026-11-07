@@ -29,9 +29,11 @@ const FIELDS = {
 
 const OPTIONAL_KEYS = ['privacyPolicyUrl'];
 const SHORT_FIELDS = new Set(['name', 'subtitle', 'title']);
-// Price and superlative words. The store-ready checker applies a list like this to name, subtitle and title only
-// (2.3.7: no prices in the name); this script applies it to every field, and in descriptions accepts --allow labels.
+// Price and superlative words. The store-ready checker (cli/src/checks/store-listing-limits.js CLAIM_WORDS) flags
+// free, sale, % off, $, €, best, top, ultimate, #1, number one and No. 1 in name, subtitle and title. This script
+// flags all of those in the same fields, plus more superlatives in every field; in descriptions it accepts --allow labels.
 const SUPERLATIVES = /\b(best|ultimate|revolutionary|leading|fastest|easiest|top[- ]rated|number one|world'?s (first|best)|unbeatable|perfect|amazing|incredible)\b|#1\b/gi;
+const SHORT_ONLY_CLAIMS = /\btop\b|\bno\.\s?1(?!\d)|[$€]/gi;
 const PRICE = /[$€£¥₹]\s?\d|\d\s?(usd|eur|gbp)\b|\b\d+% off\b/gi;
 const PRICE_WORDS = /\b(free|sale|discount|cheap|deal)\b/gi;
 const EMOJI = /\p{Extended_Pictographic}/u;
@@ -108,6 +110,8 @@ function textWarnings(platform, key, value, allow, notes) {
   const price = flagged(PRICE, value, accept);
   if (price.hits.length) out.push(`looks like a price or discount: "${price.hits[0]}"`);
   if (short) {
+    const claims = flagged(SHORT_ONLY_CLAIMS, value, []);
+    if (claims.hits.length) out.push(`"${claims.hits[0]}" in the name, subtitle or title reads as a ranking or price claim (the store-ready checker flags this too)`);
     const words = flagged(PRICE_WORDS, value, []);
     if (words.hits.length) out.push(platform === 'ios' ? `"${words.hits[0]}" in the name or subtitle reads as a price (2.3.7)` : `"${words.hits[0]}" in the title reads as a price claim`);
   }

@@ -17,5 +17,21 @@ Android
          Fix:    If this applies to your account, start the closed test early and keep 12 or more testers opted in for the full 14 days.
          Source: https://support.google.com/googleplay/android-developer/answer/14151465
 
-0 errors, 0 warnings, 3 info
+Both platforms
+  INFO   privacy.policy-url  store/listing.ios.json
+         Privacy policy URL found: https://github.com/NokNok-0/store-ready/blob/main/examples/habit-tracker/docs/privacy-policy.md. Not verified: open it and confirm it loads. Found in: store/listing.ios.json, store/listing.android.json, app.json (extra.privacyPolicyUrl), src/links.ts.
+         Fix:    Open the URL in a browser, signed out, and confirm it shows the published page (not a 404, a login page or a draft). Or run the check with --verify-urls.
+         Source: https://developer.apple.com/app-store/review/guidelines/
+
+  INFO   app.links  app.json
+         Support URL found: https://github.com/NokNok-0/store-ready/issues. Not verified: open it and confirm it loads. Found in: app.json (extra.supportUrl).
+         Fix:    Open the URL in a browser, signed out, and confirm it shows the published page (not a 404, a login page or a draft). Or run the check with --verify-urls.
+         Source: https://developer.apple.com/app-store/review/guidelines/
+
+  INFO   app.links  app.json
+         Account deletion URL found: https://github.com/NokNok-0/store-ready/blob/main/examples/habit-tracker/docs/delete-account.md. Not verified: open it and confirm it loads (Google Play requires the web deletion link to load without error). Found in: app.json (extra.deleteAccountUrl).
+         Fix:    Open the URL in a browser, signed out, and confirm it shows the published page (not a 404, a login page or a draft). Or run the check with --verify-urls.
+         Source: https://support.google.com/googleplay/android-developer/answer/13327111
+
+0 errors, 0 warnings, 6 info
 Passes the checks we know about. Store review also covers things no tool can check, such as crashes and server behaviour.

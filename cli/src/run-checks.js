@@ -30,13 +30,13 @@ export function check(target, { platform = 'both', configFile, cwd = process.cwd
 /**
  * Like check(), and with verifyUrls also fetches every URL the checks report (HEAD, fallback GET).
  * @param {string} target
- * @param {CheckOptions & { verifyUrls?: boolean, fetchImpl?: typeof fetch, timeoutMs?: number }} [options]
+ * @param {CheckOptions & { verifyUrls?: boolean, fetchImpl?: typeof fetch, timeoutMs?: number, allowPrivateHosts?: boolean }} [options]
  * @returns {Promise<CheckResult>}
  */
-export async function checkAsync(target, { platform = 'both', configFile, cwd = process.cwd(), verifyUrls: verify = false, fetchImpl, timeoutMs } = {}) {
+export async function checkAsync(target, { platform = 'both', configFile, cwd = process.cwd(), verifyUrls: verify = false, fetchImpl, timeoutMs, allowPrivateHosts } = {}) {
   const project = loadProject(target, { configFile, cwd });
   if (verify) {
-    const results = await verifyUrls(findLinks(project).map((link) => link.url), { fetchImpl, timeoutMs });
+    const results = await verifyUrls(findLinks(project).map((link) => link.url), { fetchImpl, timeoutMs, allowPrivateHosts });
     for (const [url, result] of results) project.urlChecks.set(url, result);
   }
   return runChecks(project, platform);
