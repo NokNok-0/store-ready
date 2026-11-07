@@ -2,6 +2,8 @@ export const SOURCES = Object.freeze({
   appleGuidelines: 'https://developer.apple.com/app-store/review/guidelines/',
   applePurposeStrings: 'https://developer.apple.com/help/app-review/guideline-reference/5-1-1-purpose-strings',
   appleAccountDeletion: 'https://developer.apple.com/help/app-review/guideline-reference/5-1-1-account-deletion',
+  appleRequiredReasonApi: 'https://developer.apple.com/documentation/bundleresources/describing-use-of-required-reason-api',
+  appleAppIcons: 'https://developer.apple.com/design/human-interface-guidelines/app-icons',
   appleThirdPartySdk: 'https://developer.apple.com/support/third-party-SDK-requirements/',
   appleScreenshots: 'https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications',
   appleAppInformation: 'https://developer.apple.com/help/app-store-connect/reference/app-information/app-information',

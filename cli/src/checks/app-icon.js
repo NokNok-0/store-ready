@@ -30,7 +30,7 @@ function iosIconPath(config) {
  * @returns {RawIssue[]}
  */
 function checkIosIconFile(project, file, origin) {
-  const source = SOURCES.appleGuidelines;
+  const source = SOURCES.appleAppIcons;
   const absolute = project.resolve(file);
   if (!fs.existsSync(absolute)) {
     return [{ severity: 'error', platform: 'ios', message: `The iOS icon ${file} (${origin}) does not exist.`, fix: `Add a ${IOS_ICON_SIZE}x${IOS_ICON_SIZE} PNG at that path or fix the path.`, source, file: origin }];
@@ -80,12 +80,12 @@ function checkExpoIcons(project) {
         platform: 'ios',
         message: 'No app icon is configured for iOS.',
         fix: `Set expo.icon (or expo.ios.icon) in ${file} to a ${IOS_ICON_SIZE}x${IOS_ICON_SIZE} PNG.`,
-        source: SOURCES.appleGuidelines,
+        source: SOURCES.appleAppIcons,
         file,
       });
     } else if (iconPath.endsWith('.icon')) {
       if (!project.exists(iconPath)) {
-        issues.push({ severity: 'error', platform: 'ios', message: `The iOS icon ${iconPath} does not exist.`, fix: 'Fix the path to the Icon Composer file.', source: SOURCES.appleGuidelines, file });
+        issues.push({ severity: 'error', platform: 'ios', message: `The iOS icon ${iconPath} does not exist.`, fix: 'Fix the path to the Icon Composer file.', source: SOURCES.appleAppIcons, file });
       }
     } else {
       issues.push(...checkIosIconFile(project, iconPath, file));
@@ -123,13 +123,13 @@ function checkNativeIosIcon(project) {
   if (!project.platforms.has('ios') || !project.ios.present) return [];
   const sets = project.ios.appIconSets;
   if (sets.length === 0) {
-    return [{ severity: 'error', platform: 'ios', message: 'No AppIcon.appiconset found in the iOS project.', fix: `Add an app icon set with a ${IOS_ICON_SIZE}x${IOS_ICON_SIZE} image in Xcode.`, source: SOURCES.appleGuidelines, file: project.ios.infoPlists[0]?.file }];
+    return [{ severity: 'error', platform: 'ios', message: 'No AppIcon.appiconset found in the iOS project.', fix: `Add an app icon set with a ${IOS_ICON_SIZE}x${IOS_ICON_SIZE} image in Xcode.`, source: SOURCES.appleAppIcons, file: project.ios.infoPlists[0]?.file }];
   }
   const set = sets[0];
   const images = Array.isArray(set.data?.images) ? set.data.images : [];
   const large = images.find((image) => isObject(image) && image.size === `${IOS_ICON_SIZE}x${IOS_ICON_SIZE}` && typeof image.filename === 'string');
   if (!large) {
-    return [{ severity: 'error', platform: 'ios', message: `${set.file} has no ${IOS_ICON_SIZE}x${IOS_ICON_SIZE} image.`, fix: `Add a ${IOS_ICON_SIZE}x${IOS_ICON_SIZE} PNG to the app icon set.`, source: SOURCES.appleGuidelines, file: set.file }];
+    return [{ severity: 'error', platform: 'ios', message: `${set.file} has no ${IOS_ICON_SIZE}x${IOS_ICON_SIZE} image.`, fix: `Add a ${IOS_ICON_SIZE}x${IOS_ICON_SIZE} PNG to the app icon set.`, source: SOURCES.appleAppIcons, file: set.file }];
   }
   return checkIosIconFile(project, `${set.dir}/${large.filename}`, set.file);
 }

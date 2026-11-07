@@ -53,7 +53,7 @@ export function run(project) {
   /** @type {Omit<import('../issue.js').Issue, 'id'>[]} */
   const issues = [];
   /** @param {string} message @param {string} fix @param {string} file @param {string} [source] */
-  const error = (message, fix, file, source = SOURCES.appleThirdPartySdk) =>
+  const error = (message, fix, file, source = SOURCES.appleRequiredReasonApi) =>
     issues.push({ severity: 'error', platform: 'ios', message, fix, source, file });
 
   for (const info of project.ios.privacyInfos) {
