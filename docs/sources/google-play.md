@@ -40,6 +40,10 @@ Source: https://developer.android.com/google/play/requirements/target-sdk
 - USE_FULL_SCREEN_INTENT is auto-granted only for alarm and calling apps (Android 14+). MANAGE_EXTERNAL_STORAGE, QUERY_ALL_PACKAGES and Accessibility API use need declarations.
 - Content rating (https://support.google.com/googleplay/android-developer/answer/9898843, /answer/9859655): every app needs an IARC rating from the App content questionnaire; unrated apps can be removed; retake it when content changes.
 
+## App access for review
+
+- Prepare your app for review (https://support.google.com/googleplay/android-developer/answer/9859455, checked 2026-11-07): if access to the app is restricted, you "must provide all required details to enable access to your app"; up to five sets of instructions; the "Any other instructions" field is for unusual login methods such as one-time passwords or multi-factor authentication.
+
 ## Store listing
 
 - Text (https://support.google.com/googleplay/android-developer/answer/9859152): app name 30, short description 80, full description 4,000 characters. Keyword stuffing can lead to suspension.
