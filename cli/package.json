@@ -3,11 +3,15 @@
   "version": "0.1.0",
   "description": "Checks an Expo, React Native, iOS or Android project for issues that get apps rejected by App Store and Google Play review.",
   "type": "module",
-  "repository": { "type": "git", "url": "git+https://github.com/NokNok-0/store-ready.git", "directory": "cli" },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NokNok-0/store-ready.git",
+    "directory": "cli"
+  },
   "homepage": "https://github.com/NokNok-0/store-ready#readme",
   "bugs": "https://github.com/NokNok-0/store-ready/issues",
   "bin": {
-    "store-ready": "./bin/store-ready.mjs"
+    "store-ready": "bin/store-ready.mjs"
   },
   "files": [
     "bin",
