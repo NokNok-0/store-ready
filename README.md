@@ -169,7 +169,7 @@ Store rules last checked: **2026-11-07** (App Review Guidelines revision of 2026
 
 Rules change several times a year. The most useful contribution is a rule update: change the fact in `docs/sources/` with the official URL, then the skill or check that uses it. `node scripts/validate.mjs` and `npm test` in `cli/` must pass.
 
-Found a rejection the pack missed? Open an issue with the rejection text (remove anything private).
+Found a rejection the pack missed? [Report it](https://github.com/NokNok-0/store-ready/issues/new?template=missed-rejection.yml) with the rejection text (remove anything private). Rejections from apps we didn't write are the best test of what the checker still can't see.
 
 ## License
 

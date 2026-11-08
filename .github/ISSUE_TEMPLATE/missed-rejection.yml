@@ -1,0 +1,69 @@
+name: Rejection the pack missed
+description: An App Store or Google Play rejection that the checker or skills did not catch.
+title: "Missed rejection: "
+labels: ["missed-rejection"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for sharing. Remove anything private before posting: app name, bundle ID, account emails, demo passwords, submission IDs and your company name.
+
+  - type: dropdown
+    id: store
+    attributes:
+      label: Store
+      options:
+        - App Store
+        - Google Play
+    validations:
+      required: true
+
+  - type: input
+    id: guideline
+    attributes:
+      label: Guideline or policy
+      description: As the rejection names it.
+      placeholder: "Guideline 2.1 - Performance - App Completeness, or Google Play User Data policy"
+
+  - type: input
+    id: date
+    attributes:
+      label: Date of the rejection
+      placeholder: "2026-11"
+    validations:
+      required: true
+
+  - type: textarea
+    id: message
+    attributes:
+      label: Rejection message
+      description: Paste the text from App Store Connect or Play Console, with private details removed.
+      render: text
+    validations:
+      required: true
+
+  - type: dropdown
+    id: stack
+    attributes:
+      label: Project type
+      options:
+        - Expo (managed or prebuild)
+        - Bare React Native
+        - Native iOS (Swift / Objective-C)
+        - Native Android (Kotlin / Java)
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: checker
+    attributes:
+      label: What the checker said
+      description: Output of `npx @noknok-0/store-ready check` on the version that was rejected, if you can run it. "Not run" is fine.
+      render: text
+
+  - type: textarea
+    id: fix
+    attributes:
+      label: What fixed it
+      description: If you already got through review, what you changed or replied.
